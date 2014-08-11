@@ -30,3 +30,14 @@ In rather active development. API is not stable at the moment and can change in 
 )`
 
 ## Usage
+### Creating Plaintext (unprotected) Tokens	
+	payload :=  `{"hello": "world"}`
+			
+	token,err := Sign(payload,"none",nil)
+	
+	if(err==nil) {
+		//go use token
+	}
+		
+### More examples
+Checkout jose_test.go for more examples.	

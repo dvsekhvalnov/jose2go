@@ -120,7 +120,7 @@ func (s *TestSuite) TestEncodePlaintext(c *C) {
 	payload :=  `{"hello": "world"}`
 	
 	//when	
-	test,err := Sign(payload,"none",shaKey)
+	test,err := Sign(payload,"none",nil)
 	
 	fmt.Printf("\nnone = %v\n",test)
 	
