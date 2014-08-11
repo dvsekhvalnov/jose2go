@@ -162,5 +162,41 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 		}
 	}
 
+**RS256, RS384, RS512** signatures expecting `*rsa.PublicKey` public key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `Rsa.NewPublic([]byte)` under `jose2go/keys/rsa` package:
+
+	package main
+
+	import (
+	    "fmt"
+	    "io/ioutil"
+	    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+	    "github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+	    token := "eyJhbGciOiJSUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.NL_dfVpZkhNn4bZpCyMq5TmnXbT4yiyecuB6Kax_lV8Yq2dG8wLfea-T4UKnrjLOwxlbwLwuKzffWcnWv3LVAWfeBxhGTa0c4_0TX_wzLnsgLuU6s9M2GBkAIuSMHY6UTFumJlEeRBeiqZNrlqvmAzQ9ppJHfWWkW4stcgLCLMAZbTqvRSppC1SMxnvPXnZSWn_Fk_q3oGKWw6Nf0-j-aOhK0S0Lcr0PV69ZE4xBYM9PUS1MpMe2zF5J3Tqlc1VBcJ94fjDj1F7y8twmMT3H1PI9RozO-21R0SiXZ_a93fxhE_l_dj5drgOek7jUN9uBDjkXUwJPAyp9YPehrjyLdw"
+
+	    keyBytes,err := ioutil.ReadFile("public.key")
+
+	    if(err!=nil) {
+	        panic("invalid key file")
+	    }
+
+	    publicKey,e:=Rsa.NewPublic(keyBytes)
+
+	    if(e!=nil) {
+	        panic("invalid key format")
+	    }
+
+	    token,err = jose.Decode(token, publicKey)
+
+	    if(err==nil) {
+	        //go use token
+	        fmt.Printf("\npayload = %v\n",token)
+	    }
+	} 
+
+
 ### More examples
 Checkout `jose_test.go` for more examples.	
