@@ -120,7 +120,7 @@ func (s *TestSuite) TestEncodePlaintext(c *C) {
 	payload :=  `{"hello": "world"}`
 	
 	//when	
-	test,err := Sign(payload,"none",nil)
+	test,err := Sign(payload,NONE,nil)
 	
 	fmt.Printf("\nnone = %v\n",test)
 	
@@ -138,7 +138,7 @@ func (s *TestSuite) TestEncodeHS256(c *C) {
 	payload :=  `{"hello": "world"}`
 	
 	//when	
-	test,err := Sign(payload,"HS256",shaKey)
+	test,err := Sign(payload,HS256,shaKey)
 	
 	fmt.Printf("\nHS256 = %v\n",test)
 	
@@ -156,7 +156,7 @@ func (s *TestSuite) TestEncodeHS384(c *C) {
 	payload :=  `{"hello": "world"}`
 	
 	//when	
-	test,err := Sign(payload,"HS384",shaKey)
+	test,err := Sign(payload,HS384,shaKey)
 	
 	fmt.Printf("\nHS384 = %v\n",test)
 	
@@ -174,7 +174,7 @@ func (s *TestSuite) TestEncodeHS512(c *C) {
 	payload :=  `{"hello": "world"}`
 	
 	//when	
-	test,err := Sign(payload,"HS512",shaKey)
+	test,err := Sign(payload,HS512,shaKey)
 	
 	fmt.Printf("\nHS512 = %v\n",test)
 	
