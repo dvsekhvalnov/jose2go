@@ -188,14 +188,14 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	    if(e!=nil) {
 	        panic("invalid key format")
 	    }
-
-	    token,err = jose.Decode(token, publicKey)
+	
+	    payload,err := jose.Decode(token, publicKey)
 
 	    if(err==nil) {
 	        //go use token
-	        fmt.Printf("\npayload = %v\n",token)
+	        fmt.Printf("\npayload = %v\n",payload)
 	    }
-	} 
+	}  
 
 
 ### More examples
