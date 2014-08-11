@@ -163,4 +163,4 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	}
 
 ### More examples
-Checkout jose_test.go for more examples.	
+Checkout `jose_test.go` for more examples.	
