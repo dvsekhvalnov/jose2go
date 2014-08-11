@@ -53,17 +53,40 @@ Signing with HS256, HS384, HS512 expecting `[]byte` array key of corresponding l
 	}
 	
 #### RS-256, RS-384 and RS-512	
-Signing with RS256, RS384, RS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.NewPrivate([]byte)`.
+Signing with RS256, RS384, RS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.NewPrivate([]byte)` under `jose2go/keys/rsa` package.
 
-	payload :=  `{"hello": "world"}`
+	package main
 
-	keyBytes,_ := ioutil.ReadFile('private.key')
+	import (
+		"fmt"
+		"io/ioutil"
+		"github.com/dvsekhvalnov/jose2go/keys/rsa"
+		"github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		payload :=  `{"hello": "world"}`
+
+		keyBytes,err := ioutil.ReadFile("private.key")
+
+		if(err!=nil) {
+			panic("invalid key file")
+		}
+
+		privateKey,e:=Rsa.NewPrivate(keyBytes)
+
+		if(e!=nil) {
+			panic("invalid key format")
+		}
 	
-	token,err := jose.Sign(payload,jose.RS256, Rsa.NewPrivate(keyBytes))
-	
-	if(err==nil) {
-		//go use token
-	}
+		token,err := jose.Sign(payload,jose.RS256, privateKey)
+
+		if(err==nil) {
+			//go use token
+			fmt.Printf("\nRS256 = %v\n",token)
+		}
+	}	
 	
 		
 ### More examples
