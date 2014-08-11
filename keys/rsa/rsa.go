@@ -11,7 +11,7 @@ func NewPrivate(raw []byte) (key *rsa.PrivateKey,err error) {
 	var encoded *pem.Block
 
 	if encoded, _ = pem.Decode(raw); encoded == nil {
-		return nil, errors.New("Rsa.NewPublic(): Key must be PEM encoded PKCS1 or PKCS8 private key")
+		return nil, errors.New("Rsa.NewPrivate(): Key must be PEM encoded PKCS1 or PKCS8 private key")
 	}
 
 	var parsedKey interface{}

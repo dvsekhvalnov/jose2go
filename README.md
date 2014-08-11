@@ -33,7 +33,7 @@ In rather active development. API is not stable at the moment and can change in 
 #### Creating Plaintext (unprotected) Tokens	
 	payload :=  `{"hello": "world"}`
 			
-	token,err := Sign(payload,jose.NONE,nil)
+	token,err := jose.Sign(payload,jose.NONE,nil)
 	
 	if(err==nil) {
 		//go use token
@@ -46,7 +46,20 @@ Signing with HS256, HS384, HS512 expecting `[]byte` array key of corresponding l
 	payload :=  `{"hello": "world"}`
 	key := []byte{97,48,97,50,97,98,100,56,45,54,49,54,50,45,52,49,99,51,45,56,51,100,54,45,49,99,102,53,53,57,98,52,54,97,102,99}		
 	
-	token,err := Sign(payload,jose.HS256,key)
+	token,err := jose.Sign(payload,jose.HS256,key)
+	
+	if(err==nil) {
+		//go use token
+	}
+	
+#### RS-256, RS-384 and RS-512	
+Signing with RS256, RS384, RS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.NewPrivate([]byte)`.
+
+	payload :=  `{"hello": "world"}`
+
+	keyBytes,_ := ioutil.ReadFile('private.key')
+	
+	token,err := jose.Sign(payload,jose.RS256, Rsa.NewPrivate(keyBytes))
 	
 	if(err==nil) {
 		//go use token

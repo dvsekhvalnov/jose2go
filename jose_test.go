@@ -246,7 +246,7 @@ func (s *TestSuite) TestEncodeRS384(c *C) {
 	payload :=  `{"hello": "world"}`
 	
 	//when	
-	test,err := Sign(payload,"RS384",PrivKey())
+	test,err := Sign(payload,RS384,PrivKey())
 	
 	fmt.Printf("\nRS384 = %v\n",test)
 	
@@ -264,7 +264,7 @@ func (s *TestSuite) TestEncodeRS512(c *C) {
 	payload :=  `{"hello": "world"}`
 	
 	//when	
-	test,err := Sign(payload,"RS512",PrivKey())
+	test,err := Sign(payload,RS512,PrivKey())
 	
 	fmt.Printf("\nRS512 = %v\n",test)
 	
