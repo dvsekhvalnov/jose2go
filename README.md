@@ -140,6 +140,7 @@ Direct key management with pre-shared symmetric keys expecting `[]byte` array ke
 Decoding json web tokens is fully symmetric to creating signed or encrypted tokens (with respect to public/private cryptography):		
 
 **HS256, HS384, HS512** signatures expecting `[]byte` array key:
+
 	package main
 
 	import (
