@@ -110,7 +110,33 @@ Signing with RS256, RS384, RS512 expecting `*rsa.PrivateKey` private key of corr
 			fmt.Printf("\nRS256 = %v\n",token)
 		}
 	}	
+
+### Creating encrypted Tokens
+#### DIR direct pre-shared symmetric key family of algorithms 
+Direct key management with pre-shared symmetric keys expecting `[]byte` array key of corresponding length:
+
+	package main
+
+	import (
+		"fmt"
+		"github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		payload :=  `{"hello": "world"}`
 	
+		sharedKey :=[]byte{194,164,235,6,138,248,171,239,24,216,11,22,137,199,215,133}
+	
+		token,err := jose.Encrypt(payload,jose.DIR,jose.A128GCM,sharedKey)
+
+		if(err==nil) {
+			//go use token
+			fmt.Printf("\nDIR A128GCM = %v\n",token)
+		}
+	}
+	
+### Verifying and Decoding Tokens
 		
 ### More examples
 Checkout jose_test.go for more examples.	
