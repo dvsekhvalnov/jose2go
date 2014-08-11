@@ -112,7 +112,7 @@ Signing with RS256, RS384, RS512 expecting `*rsa.PrivateKey` private key of corr
 	}	
 
 ### Creating encrypted Tokens
-#### DIR direct pre-shared symmetric key family of algorithms 
+#### DIR direct pre-shared symmetric key management
 Direct key management with pre-shared symmetric keys expecting `[]byte` array key of corresponding length:
 
 	package main
@@ -137,6 +137,29 @@ Direct key management with pre-shared symmetric keys expecting `[]byte` array ke
 	}
 	
 ### Verifying and Decoding Tokens
-		
+Decoding json web tokens is fully symmetric to creating signed or encrypted tokens (with respect to public/private cryptography):		
+
+**HS256, HS384, HS512** signatures expecting `[]byte` array key:
+	package main
+
+	import (
+		"fmt"
+		"github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		token := "eyJhbGciOiJIUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.chIoYWrQMA8XL5nFz6oLDJyvgHk2KA4BrFGrKymjC8E"
+	
+		sharedKey :=[]byte{97,48,97,50,97,98,100,56,45,54,49,54,50,45,52,49,99,51,45,56,51,100,54,45,49,99,102,53,53,57,98,52,54,97,102,99}
+	
+		payload,err := jose.Decode(token,sharedKey)
+
+		if(err==nil) {
+			//go use token
+			fmt.Printf("\npayload = %v\n",payload)
+		}
+	}
+
 ### More examples
 Checkout jose_test.go for more examples.	
