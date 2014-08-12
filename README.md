@@ -15,6 +15,7 @@ In rather active development. API is not stable at the moment and can change in 
 **Signing**
 - HMAC signatures with HS256, HS384 and HS512.
 - RSASSA-PKCS1-V1_5 signatures with RS256, RS384 and RS512.
+- RSASSA-PSS signatures (probabilistic signature scheme with appendix) with PS256, PS384 and PS512.
 - NONE (unprotected) plain text algorithm without integrity protection
 
 **Encryption**
@@ -22,12 +23,12 @@ In rather active development. API is not stable at the moment and can change in 
 
 ## Installation
 ### Grab package from github
-`go get github.com/dvsekhvalnov/jose2go`
+`go get github.com/dvsekhvalnov/jose2go` or `go get -u github.com/dvsekhvalnov/jose2go` to update to latest version
 
 ### Import package
-`import (
-	"github.com/dvsekhvalnov/jose2go"
-)`
+	import (
+		"github.com/dvsekhvalnov/jose2go"
+	)
 
 ## Usage
 #### Creating Plaintext (unprotected) Tokens	
@@ -75,8 +76,8 @@ Signing with HS256, HS384, HS512 expecting `[]byte` array key of corresponding l
 		}
 	}
 	
-#### RS-256, RS-384 and RS-512	
-Signing with RS256, RS384, RS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.NewPrivate([]byte)` under `jose2go/keys/rsa` package.
+#### RS-256, RS-384 and RS-512, PS-256, PS-384 and PS-512
+Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.NewPrivate([]byte)` under `jose2go/keys/rsa` package.
 
 	package main
 
@@ -162,7 +163,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 		}
 	}
 
-**RS256, RS384, RS512** signatures expecting `*rsa.PublicKey` public key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `Rsa.NewPublic([]byte)` under `jose2go/keys/rsa` package:
+**RS256, RS384, RS512**,**PS256, PS384, PS512** signatures expecting `*rsa.PublicKey` public key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `Rsa.NewPublic([]byte)` under `jose2go/keys/rsa` package:
 
 	package main
 
