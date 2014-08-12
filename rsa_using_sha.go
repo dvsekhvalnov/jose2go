@@ -30,7 +30,7 @@ func (alg *RsaUsingSha) Verify(securedInput, signature []byte, key interface{}) 
 		return rsa.VerifyPKCS1v15(pubKey, hashFunc(alg.keySizeBits), sha(alg.keySizeBits, securedInput), signature)	
 	}
 	
-	return errors.New("RsaUsingSha.Verify() expects key to be '*rsa.PublicKey'")		
+	return errors.New("RsaUsingSha.Verify(): expects key to be '*rsa.PublicKey'")		
 }
 
 func (alg *RsaUsingSha) Sign(securedInput []byte, key interface{}) (signature []byte, err error) {
@@ -39,7 +39,7 @@ func (alg *RsaUsingSha) Sign(securedInput []byte, key interface{}) (signature []
 		return rsa.SignPKCS1v15(rand.Reader, privKey, hashFunc(alg.keySizeBits), sha(alg.keySizeBits, securedInput))
 	}
 	
-	return nil,errors.New("RsaUsingSha.Sign() expects key to be '*rsa.PrivateKey'")		
+	return nil,errors.New("RsaUsingSha.Sign(): expects key to be '*rsa.PrivateKey'")		
 }
 
 func sha(keySizeBits int, input []byte) (hash []byte) {

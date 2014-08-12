@@ -41,5 +41,5 @@ func (alg *HmacUsingSha) Sign(securedInput []byte, key interface{}) (signature [
 		return calculateHmac(alg.keySizeBits, securedInput, pubKey),nil
 	}
 	
-	return nil,errors.New("HmacUsingSha expects key to be '[]byte' array")	
+	return nil,errors.New("HmacUsingSha.Sign(): expects key to be '[]byte' array")	
 }
