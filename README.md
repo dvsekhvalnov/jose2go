@@ -113,8 +113,8 @@ Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey
 		}
 	}	
 
-#### ES-256, ES-384 and ES-512  family
-ES256, ES384, ES512 ECDSA signatures requires `*ecdsa.PrivateKey` private elliptic curve key of corresponding length.  **jose2go** provides convinient utils to construct `*ecdsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `ecc.ReadPrivate([]byte)` or directly from `X,Y,D` parameters: `ecc.NewPrivate(x,y,d []byte)` under `jose2go/keys/ecc` package.
+#### ES-256, ES-384 and ES-512
+ES256, ES384, ES512 ECDSA signatures expecting `*ecdsa.PrivateKey` private elliptic curve key of corresponding length.  **jose2go** provides convinient utils to construct `*ecdsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `ecc.ReadPrivate([]byte)` or directly from `X,Y,D` parameters: `ecc.NewPrivate(x,y,d []byte)` under `jose2go/keys/ecc` package.
 
 	package main
 
@@ -228,6 +228,30 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	    }
 	}  
 
+**ES256, ES284, ES512** signatures expecting `*ecdsa.PublicKey` public elliptic curve key of corresponding length. **jose2go** provides convinient utils to construct `*ecdsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `ecc.ReadPublic([]byte)` or directly from `X,Y` parameters: `ecc.NewPublic(x,y []byte)`under `jose2go/keys/ecc` package:
 
+	package main
+
+	import (
+	    "fmt"
+	    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+	    "github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+	    token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+
+		publicKey:=ecc.NewPublic([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+		 			 			 []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53})
+	
+	    payload,err := jose.Decode(token, publicKey)
+
+	    if(err==nil) {
+	        //go use token
+	        fmt.Printf("\npayload = %v\n",payload)
+	    }
+	}
+	
 ### More examples
 Checkout `jose_test.go` for more examples.	
