@@ -16,6 +16,7 @@ In rather active development. API is not stable at the moment and can change in 
 - HMAC signatures with HS256, HS384 and HS512.
 - RSASSA-PKCS1-V1_5 signatures with RS256, RS384 and RS512.
 - RSASSA-PSS signatures (probabilistic signature scheme with appendix) with PS256, PS384 and PS512.
+- ECDSA signatures with ES256, ES384 and ES512.
 - NONE (unprotected) plain text algorithm without integrity protection
 
 **Encryption**
@@ -111,6 +112,35 @@ Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey
 			fmt.Printf("\nRS256 = %v\n",token)
 		}
 	}	
+
+#### ES-256, ES-384 and ES-512  family
+ES256, ES384, ES512 ECDSA signatures requires `*ecdsa.PrivateKey` private elliptic curve key of corresponding length.  **jose2go** provides convinient utils to construct `*ecdsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `ecc.ReadPrivate([]byte)` or directly from `X,Y,D` parameters: `ecc.NewPrivate(x,y,d []byte)` under `jose2go/keys/ecc` package.
+
+	package main
+
+	import (
+	    "fmt"
+	    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+	    "github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+	    payload := `{"hello":"world"}`
+
+		privateKey:=ecc.NewPrivate([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+		 			 			   []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53},
+								   []byte{ 42, 148, 231, 48, 225, 196, 166, 201, 23, 190, 229, 199, 20, 39, 226, 70, 209, 148, 29, 70, 125, 14, 174, 66, 9, 198, 80, 251, 95, 107, 98, 206 })
+	
+	    token,err := jose.Sign(payload, jose.ES256, privateKey)
+
+	    if(err==nil) {
+	        //go use token
+	        fmt.Printf("\ntoken = %v\n",token)
+	    }
+	}  
+
+
 
 ### Creating encrypted Tokens
 #### DIR direct pre-shared symmetric key management
