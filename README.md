@@ -77,7 +77,7 @@ Signing with HS256, HS384, HS512 expecting `[]byte` array key of corresponding l
 	}
 	
 #### RS-256, RS-384 and RS-512, PS-256, PS-384 and PS-512
-Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.NewPrivate([]byte)` under `jose2go/keys/rsa` package.
+Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.ReadPrivate([]byte)` under `jose2go/keys/rsa` package.
 
 	package main
 
@@ -98,7 +98,7 @@ Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey
 			panic("invalid key file")
 		}
 
-		privateKey,e:=Rsa.NewPrivate(keyBytes)
+		privateKey,e:=Rsa.ReadPrivate(keyBytes)
 
 		if(e!=nil) {
 			panic("invalid key format")
@@ -163,7 +163,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 		}
 	}
 
-**RS256, RS384, RS512**,**PS256, PS384, PS512** signatures expecting `*rsa.PublicKey` public key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `Rsa.NewPublic([]byte)` under `jose2go/keys/rsa` package:
+**RS256, RS384, RS512**,**PS256, PS384, PS512** signatures expecting `*rsa.PublicKey` public key of corresponding length. **jose2go** provides convinient utils to construct `*rsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `Rsa.ReadPublic([]byte)` under `jose2go/keys/rsa` package:
 
 	package main
 
@@ -184,7 +184,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	        panic("invalid key file")
 	    }
 
-	    publicKey,e:=Rsa.NewPublic(keyBytes)
+	    publicKey,e:=Rsa.ReadPublic(keyBytes)
 
 	    if(e!=nil) {
 	        panic("invalid key format")
