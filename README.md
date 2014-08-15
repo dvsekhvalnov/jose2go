@@ -1,11 +1,11 @@
 # Golang (GO) Javascript Object Signing and Encryption (JOSE) and JSON Web Token (JWT) implementation
 
-Pure Golang (GO) library for generating, decoding and encryption [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10). Supports some of [JSON Web Algorithms](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-23). 
+Pure Golang (GO) library for generating, decoding and encryption [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10). Supports all signature algorithms and some key management of [JSON Web Algorithms](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-23). 
 Extensively unit tested and cross tested for compatibility with [jose.4.j](https://bitbucket.org/b_c/jose4j/wiki/Home), [Nimbus-JOSE-JWT](https://bitbucket.org/nimbusds/nimbus-jose-jwt/wiki/Home), [json-jwt](https://github.com/nov/json-jwt) and
 [jose-jwt](https://github.com/dvsekhvalnov/jose-jwt) libraries. 
 
 ## Goal
-The project goal is to provide full suite of JOSE algorithms. Ideally relying only on standard Golang (GO) package.
+The project goal is to provide full suite of JOSE algorithms. Ideally relying only on standard Golang (GO) packages only.
 
 ##Status
 In rather active development. API is not stable at the moment and can change in future versions.
