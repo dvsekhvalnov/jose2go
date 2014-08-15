@@ -7,7 +7,7 @@ import (
 		"errors"
 )
 
-func NewPrivate(raw []byte) (key *rsa.PrivateKey,err error) {	
+func ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error) {	
 	var encoded *pem.Block
 
 	if encoded, _ = pem.Decode(raw); encoded == nil {
@@ -25,13 +25,13 @@ func NewPrivate(raw []byte) (key *rsa.PrivateKey,err error) {
 	var ok bool
 		
 	if key,ok=parsedKey.(*rsa.PrivateKey);!ok {
-		return nil, errors.New("Rsa.NewPublic(): Key is not valid *rsa.PrivateKey")
+		return nil, errors.New("Rsa.NewPrivate(): Key is not valid *rsa.PrivateKey")
 	}
 	
 	return key,nil
 }
 
-func NewPublic(raw []byte) (key *rsa.PublicKey,err error)  {
+func ReadPublic(raw []byte) (key *rsa.PublicKey,err error)  {
 	var encoded *pem.Block
 	
 	if encoded, _ = pem.Decode(raw); encoded == nil {

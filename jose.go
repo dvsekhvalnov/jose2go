@@ -19,15 +19,18 @@ const (
 	PS256="PS256"
 	PS384="PS384"
 	PS512="PS512"		
+	ES256="ES256"
+	ES384="ES384"
+	ES512="ES512"		
 	
-	A128CBC_HS256="A128CBC-HS256"	
+	A128CBC_HS256="A128CBC-HS256" 
 	A192CBC_HS384="A192CBC-HS384"	
 	A256CBC_HS512="A256CBC-HS512"
 	A128GCM="A128GCM"
 	A192GCM="A192GCM"
 	A256GCM="A256GCM"
 	
-	DIR="dir"
+	DIR="dir" //Direct use of pre-shared symmetric key
 )
 
 var jwsHashers = map[string]JwsAlgorithm{}
@@ -142,7 +145,7 @@ func Decode(token string, key interface{}) (string,error) {
 	return "",errors.New(fmt.Sprintf("jwt.Decode() expects token of 3 or 5 parts, but was given: %v parts",len(parts)))	
 }
 
-func verify(parts [][]byte, key interface{}) (string,error) {
+func verify(parts [][]byte, key interface{}) (plainText string,err error) {
 		
 	header,payload,signature := parts[0],parts[1],parts[2]	
 	
@@ -150,18 +153,18 @@ func verify(parts [][]byte, key interface{}) (string,error) {
 	
 	var jwtHeader map[string]interface{}
 	
-	if e:=json.Unmarshal(header,&jwtHeader);e!=nil {
-		return "",e 
+	if err=json.Unmarshal(header,&jwtHeader);err!=nil {
+		return "",err
 	}
 	
 	alg := jwtHeader["alg"].(string)
 	
 	if verifier, ok := jwsHashers[alg]; ok {
-		if sigValid := verifier.Verify(secured,signature,key); sigValid==nil {
+		if err = verifier.Verify(secured,signature,key); err==nil {
 				return string(payload),nil
 		}
 		
-		return "",errors.New("jwt.Decode(): Signature is not valid")
+		return "", err
 	}
 	
 	return "", errors.New(fmt.Sprintf("jwt.Decode(): Unknown algorithm: '%v'",alg))

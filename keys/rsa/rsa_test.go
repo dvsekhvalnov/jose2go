@@ -18,7 +18,7 @@ func (s *TestSuite) TestNewPrivateRsaKeyPKCS1(c *C) {
 	keyBytes, _ := ioutil.ReadFile("priv.pem")
 	
 	//when	
-	test,e := NewPrivate(keyBytes)
+	test,e := ReadPrivate(keyBytes)
 	
 	//then
 	c.Assert(e, IsNil)
@@ -36,7 +36,7 @@ func (s *TestSuite) TestNewPrivateRsaKeyPKCS8(c *C) {
 	keyBytes, _ := ioutil.ReadFile("priv.pem")
 	
 	//when	
-	test,e := NewPrivate(keyBytes)
+	test,e := ReadPrivate(keyBytes)
 		
 	//then
 	c.Assert(e, IsNil)
@@ -54,7 +54,7 @@ func (s *TestSuite) TestNewPublicRsaKeyPKCS1(c *C) {
 	keyBytes, _ := ioutil.ReadFile("pub.pem")
 	
 	//when	
-	test,e := NewPublic(keyBytes)
+	test,e := ReadPublic(keyBytes)
 		
 	//then
 	c.Assert(e, IsNil)	
@@ -68,7 +68,7 @@ func (s *TestSuite) TestNewPublicRsaKeyPKIX(c *C) {
 	keyBytes, _ := ioutil.ReadFile("pub.key")
 	
 	//when	
-	test,e := NewPublic(keyBytes)
+	test,e := ReadPublic(keyBytes)
 		
 	//then
 	c.Assert(e, IsNil)	

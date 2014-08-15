@@ -2,10 +2,12 @@ package jose
 
 import (
 	"crypto/rsa"
+	"crypto/ecdsa"
 	"testing"
 	"fmt"
 	"strings"
 	"jose2go/keys/rsa"
+	"jose2go/keys/ecc"
 	. "gopkg.in/check.v1"
 )
 
@@ -385,6 +387,114 @@ func (s *TestSuite) TestEncodePS512(c *C) {
 	c.Assert(t, Equals, payload) 
 }
 
+func (s *TestSuite) TestDecodeES256(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+	
+	//when	
+	test,err := Decode(token, Ecc256Public())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"hello": "world"}`)
+}
+
+func (s *TestSuite) TestDecodeES384(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzM4NCIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.jVTHd9T0fIQDJLNvAq3LPpgj_npXtWb64FfEK8Sm65Nr9q2goUWASrM9jv3h-71UrP4cBpM3on3yN--o6B-Tl6bscVUfpm1swPp94f7XD9VYLEjGMjQOaozr13iBZJCY"
+	
+	//when	
+	test,err := Decode(token, Ecc384Public())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"hello": "world"}`)
+}
+
+func (s *TestSuite) TestDecodeES512(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzUxMiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.AHxJYFeTVpZmrfZsltpQKkkplmbkycQKFOFucD7hE4Sm3rCswUDi8hlSCfeYByugySYLFzogTQGk79PHP6vdl39sAUc9k2bhnv-NxRmJsN8ZxEx09qYKbc14qiNWZztLweQg0U-pU0DQ66rwJ0HikzSqgmyD1bJ6RxitJwceYLAovv0v"
+	
+	//when	
+	test,err := Decode(token, Ecc512Public())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"hello": "world"}`)
+}
+
+func (s *TestSuite) TestEncodeES256(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Sign(payload,ES256,Ecc256Private())
+	
+	fmt.Printf("\nES256 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 3);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9");
+	c.Assert(len(parts[2]), Equals, 86);	
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test,Ecc256Public())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncodeES384(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Sign(payload,ES384,Ecc384Private())
+	
+	fmt.Printf("\nES384 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 3);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9");
+	c.Assert(len(parts[2]), Equals, 128);	
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test,Ecc384Public())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncodeES512(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Sign(payload,ES512,Ecc512Private())
+	
+	fmt.Printf("\nES512 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 3);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9");
+	c.Assert(len(parts[2]), Equals, 176);	
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test,Ecc512Public())
+	c.Assert(t, Equals, payload) 
+}
+
 func (s *TestSuite) TestDecrypt_DIR_A128CBC_HS256(c *C) {
 	//given
 	token := "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..3lClLoerWhxIc811QXDLbg.iFd5MNk2eWDlW3hbq7vTFLPJlC0Od_MSyWGakEn5kfYbbPk7BM_SxUMptwcvDnZ5uBKwwPAYOsHIm5IjZ79LKZul9ZnOtJONRvxWLeS9WZiX4CghOLZL7dLypKn-mB22xsmSUbtizMuNSdgJwUCxEmms7vYOpL0Che-0_YrOu3NmBCLBiZzdWVtSSvYw6Ltzbch4OAaX2ye_IIemJoU1VnrdW0y-AjPgnAUA-GY7CAKJ70leS1LyjTW8H_ecB4sDCkLpxNOUsWZs3DN0vxxSQw.bxrZkcOeBgFAo3t0585ZdQ"
@@ -615,12 +725,48 @@ func (s *TestSuite) TestEncrypt_DIR_A256GCM(c *C) {
 
 //test utils
 func PubKey() *rsa.PublicKey {
-	key,_ :=Rsa.NewPublic([]byte(pubKey))	
+	key,_ :=Rsa.ReadPublic([]byte(pubKey))	
 	return key	
 }
-
 
 func PrivKey() *rsa.PrivateKey {
-	key,_ :=Rsa.NewPrivate([]byte(privKey))	
+	key,_ :=Rsa.ReadPrivate([]byte(privKey))	
 	return key	
 }
+
+func Ecc256Public() *ecdsa.PublicKey {	
+	return ecc.NewPublic([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+						 []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53})
+}
+
+func Ecc256Private() *ecdsa.PrivateKey {
+	return ecc.NewPrivate([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+ 						  []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53},
+						  []byte{ 42, 148, 231, 48, 225, 196, 166, 201, 23, 190, 229, 199, 20, 39, 226, 70, 209, 148, 29, 70, 125, 14, 174, 66, 9, 198, 80, 251, 95, 107, 98, 206 })
+}
+
+func Ecc384Public() *ecdsa.PublicKey {
+	return ecc.NewPublic([]byte{ 70, 151, 220, 179, 62, 0, 79, 232, 114, 64, 58, 75, 91, 209, 232, 128, 7, 137, 151, 42, 13, 148, 15, 133, 93, 215, 7, 3, 136, 124, 14, 101, 242, 207, 192, 69, 212, 145, 88, 59, 222, 33, 127, 46, 30, 218, 175, 79 },
+  						 []byte{ 189, 202, 196, 30, 153, 53, 22, 122, 171, 4, 188, 42, 71, 2, 9, 193, 191, 17, 111, 180, 78, 6, 110, 153, 240, 147, 203, 45, 152, 236, 181, 156, 232, 223, 227, 148, 68, 148, 221, 176, 57, 149, 44, 203, 83, 85, 75, 55 })
+}
+
+func Ecc384Private() *ecdsa.PrivateKey {
+	return ecc.NewPrivate([]byte{ 70, 151, 220, 179, 62, 0, 79, 232, 114, 64, 58, 75, 91, 209, 232, 128, 7, 137, 151, 42, 13, 148, 15, 133, 93, 215, 7, 3, 136, 124, 14, 101, 242, 207, 192, 69, 212, 145, 88, 59, 222, 33, 127, 46, 30, 218, 175, 79 },
+  						  []byte{ 189, 202, 196, 30, 153, 53, 22, 122, 171, 4, 188, 42, 71, 2, 9, 193, 191, 17, 111, 180, 78, 6, 110, 153, 240, 147, 203, 45, 152, 236, 181, 156, 232, 223, 227, 148, 68, 148, 221, 176, 57, 149, 44, 203, 83, 85, 75, 55 },
+						  []byte{ 137, 199, 183, 105, 188, 90, 128, 82, 116, 47, 161, 100, 221, 97, 208, 64, 173, 247, 9, 42, 186, 189, 181, 110, 24, 225, 254, 136, 75, 156, 242, 209, 94, 218, 58, 14, 33, 190, 15, 82, 141, 238, 207, 214, 159, 140, 247, 139 })
+}
+
+func Ecc512Public() *ecdsa.PublicKey {
+	return ecc.NewPublic([]byte{ 0, 248, 73, 203, 53, 184, 34, 69, 111, 217, 230, 255, 108, 212, 241, 229, 95, 239, 93, 131, 100, 37, 86, 152, 87, 98, 170, 43, 25, 35, 80, 137, 62, 112, 197, 113, 138, 116, 114, 55, 165, 128, 8, 139, 148, 237, 109, 121, 40, 205, 3, 61, 127, 28, 195, 58, 43, 228, 224, 228, 82, 224, 219, 148, 204, 96 },
+  						  []byte{ 0, 60, 71, 97, 112, 106, 35, 121, 80, 182, 20, 167, 143, 8, 246, 108, 234, 160, 193, 10, 3, 148, 45, 11, 58, 177, 190, 172, 26, 178, 188, 240, 91, 25, 67, 79, 64, 241, 203, 65, 223, 218, 12, 227, 82, 178, 66, 160, 19, 194, 217, 172, 61, 250, 23, 78, 218, 130, 160, 105, 216, 208, 235, 124, 46, 32 });
+}
+
+func Ecc512Private() *ecdsa.PrivateKey {
+	return ecc.NewPrivate([]byte{ 0, 248, 73, 203, 53, 184, 34, 69, 111, 217, 230, 255, 108, 212, 241, 229, 95, 239, 93, 131, 100, 37, 86, 152, 87, 98, 170, 43, 25, 35, 80, 137, 62, 112, 197, 113, 138, 116, 114, 55, 165, 128, 8, 139, 148, 237, 109, 121, 40, 205, 3, 61, 127, 28, 195, 58, 43, 228, 224, 228, 82, 224, 219, 148, 204, 96 },
+  						  []byte{ 0, 60, 71, 97, 112, 106, 35, 121, 80, 182, 20, 167, 143, 8, 246, 108, 234, 160, 193, 10, 3, 148, 45, 11, 58, 177, 190, 172, 26, 178, 188, 240, 91, 25, 67, 79, 64, 241, 203, 65, 223, 218, 12, 227, 82, 178, 66, 160, 19, 194, 217, 172, 61, 250, 23, 78, 218, 130, 160, 105, 216, 208, 235, 124, 46, 32 },
+						  []byte{ 0, 222, 129, 9, 133, 207, 123, 116, 176, 83, 95, 169, 29, 121, 160, 137, 22, 21, 176, 59, 203, 129, 62, 111, 19, 78, 14, 174, 20, 211, 56, 160, 83, 42, 74, 219, 208, 39, 231, 33, 84, 114, 71, 106, 109, 161, 116, 243, 166, 146, 252, 231, 137, 228, 99, 149, 152, 123, 201, 157, 155, 131, 181, 106, 179, 112 });
+}
+
+
+
+
