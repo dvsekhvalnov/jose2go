@@ -27,7 +27,7 @@ func (alg *Direct) WrapNewKey(cekSizeBits int, key interface{}, header map[strin
 func (alg *Direct) Unwrap(encryptedCek []byte, key interface{}, cekSizeBits int, header map[string]interface{}) (cek []byte, err error) {
 
 	if(len(encryptedCek)!=0) {
-		return nil, errors.New("Direct key management expects empty encrypted CEK")
+		return nil, errors.New("Direct.Unwrap(): expected empty encrypted CEK")
 	}
 	
 	if cek,ok:=key.([]byte); ok {

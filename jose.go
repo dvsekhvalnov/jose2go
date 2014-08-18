@@ -30,7 +30,9 @@ const (
 	A192GCM="A192GCM"
 	A256GCM="A256GCM"
 	
-	DIR="dir" //Direct use of pre-shared symmetric key
+	DIR="dir"           //Direct use of pre-shared symmetric key
+	RSA1_5="RSA1_5"     //RSAES with PKCS #1 v1.5 padding, RFC 3447
+	RSA_OAEP="RSA_OAEP" //RSAES using Optimal Assymetric Encryption Padding, RFC 3447
 )
 
 var jwsHashers = map[string]JwsAlgorithm{}

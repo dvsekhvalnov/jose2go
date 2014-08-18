@@ -34,8 +34,7 @@ func (alg *AesCbcHmac) KeySizeBits() int {
 
 func (alg *AesCbcHmac) Encrypt(aad, plainText, cek []byte) (iv, cipherText, authTag []byte, err error) {
 	
-	cekSizeBits := len(cek)*8
-	
+	cekSizeBits := len(cek)<<3	
 	if cekSizeBits != alg.keySizeBits {
 		return nil,nil,nil, errors.New(fmt.Sprintf("AesCbcHmac.Encrypt(): expected key of size %v bits, but was given %v bits.",alg.keySizeBits, cekSizeBits))
 	}	
@@ -68,7 +67,7 @@ func (alg *AesCbcHmac) Encrypt(aad, plainText, cek []byte) (iv, cipherText, auth
 
 func (alg *AesCbcHmac) Decrypt(aad, cek, iv, cipherText, authTag []byte) (plainText []byte, err error) {
 	
-	cekSizeBits := len(cek)*8
+	cekSizeBits := len(cek)<<3
 	
 	if  cekSizeBits != alg.keySizeBits {
 		return nil, errors.New(fmt.Sprintf("AesCbcHmac.Decrypt(): expected key of size %v bits, but was given %v bits.",alg.keySizeBits, cekSizeBits))
@@ -99,7 +98,7 @@ func (alg *AesCbcHmac) Decrypt(aad, cek, iv, cipherText, authTag []byte) (plainT
 }
 
 func (alg *AesCbcHmac) computeAuthTag(aad []byte, iv []byte, cipherText []byte, hmacKey []byte) (signature []byte) {
-	al := arrays.UInt64ToBytes(uint64(len(aad) * 8));	
+	al := arrays.UInt64ToBytes(uint64(len(aad) << 3));	
 	hmacInput := arrays.Concat(aad, iv, cipherText, al)
 	hmac :=calculateHmac(alg.keySizeBits, hmacInput, hmacKey);
 

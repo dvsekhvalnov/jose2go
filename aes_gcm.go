@@ -32,7 +32,7 @@ func (alg *AesGcm) KeySizeBits() int {
 
 func (alg *AesGcm) Encrypt(aad, plainText, cek []byte) (iv, cipherText, authTag []byte, err error) {	
 	
-	cekSizeBits := len(cek)*8
+	cekSizeBits := len(cek)<<3
 	
 	if cekSizeBits != alg.keySizeBits {
 		return nil,nil,nil, errors.New(fmt.Sprintf("AesGcm.Encrypt(): expected key of size %v bits, but was given %v bits.",alg.keySizeBits, cekSizeBits))
@@ -64,7 +64,7 @@ func (alg *AesGcm) Encrypt(aad, plainText, cek []byte) (iv, cipherText, authTag 
 
 func (alg *AesGcm) Decrypt(aad, cek, iv, cipherText, authTag []byte) (plainText []byte, err error) {
 	
-	cekSizeBits := len(cek)*8
+	cekSizeBits := len(cek)<<3
 	
 	if cekSizeBits != alg.keySizeBits {
 		return nil, errors.New(fmt.Sprintf("AesGcm.Decrypt(): expected key of size %v bits, but was given %v bits.",alg.keySizeBits, cekSizeBits))
