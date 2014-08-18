@@ -20,6 +20,7 @@ In rather active development. API is not stable at the moment and can change in 
 - NONE (unprotected) plain text algorithm without integrity protection
 
 **Encryption**
+- RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - Direct symmetric key encryption with pre-shared key A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
 
 ## Installation
@@ -140,9 +141,43 @@ ES256, ES384, ES512 ECDSA signatures expecting `*ecdsa.PrivateKey` private ellip
 	    }
 	}  
 
-
-
 ### Creating encrypted Tokens
+#### RSA1\_5  key management algorithm
+RSA1_5 key management expecting `*rsa.PublicKey` public key of corresponding length.
+
+	package main
+
+	import (
+	    "fmt"
+		"io/ioutil"
+	    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+	    "github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		payload :=  `{"hello": "world"}`
+	
+		keyBytes,err := ioutil.ReadFile("public.key")
+
+		if(err!=nil) {
+			panic("invalid key file")
+		}
+
+		publicKey,e:=Rsa.ReadPublic(keyBytes)
+
+		if(e!=nil) {
+			panic("invalid key format")
+		}
+		
+		token,err := jose.Encrypt(payload, jose.RSA1_5, jose.A256GCM, publicKey)
+
+	    if(err==nil) {
+	        //go use token
+	        fmt.Printf("\ntoken = %v\n",token)
+	    }
+	}  
+ 
 #### DIR direct pre-shared symmetric key management
 Direct key management with pre-shared symmetric keys expecting `[]byte` array key of corresponding length:
 
@@ -224,6 +259,41 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 
 	    if(err==nil) {
 	        //go use token
+	        fmt.Printf("\npayload = %v\n",payload)
+	    }
+	}  
+
+**RSA1_5** key management algorithms expecting `*rsa.PrivateKey` private key of corresponding length:
+
+	package main
+
+	import (
+	    "fmt"
+	    "io/ioutil"
+	    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+	    "github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+	    token := "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMjU2R0NNIn0.ixD3WVOkvaxeLKi0kyVqTzM6W2EW25SHHYCAr9473Xq528xSK0AVux6kUtv7QMkQKgkMvO8X4VdvonyGkDZTK2jgYUiI06dz7I1sjWJIbyNVrANbBsmBiwikwB-9DLEaKuM85Lwu6gnzbOF6B9R0428ckxmITCPDrzMaXwYZHh46FiSg9djChUTex0pHGhNDiEIgaINpsmqsOFX1L2Y7KM2ZR7wtpR3kidMV3JlxHdKheiPKnDx_eNcdoE-eogPbRGFdkhEE8Dyass1ZSxt4fP27NwsIer5pc0b922_3XWdi1r1TL_fLvGktHLvt6HK6IruXFHpU4x5Z2gTXWxEIog.zzTNmovBowdX2_hi.QSPSgXn0w25ugvzmu2TnhePn.0I3B9BE064HFNP2E0I7M9g"
+
+	    keyBytes,err := ioutil.ReadFile("private.key")
+
+	    if(err!=nil) {
+	        panic("invalid key file")
+	    }
+
+	    privateKey,e:=Rsa.ReadPrivate(keyBytes)
+
+	    if(e!=nil) {
+	        panic("invalid key format")
+	    }
+
+	    payload,err := jose.Decode(token, privateKey)
+
+	    if(err==nil) {
+	        //go use payload
 	        fmt.Printf("\npayload = %v\n",payload)
 	    }
 	}  
