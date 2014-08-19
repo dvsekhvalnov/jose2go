@@ -20,6 +20,7 @@ In rather active development. API is not stable at the moment and can change in 
 - NONE (unprotected) plain text algorithm without integrity protection
 
 **Encryption**
+- RSAES OAEP encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - Direct symmetric key encryption with pre-shared key A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
 
@@ -142,8 +143,8 @@ ES256, ES384, ES512 ECDSA signatures expecting `*ecdsa.PrivateKey` private ellip
 	}  
 
 ### Creating encrypted Tokens
-#### RSA1\_5  key management algorithm
-RSA1_5 key management expecting `*rsa.PublicKey` public key of corresponding length.
+#### RSA-OAEP and RSA1\_5 key management algorithm
+RSA-OAEP and RSA1_5 key management expecting `*rsa.PublicKey` public key of corresponding length.
 
 	package main
 
@@ -169,8 +170,10 @@ RSA1_5 key management expecting `*rsa.PublicKey` public key of corresponding len
 		if(e!=nil) {
 			panic("invalid key format")
 		}
-		
-		token,err := jose.Encrypt(payload, jose.RSA1_5, jose.A256GCM, publicKey)
+
+		//OR:
+		//token,err := jose.Encrypt(payload, jose.RSA1_5, jose.A256GCM, publicKey)		
+		token,err := jose.Encrypt(payload, jose.RSA_OAEP, jose.A256GCM, publicKey)
 
 	    if(err==nil) {
 	        //go use token
@@ -263,7 +266,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	    }
 	}  
 
-**RSA1_5** key management algorithms expecting `*rsa.PrivateKey` private key of corresponding length:
+**RSA-OAEP** and **RSA1_5** key management algorithms expecting `*rsa.PrivateKey` private key of corresponding length:
 
 	package main
 

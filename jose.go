@@ -8,27 +8,27 @@ import (
 )
 
 const (
-	NONE="none"
+	NONE="none"   //plaintext (unprotected) without signature / encryption
 	
-	HS256="HS256"
-	HS384="HS384"
-	HS512="HS512"
-	RS256="RS256"
-	RS384="RS384"
-	RS512="RS512"			
-	PS256="PS256"
-	PS384="PS384"
-	PS512="PS512"		
-	ES256="ES256"
-	ES384="ES384"
-	ES512="ES512"		
+	HS256="HS256" //HMAC using SHA-256 hash
+	HS384="HS384" //HMAC using SHA-384 hash
+	HS512="HS512" //HMAC using SHA-512 hash
+	RS256="RS256" //RSASSA-PKCS-v1_5 using SHA-256 hash 
+	RS384="RS384" //RSASSA-PKCS-v1_5 using SHA-384 hash
+	RS512="RS512" //RSASSA-PKCS-v1_5 using SHA-512 hash		
+	PS256="PS256" //RSASSA-PSS using SHA-256 hash
+	PS384="PS384" //RSASSA-PSS using SHA-384 hash
+	PS512="PS512" //RSASSA-PSS using SHA-512 hash	
+	ES256="ES256" //ECDSA using P-256 curve and SHA-256 hash
+	ES384="ES384" //ECDSA using P-384 curve and SHA-384 hash
+	ES512="ES512" //ECDSA using P-521 curve and SHA-512 hash		
 	
-	A128CBC_HS256="A128CBC-HS256" 
-	A192CBC_HS384="A192CBC-HS384"	
-	A256CBC_HS512="A256CBC-HS512"
-	A128GCM="A128GCM"
-	A192GCM="A192GCM"
-	A256GCM="A256GCM"
+	A128CBC_HS256="A128CBC-HS256" //AES in CBC mode with PKCS #5 (NIST.800-38A) padding with HMAC using 256 bit key
+	A192CBC_HS384="A192CBC-HS384" //AES in CBC mode with PKCS #5 (NIST.800-38A) padding with HMAC using 384 bit key
+	A256CBC_HS512="A256CBC-HS512" //AES in CBC mode with PKCS #5 (NIST.800-38A) padding with HMAC using 512 bit key
+	A128GCM="A128GCM" //AES in GCM mode with 128 bit key
+	A192GCM="A192GCM" //AES in GCM mode with 192 bit key
+	A256GCM="A256GCM" //AES in GCM mode with 256 bit key
 	
 	DIR="dir"           //Direct use of pre-shared symmetric key
 	RSA1_5="RSA1_5"     //RSAES with PKCS #1 v1.5 padding, RFC 3447
