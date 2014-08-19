@@ -12,7 +12,7 @@ type Direct struct{
 }
 
 func (alg *Direct) Name() string {
-	return "dir"
+	return DIR
 }
 
 func (alg *Direct) WrapNewKey(cekSizeBits int, key interface{}, header map[string]interface{}) (cek []byte, encryptedCek []byte, err error) {

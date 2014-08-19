@@ -951,6 +951,234 @@ func (s *TestSuite) TestEncrypt_RSA1_5_A256GCM(c *C) {
 	c.Assert(t, Equals, payload) 
 }
 
+func (s *TestSuite) TestDecrypt_RSA_OAEP_A128CBC_HS256(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExMjhDQkMtSFMyNTYifQ.mlcD4YXAzTKgKsnkiPD8iBPkUkVijLCf9ODLs-ziHotR10iVPg2G2j1m-_BCgLB0SNWOcvkCTG1jzYJPr7ARs9GIBg63vtlqgk5TJhTko3J6TFwkrqMB_yeweuWvVvJ7R5CvlKRh_diUcB90RX1lPWSTx4wQHOjLssQ-xRG1iVZ2eroA1uhi8gW7Jdds2wmEnDqxfwmMaaK7IY6cpG_rUMYDqG3m9r3-B0j2MAYOtjGzPtwsJfTHsdasWz_pbypViOp35_BrUHRy6qfqR0uK3zfhe8sFfQDTDctMjissAUGo8rpqnVphoojjvxZVlkB2PmcctOzkAiaMusdOsAxhRg.yH5p6nQitVc9YxQJQP6ocw.XeHzeO9nlXJEmnKtEe_uyl72Aqyzje7Eiz96Zpz79Ot8udWPTmVpa902pGSEeLqHSmbvSpleGEGeuJP5HgOQ-VCrUd3FYL9PK88ieEwO2zsXZfGq4L-tVu7sgyYE8yz25dNRoMoXnrPRzv8dciq3XYxgIYeE0gMc9htVb42rXH7lXjbYeA1aCS2sjd-hRbh-5_afChrpDKYTavpd4EikOdz_-d7EddeUOnHmUsFBz6R6PVX4aOSUkIQug4RyXZLLaq0UkfBLfwezgO3t-dWY8Q.vjaIoaOKXR76eOuUZ1fang"
+	
+	//when	
+	test,err := Decode(token, PrivKey())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1408354731,\"sub\":\"alice\",\"nbf\":1408354131,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"bda732e5-8cbd-4f9d-8205-9e05a77a1f90\",\"iat\":1408354131}")
+}
+
+func (s *TestSuite) TestDecrypt_RSA_OAEP_A192CBC_HS384(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExOTJDQkMtSFMzODQifQ.cT1VUi7KyfLuDL2JUVL5nVw7OcVUJTCwU2jPbIJVpPh2oR_89BYb4c5ff21A2F-69CqOgV-FD4zlmOkvjywiVq4BRlo8AO90qbe4dSDkIedXHTb0CM0o5HJCWPRNqlBfoPl8tTk7FFtCQyQIJmmTp88h8P4fEtHPe7v50oBjV6sVVdd0-vJa2Lp8id9ezKmlQ5IcgI6E3-81xIGfGvYERbtI7Tr-VQ8LjtylbgKPljfTtVQ_gn0UmbyLBIOUfQfLdpzF7Gdh9kfkEBy1nEnDuQ8V4BqkWfcb6yOWho_zSS4b9lj5qYisjo5KiOmsNNZcyl-EWbjq98k6gAKvAjWxlw.2yxe4VSlm_No0Ii5NTU3kQ.hN_a2DF0B02g7oBTs-Ft2_8nLPI1i6yzyys6a0TIjmfQZrzZTepORlQfHymBKwJOMDbThehvj4F3Yjjk_fziSN80eeuuvRdsi4wheH_jymcgoHJE1FCgpWpLKUfGlY9lMWeqaeL047W-qPdAmUDLUIiIsA4qguX55aPHFPQyjATg0-XaM1IfLySTxCNwV9Ha6FRtxBT01L9T2hbpucu708HgHCvdXn2jzOIC_Zs7SMdb3BbVeUaAyIobU6jDNd3WrgZxwUW0S0LZhovYip-sYg.xneenkPzCRAUQGO8G4YJMGNGYZzqjKoo"
+	
+	//when	
+	test,err := Decode(token, PrivKey())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1408439204,\"sub\":\"alice\",\"nbf\":1408438604,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"1d22fd82-84b5-4b24-96db-c13e41097a9f\",\"iat\":1408438604}")
+}
+
+func (s *TestSuite) TestDecrypt_RSA_OAEP_A256CBC_HS512(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIifQ.JY7V0pIV5tFYju-WcdfO-KxYdV-d2tjKyuXnq3HwVjQLqttlwnbcxAtUApRuc1UuB6dqp8ggc9d3kgTTZVIveT5MaP57Jm6kU33puHxdujiz0CEFBpf0IWHetq175iFfZWFgAp4BWIK-FaG7_mbinSlNmSxZ4KOM8vgkfvfXQcPwBfsrehsxWRS6BIpJ2PKjOr61z0ry5s19pcMKWzrO-ygtDsusj9ioqH8H0ZahG323um-OtxIw1eVdBsa7rBg8n3zE-Lowgog6wZBOuIzN8bMdRVk5Y08xZRLxmcazJB5aMBB-sVZ5X695ACYTdG55oDpAet5uwyOJybkHF9MSRg.kiHWbMnhKCrSkjOXoIKpAw.xx44_UzBGn_kGOSPZI6QXQTGKq8OFHKyGM1ALZhk51UoiQQe6YzrtwHZcufT3yO0oFcw6TshkdyjKvwXecmSf-LOlUkgaR9o9zQ3PtcFLtgfHdTKBRDBEiubLHMOUTuHCi8laveJ0-RYuYcpwOnSCS_6hPoO86p3aAYzZOmJ3mFLgKQxdt7tgqV7DeRt3j9FyRXmS7vusA7g2oDJz-f7aRs0hWjtPiDN3TGwByacn6T_nlPCvTs6ZR-y9BVNYTaGCJEgujbXebtae_Y94_XZ3g.H2v7BssosabkZEEIk72pFhyYR5VUjQ9EEyQVtFyVvg8"
+	
+	//when	
+	test,err := Decode(token, PrivKey())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1408439204,\"sub\":\"alice\",\"nbf\":1408438604,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"ccb36bb8-7fe2-43b7-93ba-63c9331d0f47\",\"iat\":1408438604}")
+}
+
+func (s *TestSuite) TestDecrypt_RSA_OAEP_A128GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExMjhHQ00ifQ.Prr8uxpkVLvASjHK4n_TKrMNQWx9cMN4_t1FIMhXXW9aRD4uLXLTmTasspvbprwPbR47qkCu_KcHC6p5eBpZZIW0Ja96OyQLycnhZkueyelqxeGKYMuHEPQ-cAxoe1Vf47bNYBK-9J9G9cHBjngsISlgoxv2K8AjDnAvwlKRqz1Rjg_zdM6nVpFwrWMNEBg5M8HdLR_P0S_z8S9spOsOCWl_2hybwkmuViXdprwXBVdm7TItuhw0NZVP88FzIO7F3C23788bf4JU_6I7KECuWG9uNoPfORZjNGYCIvFWJvq3Adyk3r3DuQwiWc6tE2vHcMj9f7yFxWqWUsxWOtmfuA.sMJK64MRl7g4A_Qr.D3OvvJkI_D569j6G7o8l54iJUOZ36iqge7wvNkBGP0SksZEwhBB7HOJVH8avWY-CpA6Lhh_FZvvA3phgVIQRTMSzc3pXMnirXh0qGBSvdi4OKJsUKWC0dugGY1j5sgV8mEowepg3iUM_j9WS3FW1mSh65IBlyEsLL6eUiYQepeN4vr4cN3jn-vORYVu-KaRyAnab4IJgzhhyRD48_B9w9_dffcuN4_xXPc-O0IvBsFkJTtPRvWGJFkv0r-JMXJR-BZqBrg.pd51_IhdN5YRuzCB6XIHvw"
+	
+	//when	
+	test,err := Decode(token, PrivKey())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1408439204,\"sub\":\"alice\",\"nbf\":1408438604,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"3c039563-1d18-48df-8008-d113ac43cf2f\",\"iat\":1408438604}")
+}
+
+func (s *TestSuite) TestDecrypt_RSA_OAEP_A192GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExOTJHQ00ifQ.IuvEhYtqW3TXDfc44FyXtMgWL0urYpZktuo989Y0MhusaZjTsaIRnsl2wyaRUim6vfuRE5Svtfm98UYC5zKx_FOq9CTElI7t9Q3QdvimiIbswaWCA2LKx6aiJxA2eCEhVRMUlDDe49V1HY2_zOiPN87qE-P-htRdxSBuQCDplJ7t8agp9VPM73pRAxt9gGvmlXzdGbCpR1HXhIDK14urfcuEF31w5jk0LOR2TIyt8VBWEYMdFnHpYKAQN3KQrF6yNow7AC0jIgcBM4ep41F5d9gkVp2jZWUsRT1Epgv0UcHC0t6BDArLT6Gy2xemTbs81qmARO5v4iyBRBaIuSehuw.F7NhQ3VzsCGfpRI2.jQZz-Kc6n5jUZzPTdjlbnVk-ujFpTNTsEa3J3L222eLg6cPQ6WQH9kmnoSW9WJXbun1ZFBSESv6ti3fKxEUPqs4vwy8d5JIrjrhXcw8lf2AWfFytX92U-ZqSGaoiqGjp0AHnuCqpNnBvCk2-vIHTAabWnpdGvIszVnodEF299CHDgHS9XIerZTGkQCZrRaH89koVfsO__pXnXcjy5loOV9D3ACfj3bIVRUdmg8P1mvyZfNdDErCMuu1G1TK6yaqpcDbrOg.WwWMv-v1Czh67ltSsbI0-A"
+	
+	//when	
+	test,err := Decode(token, PrivKey())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1408439204,\"sub\":\"alice\",\"nbf\":1408438604,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"49ea8e2e-5de8-4fdf-a3d8-f8cd348c1289\",\"iat\":1408438604}")
+}
+
+func (s *TestSuite) TestDecrypt_RSA_OAEP_A256GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ.ClRqSlrZ-3uqe5g4iiAtg3KKqFY_28sFgAh_u-_jUDwU7JBtvDazKRMK0guPqXq0pImb-bCDA6QZhzWgrrz9RGOMEJOVmq_JFl2SF-ipTz6Xj8nDAfqDnYbxj2XRdqMdgdu0BM7xXIpc5GbXuutPFcu9aVxyafv5G4JQo5qCx9Yvo-zVuLUvdOom_cIHwkWK3bx4EPBifIPdPfTQXt8yCXdF36CpT_mmbc13Fe-Uw8JgWtoLQ2nfbXjIEsSgr8BZdxfhiCFYAIyHQ2CdSzEh6J34NtF50u0DVOnkSjAMGiukB0k1fW469EutkfrZJIvo_19Qk8n5Eif7gW1WUw9u9w.rmBi9peixHbDA8cX.o5Xt4SHLSKCYX28u4_rArpfC3KgWwiIcWQMZM1YJPrqX2hRvGqg8Tcl80vXEV-mfNntao0QCPA7hsz4gaoHKLTh1nU1ucY9UGICkwgv9D2q3soOwYRlKP1PuDrh6LQPcPcn2yoSMXTjFhcgPlNGEE-mFipQEnMB5Cn47fcXxpJrWyXSo_FHuOWB1_mfSs1n-HMIDE7Wrxtegp0VNU8AFMEIeQj3pDupZhPrvHzwwRKcfyXhccyYDdfAPrL4xkqFs5en_fw.z8Oazv9h_rLZyI0wQx-QiQ"
+	
+	//when	
+	test,err := Decode(token, PrivKey())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1408439204,\"sub\":\"alice\",\"nbf\":1408438604,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"7b032524-9b59-4469-b92a-fdf25f2c5a7c\",\"iat\":1408438604}")
+}
+
+func (s *TestSuite) TestEncrypt_RSA_OAEP_A128CBC_HS256(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,RSA_OAEP,A128CBC_HS256,PubKey())
+	
+	fmt.Printf("\nRSA-OAEP A128CBC-HS256 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExMjhDQkMtSFMyNTYifQ")
+	c.Assert(len(parts[1]), Equals, 342);
+	c.Assert(len(parts[2]), Equals, 22);
+	c.Assert(len(parts[3]), Equals, 43);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, PrivKey())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_RSA_OAEP_A192CBC_HS384(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,RSA_OAEP,A192CBC_HS384,PubKey())
+	
+	fmt.Printf("\nRSA-OAEP A192CBC-HS384 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExOTJDQkMtSFMzODQifQ")
+	c.Assert(len(parts[1]), Equals, 342);
+	c.Assert(len(parts[2]), Equals, 22);
+	c.Assert(len(parts[3]), Equals, 43);
+	c.Assert(len(parts[4]), Equals, 32);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, PrivKey())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_RSA_OAEP_A256CBC_HS512(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,RSA_OAEP,A256CBC_HS512,PubKey())
+	
+	fmt.Printf("\nRSA-OAEP A256CBC-HS512 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIifQ")
+	c.Assert(len(parts[1]), Equals, 342);
+	c.Assert(len(parts[2]), Equals, 22);
+	c.Assert(len(parts[3]), Equals, 43);
+	c.Assert(len(parts[4]), Equals, 43);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, PrivKey())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_RSA_OAEP_A128GCM(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,RSA_OAEP,A128GCM,PubKey())
+	
+	fmt.Printf("\nRSA-OAEP A128GCM = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExMjhHQ00ifQ")
+	c.Assert(len(parts[1]), Equals, 342);
+	c.Assert(len(parts[2]), Equals, 16);
+	c.Assert(len(parts[3]), Equals, 24);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, PrivKey())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_RSA_OAEP_A192GCM(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,RSA_OAEP,A192GCM,PubKey())
+	
+	fmt.Printf("\nRSA-OAEP A192GCM = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkExOTJHQ00ifQ")
+	c.Assert(len(parts[1]), Equals, 342);
+	c.Assert(len(parts[2]), Equals, 16);
+	c.Assert(len(parts[3]), Equals, 24);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, PrivKey())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_RSA_OAEP_A256GCM(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,RSA_OAEP,A256GCM,PubKey())
+	
+	fmt.Printf("\nRSA-OAEP A256GCM = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ")
+	c.Assert(len(parts[1]), Equals, 342);
+	c.Assert(len(parts[2]), Equals, 16);
+	c.Assert(len(parts[3]), Equals, 24);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, PrivKey())
+	c.Assert(t, Equals, payload) 
+}
+
 //test utils
 func PubKey() *rsa.PublicKey {
 	key,_ :=Rsa.ReadPublic([]byte(pubKey))	
