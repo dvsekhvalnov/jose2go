@@ -22,6 +22,7 @@ In rather active development. API is not stable at the moment and can change in 
 **Encryption**
 - RSAES OAEP encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
+- A128KW, A192KW, A256KW encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - Direct symmetric key encryption with pre-shared key A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
 
 ## Installation
@@ -180,7 +181,30 @@ RSA-OAEP and RSA1_5 key management expecting `*rsa.PublicKey` public key of corr
 	        fmt.Printf("\ntoken = %v\n",token)
 	    }
 	}  
- 
+#### AES Key Wrap key management family of algorithms
+AES128KW, AES192KW and AES256KW key management requires `[]byte` array key of corresponding length
+
+	package main
+
+	import (
+		"fmt"
+		"github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		payload :=  `{"hello": "world"}`
+
+		sharedKey :=[]byte{194,164,235,6,138,248,171,239,24,216,11,22,137,199,215,133}
+
+		token,err := jose.Encrypt(payload,jose.A128KW,jose.A128GCM,sharedKey)
+
+		if(err==nil) {
+			//go use token
+			fmt.Printf("\nA128KW A128GCM = %v\n",token)
+		}
+	}
+
 #### DIR direct pre-shared symmetric key management
 Direct key management with pre-shared symmetric keys expecting `[]byte` array key of corresponding length:
 
@@ -208,7 +232,7 @@ Direct key management with pre-shared symmetric keys expecting `[]byte` array ke
 ### Verifying and Decoding Tokens
 Decoding json web tokens is fully symmetric to creating signed or encrypted tokens (with respect to public/private cryptography):		
 
-**HS256, HS384, HS512** signatures and **DIR** key management algorithm expecting `[]byte` array key:
+**HS256, HS384, HS512** signatures, **A128KW, A192KW, A256KW** and **DIR** key management algorithm expecting `[]byte` array key:
 
 	package main
 
