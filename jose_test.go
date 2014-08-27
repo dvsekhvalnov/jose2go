@@ -1179,6 +1179,234 @@ func (s *TestSuite) TestEncrypt_RSA_OAEP_A256GCM(c *C) {
 	c.Assert(t, Equals, payload) 
 }
 
+func (s *TestSuite) TestDecrypt_A128KW_A128CBC_HS256(c *C) {
+	//given
+	token := "eyJhbGciOiJBMTI4S1ciLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.DPRoUHQ3Ac8duyD32nUNH3eNUKzUIMYgEdf5GwJ8rW4MYQdl2PCIHA.B1dR6t93aUPcFC1c1aUjeA.lHPKTK0ehgzq70_Ihdh-svI2icUa9usgqP8sF5j50fsQAGizITZpTTXKOKd9-GSEVmJo07551hq9xscZj4vXsDEx-z-akxg0nlL5fFE24km7l4T3LfAeG17gmrMcJuLP55mFUg-F98j9duV2UCyKJPXP6RwOQ5X17VNw29c4k-_AxYM0EjTv3Fww1o3AGuVa07PfpLWE-GdJeJF9RLgaP_6Pua_mdVJud77bYXOsVxsweVtKIaBeLswMUUSU6PoC5oYURP_ybW76GOCjmgXpjA.avU8f5LK_tbJOyKW6-fRnw"
+	
+	//when	
+	test,err := Decode(token, aes128Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1392553211,\"sub\":\"alice\",\"nbf\":1392552611,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"586dd129-a29f-49c8-9de7-454af1155e27\",\"iat\":1392552611}")
+}
+
+func (s *TestSuite) TestDecrypt_A192KW_A192CBC_HS384(c *C) {
+	//given
+	token := "eyJhbGciOiJBMTkyS1ciLCJlbmMiOiJBMTkyQ0JDLUhTMzg0In0.OLwgc7EaQdvsf54GfU69qH143C79H_eETvM_yGBgJzEB5367k9tbw6qW4TlQ56GMj__5QDJBvAg.BvYY_v4_dxxsK4M8A0T_TA.V0jBe7o-OahMkqGDgWW0Lxq1eTKPJYix7hjKmmqaKlhdVcnT0cdOU0ahdg82Ls-Vg_NaWKas8MhahHspz18Gx2abDSwLIKbU0jcaf0LxWZkEuMmFJs5dodq0ZqQeaEldDsHe9De_V_TQwPFkcMOPYqWhx2XEb13bmFTPtxNST18Cwm_j263Y_Ouz2YNyC4uZENZDWeOXfJLy7c8jt_ToOvXEVpXj7oZN7Ik1S9bGAenTcvUDORP-gdFdJ3stLe9FmKulOlb94Y-KvP_meyIZ7Q.XPPqS5YVJu2utJcAIRTUxlBHlECGRaM5"
+	
+	//when	
+	test,err := Decode(token, aes192Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1392553211,\"sub\":\"alice\",\"nbf\":1392552611,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"586dd129-a29f-49c8-9de7-454af1155e27\",\"iat\":1392552611}")
+}
+
+func (s *TestSuite) TestDecrypt_A256KW_A256CBC_HS512(c *C) {
+	//given
+	token := "eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.91z9VM1VLIA_qyTbqeInFoit7c4PWVuQ5mHcDyNsfofDGXS1qUDdPCWRdLC8ybvJflqHej7SCjEUMxuzOtPOUOgo-8rcdeHi.rsx7FYNTunzditC8XTMJXg.k88BLb0qs8g0UnKjSq9rs2PcrhpafEaUEX2kT-wMdmviZ9UEJrECoQY7MmJgCyQYO30hnnay2psJcr_yaDhV-NpctBZ793Xf9tztLZZndIjz5omV9HjcFgheQZj4g1tbNcRLwxod5uYz-OLrKORzeROEM-wkLgHVEqs90wN98NAiyhGyVMw7CXVX5NdU2KFUacbflkJc5AcaiAZYAts1t9bo2877XLYSO1qBoI5k5QKv6ijjM8I03Uyr3H0p0tdF6EB-cdYNcxq68GvA5CTkOw.DBtOuSJTFu5AAIdcgymUR-JflpwfcXJ2AnZU8LNB3UA"
+	
+	//when	
+	test,err := Decode(token, aes256Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1392553211,\"sub\":\"alice\",\"nbf\":1392552611,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"586dd129-a29f-49c8-9de7-454af1155e27\",\"iat\":1392552611}")
+}
+
+func (s *TestSuite) TestDecrypt_A128KW_A128GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJBMTI4S1ciLCJlbmMiOiJBMTI4R0NNIn0.T3p7Vi-P6jVWrvJIF3MYx6lyNtJOeFmL.IVVKIDU6Nlty559s.xFMzgqiPec95flp57O_TUrF8vDcZIz4zVMrnCQZSnGlLyS464A-whc7ORehjL-U8JLIHmnrD89GzXzC0h-0QG5x1QKv6_MzyeuGMvv4WQLapWtjhfU4s0xSyRswKPAKrjPWzBCi39OjIP0DDTjSmfTiQ6OsDf772Xy3RaZ5FmHHiwzhAs4X3J5foCKEZQXrMrE_H4y0f5eey_B5y_XrYjn2jlOHcBydSCW-cUi9q7f3WTQzlHgEzZMcGSg7imIuoSz6IQQ.xIRG_a_6eMNN4aBneKviEw"
+	
+	//when	
+	test,err := Decode(token, aes128Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1392553211,\"sub\":\"alice\",\"nbf\":1392552611,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"586dd129-a29f-49c8-9de7-454af1155e27\",\"iat\":1392552611}")
+}
+
+func (s *TestSuite) TestDecrypt_A192KW_A192GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJBMTkyS1ciLCJlbmMiOiJBMTkyR0NNIn0.Rd2X_AyKle5d8IO4MQCxJ7WFiVTjzlQ-sDTpOU7dllk.i6-U-bPS1XU87QLu.vJ7Dgh1OhBjniKDOCzLNHsSvZBb6lyDZsIr2v3br6Zp7xhxhq8Cjwmyd2FGqMKpMtSzdg1Y7QSLH3qIfijjp7lH8AxSvCsE2PZTFUJKjCbYtWWmsa6WCA4LIJU8IHBGr0DVQIRh-77ru1cy5xFWGiU7yJMpZpQ62MvluqBSFNYYmzfy5BwXqYMf8n0P2BhxRl4SxvsOoyi7JZvzfCCMixPJm50u65aak83NEIInqN-76AkekWOP4KY57HyKSYs3Fk7lUgw.rN3AZ46DWMtVZa42lnnIHg"
+	
+	//when	
+	test,err := Decode(token, aes192Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1392553211,\"sub\":\"alice\",\"nbf\":1392552611,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"586dd129-a29f-49c8-9de7-454af1155e27\",\"iat\":1392552611}")
+}
+
+func (s *TestSuite) TestDecrypt_A256KW_A256GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2R0NNIn0.LY3h_i8x7z_Duc68B-DBrKrKqQpgBbiudtRzVkEPgEsASK1QO2ycVw.KOn1Sn5NOZNVFWje.-26uGTnqc72gaUg4GYEysV9P0lApakuMihLAp7MuWXM5Q267oOVjSd-YeFBvN94A8ZvhFPrNXRcALt3FDOVoEswYy9ryloJu-YbsPt_Gcpnvk8_6OJKDU6xKPWRMCCRDyP88hZ9sMGdV12bWqAQA7LZMGKa-KU0_DUeLeWVew_uoKmR1TqbWBw9_Cmqy5qFztP0zOTACzNQQb8xXij1EZfhPTBQXXDQc4tawGNysEif7SWtlDDQ0row38SsApFtU1saB5g.lPTSTfaMmpNbYp9Yg9YgpQ"
+	
+	//when	
+	test,err := Decode(token, aes256Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1392553211,\"sub\":\"alice\",\"nbf\":1392552611,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"586dd129-a29f-49c8-9de7-454af1155e27\",\"iat\":1392552611}")
+}
+
+func (s *TestSuite) TestEncrypt_A128KW_A128CBC_HS256(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A128KW,A128CBC_HS256,aes128Key)
+	
+	fmt.Printf("\nA128KW A128CBC_HS256 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJBMTI4S1ciLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0")
+	c.Assert(len(parts[1]), Equals, 54);
+	c.Assert(len(parts[2]), Equals, 22);
+	c.Assert(len(parts[3]), Equals, 43);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes128Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A192KW_A192CBC_HS384(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A192KW,A192CBC_HS384,aes192Key)
+	
+	fmt.Printf("\nA192KW A192CBC_HS384 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJBMTkyS1ciLCJlbmMiOiJBMTkyQ0JDLUhTMzg0In0")
+	c.Assert(len(parts[1]), Equals, 75);
+	c.Assert(len(parts[2]), Equals, 22);
+	c.Assert(len(parts[3]), Equals, 43);
+	c.Assert(len(parts[4]), Equals, 32);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes192Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A256KW_A256CBC_HS512(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A256KW,A256CBC_HS512,aes256Key)
+	
+	fmt.Printf("\nA256KW A256CBC_HS512 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0")
+	c.Assert(len(parts[1]), Equals, 96);
+	c.Assert(len(parts[2]), Equals, 22);
+	c.Assert(len(parts[3]), Equals, 43);
+	c.Assert(len(parts[4]), Equals, 43);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes256Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A128KW_A128GCM(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A128KW,A128GCM,aes128Key)
+	
+	fmt.Printf("\nA128KW A128GCM = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJBMTI4S1ciLCJlbmMiOiJBMTI4R0NNIn0")
+	c.Assert(len(parts[1]), Equals, 32);
+	c.Assert(len(parts[2]), Equals, 16);
+	c.Assert(len(parts[3]), Equals, 24);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes128Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A192KW_A192GCM(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A192KW,A192GCM,aes192Key)
+	
+	fmt.Printf("\nA192KW A192GCM = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJBMTkyS1ciLCJlbmMiOiJBMTkyR0NNIn0")
+	c.Assert(len(parts[1]), Equals, 43);
+	c.Assert(len(parts[2]), Equals, 16);
+	c.Assert(len(parts[3]), Equals, 24);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes192Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A256KW_A256GCM(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A256KW,A256GCM,aes256Key)
+	
+	fmt.Printf("\nA256KW A256GCM = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals,"eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2R0NNIn0")
+	c.Assert(len(parts[1]), Equals, 54);
+	c.Assert(len(parts[2]), Equals, 16);
+	c.Assert(len(parts[3]), Equals, 24);
+	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes256Key)
+	c.Assert(t, Equals, payload) 
+}
+
 //test utils
 func PubKey() *rsa.PublicKey {
 	key,_ :=Rsa.ReadPublic([]byte(pubKey))	

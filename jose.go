@@ -33,6 +33,9 @@ const (
 	DIR="dir"           //Direct use of pre-shared symmetric key
 	RSA1_5="RSA1_5"     //RSAES with PKCS #1 v1.5 padding, RFC 3447
 	RSA_OAEP="RSA-OAEP" //RSAES using Optimal Assymetric Encryption Padding, RFC 3447
+    A128KW="A128KW"     //AES Key Wrap Algorithm using 128 bit keys, RFC 3394
+    A192KW="A192KW"     //AES Key Wrap Algorithm using 192 bit keys, RFC 3394
+    A256KW="A256KW"     //AES Key Wrap Algorithm using 256 bit keys, RFC 3394	
 )
 
 var jwsHashers = map[string]JwsAlgorithm{}

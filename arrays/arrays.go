@@ -8,6 +8,31 @@ import (
 	"fmt"		
 )
 
+func Xor(left,right []byte) []byte {
+	result:=make([]byte,len(left))
+	
+	for i:=0;i<len(left);i++ {
+		result[i]=left[i] ^ right[i]
+	}
+	
+	return result
+}
+
+func Slice(arr []byte, count int) [][]byte {
+	
+	sliceCount := len(arr) / count;
+	result:=make([][]byte, sliceCount)
+	
+	for i:=0; i<sliceCount; i++ {
+		start:=i*count
+		end:=i*count+count
+
+		result[i]=arr[start:end]
+	}
+	
+	return result
+}
+
 func Random(byteCount int) ([]byte,error) {
 	data := make([]byte,byteCount)
 	
@@ -19,6 +44,16 @@ func Random(byteCount int) ([]byte,error) {
 }
 
 func Concat(arrays ...[]byte) []byte {
+	var result []byte=arrays[0]
+	
+	for _,arr := range(arrays[1:]) {
+		result=append(result,arr...)
+	}
+	
+	return result
+}
+
+func Unwrap(arrays [][]byte) []byte {
 	var result []byte=arrays[0]
 	
 	for _,arr := range(arrays[1:]) {
