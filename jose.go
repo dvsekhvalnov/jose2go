@@ -30,12 +30,15 @@ const (
 	A192GCM="A192GCM" //AES in GCM mode with 192 bit key
 	A256GCM="A256GCM" //AES in GCM mode with 256 bit key
 	
-	DIR="dir"           //Direct use of pre-shared symmetric key
-	RSA1_5="RSA1_5"     //RSAES with PKCS #1 v1.5 padding, RFC 3447
-	RSA_OAEP="RSA-OAEP" //RSAES using Optimal Assymetric Encryption Padding, RFC 3447
-    A128KW="A128KW"     //AES Key Wrap Algorithm using 128 bit keys, RFC 3394
-    A192KW="A192KW"     //AES Key Wrap Algorithm using 192 bit keys, RFC 3394
-    A256KW="A256KW"     //AES Key Wrap Algorithm using 256 bit keys, RFC 3394	
+	DIR="dir"                 //Direct use of pre-shared symmetric key
+	RSA1_5="RSA1_5"           //RSAES with PKCS #1 v1.5 padding, RFC 3447
+	RSA_OAEP="RSA-OAEP"       //RSAES using Optimal Assymetric Encryption Padding, RFC 3447
+    A128KW="A128KW"           //AES Key Wrap Algorithm using 128 bit keys, RFC 3394
+    A192KW="A192KW"           //AES Key Wrap Algorithm using 192 bit keys, RFC 3394
+    A256KW="A256KW"           //AES Key Wrap Algorithm using 256 bit keys, RFC 3394	
+    A128GCMKW="A128GCMKW"     //AES GCM Key Wrap Algorithm using 128 bit keys
+    A192GCMKW="A192GCMKW"     //AES GCM Key Wrap Algorithm using 192 bit keys
+    A256GCMKW="A256GCMKW"     //AES GCM Key Wrap Algorithm using 256 bit keys
 )
 
 var jwsHashers = map[string]JwsAlgorithm{}

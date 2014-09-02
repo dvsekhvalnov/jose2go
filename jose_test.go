@@ -1407,6 +1407,158 @@ func (s *TestSuite) TestEncrypt_A256KW_A256GCM(c *C) {
 	c.Assert(t, Equals, payload) 
 }
 
+func (s *TestSuite) TestDecrypt_A128GCMKW_A128CBC_HS256(c *C) {
+	//given
+	token := "eyJhbGciOiJBMTI4R0NNS1ciLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiaXYiOiJ1SDVxVThlN2JVZXhGYWh3IiwidGFnIjoiamdxc2czdHoyUGo0QmhEWU1xTnBrdyJ9.peAzKiVO3_w2tAlSzRZdqqQpnUSpgPDHi_xgTd6VzP4.o8bhvYO_UTkrsxQmm__nIg.MSmgetpjXHWMs0TyuGgmWd-msfbQ7oVWC4WuCJcfAsbhLU9kLDLrd0naL5f_UkWBaM04bfcc31K4FRN20IiUxcHzLnMR-lY-HkvRFWYdur-kLWw1UXjIlPOb0nqCuyd2FRpxMdSfFnYr5Us9T45cF7DdK8p4iA7KqPToMHWBsvAcET_ycMIoERqJrBuiJzh-j7UtDzH6KtUfgD4tzZAm3iM6HWT2lq25Pqsu4qf19LYXxZaMIiFwFKboeexkJ5E0hc7P-wIeknzFJaZhkb5P4g.dTQAed1znLHX4cO-VDgxeA"
+	
+	//when	
+	test,err := Decode(token, aes128Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
+}
+
+func (s *TestSuite) TestDecrypt_A128GCMKW_A256CBC_HS512(c *C) {
+	//given
+	token := "eyJhbGciOiJBMTI4R0NNS1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiaXYiOiI5bUwxR1YzUUZIWGtVbEdUIiwidGFnIjoiU0xrTDVpdmhncy1HNjRBTS01bTBxdyJ9.S3_MudWEzKWCp8RRxIG5p6H2YOtMDCkOXXKM9J8J4lMX5N2CcUqsKkDQ4TE1rG7gD5qYgHsb8AiQFLbhjgDeAA.WiOHBPlws9hImQr6bZ8h5Q.jN9UbuvhTiS6uJi1jc0TsvpheXqHs8vdJzKOUVgFmVHZ_OG4vSNRLx408vSoAgSeqsRmj8C8i9Yi2R6kpgtRXZ-Rw7EQEjZ65kg2uwZuve1ObqK-uBm3UzDmcT_Jh6myp9Df1m28ng8ojfrY_JUz6oE5yEcJdlm7H8ahipJyznWOjFigOqhaiXosjW0kbGGpYE-njD5OX22vR5k0RxHlMCDAH2ONR69kaWbLQvDg7y4yMFSxi3ILUFSVz4uXo6qlb8RVCqMUWzlGho-5Cy9OPA.XQ0UmHH5btv14_km6CIlIUwzOFj-rQUYyEzF9VY0r70"
+	
+	//when	
+	test,err := Decode(token, aes128Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
+}
+
+func (s *TestSuite) TestDecrypt_A192GCMKW_A192CBC_HS384(c *C) {
+	//given
+	token := "eyJhbGciOiJBMTkyR0NNS1ciLCJlbmMiOiJBMTkyQ0JDLUhTMzg0IiwiaXYiOiJzRHRLdnRzZVk2UkFuU2twIiwidGFnIjoiZDFDS3dKWnlXSnlvcW5HTUFwbmR6dyJ9.2L9u7vV0P8bZddbkCKKe6_C5JTLf8wRZC8xzEe4gvmcGoF2K5AledhcqT6mIlaPx.1JY51r77jimrvKxts9EroQ.922BMD0HOscwZxn4pmYTRgV7oshegQ1dooU9njhonPcp46XbegdfsgeZAACVFpCc_CoY_XzOsM5trH1Z30QUDc7IGJmC0NKuPdK2KkrYQPXJAe6nuZMembGsyRkOHahtj7sew-ULZn9y0ztbntPqm5I9O716mv1Cu6_5_mBYu36c_VVd6jlzueUWun09yLDJLFuf5jRXDrqRrY4t6XIcqti8LF-QLowU_pa5DvRV_KzCtD_S8HvzJ217_TI9Y1qaApgvWr_BxDrfTXxO2xaZ2Q.0fnvCkg_ChWuf8F3KY8KUgbdIzifb_JT"
+	
+	//when	
+	test,err := Decode(token, aes192Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
+}
+
+func (s *TestSuite) TestDecrypt_A256GCMKW_A256CBC_HS512(c *C) {
+	//given
+	token := "eyJhbGciOiJBMjU2R0NNS1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiaXYiOiJvUV9xbDNJUHNibEVPaDBXIiwidGFnIjoieTllMEFfY1hZMnNDZ24tamxsNl9TdyJ9.K5BxtxcV0simNM-69RvjZuNBjxaavDVnBzP7EFXSjbWZi3NjZFoTcFljcu2TuzR_F9zdjjBbohEgaf4kUMVZfg.881rEerOD33OLCHKdTWDjQ.LvrzsNicH2slBjwERYFu-Fr4Bus2lcLTdFazEpsHc_0QH4NJ2tGrJJjByli6OaFOwtdWONEu_3Ax8xvEXWHc0WMhYKxaVLZI1HQwE0NnWyqfF9mtOkUCCXn9ljvSGSDQY5VUcupVUT6WQxAkaNe6mJ6qkJOxE4pBpiMskO0luW5PkPexk2N3bJVz-GwzMp3xVT6wtFimThucZm2V71594NPCKIkA0HvtBkW0gW0M66pSTfQTHkU0Uvm7WfRvr6TXpiuKntJUe7RX5pXFXbfN2g.aW8OWGfHFI5zTGfFyKuqeLFT5o0tleSYbpCb7kAv1Bs"
+	
+	//when	
+	test,err := Decode(token, aes256Key)
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
+}
+
+func (s *TestSuite) TestEncrypt_A128GCMKW_A128CBC_HS256(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A128GCMKW,A128CBC_HS256,aes128Key)
+	
+	fmt.Printf("\nA128GCMKW A128CBC_HS256 = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(len(parts[0]),Equals,128)
+ 	c.Assert(len(parts[1]), Equals, 43);
+ 	c.Assert(len(parts[2]), Equals, 22);
+ 	c.Assert(len(parts[3]), Equals, 43);
+ 	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes128Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A128GCMKW_A256CBC_HS512(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A128GCMKW,A256CBC_HS512,aes128Key)
+	
+	fmt.Printf("\nA128GCMKW A256CBC_HS512= %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(len(parts[0]),Equals,128)
+ 	c.Assert(len(parts[1]), Equals, 86);
+ 	c.Assert(len(parts[2]), Equals, 22);
+ 	c.Assert(len(parts[3]), Equals, 43);
+ 	c.Assert(len(parts[4]), Equals, 43);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes128Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A192GCMKW_A192CBC_HS384(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A192GCMKW,A192CBC_HS384,aes192Key)
+	
+	fmt.Printf("\nA192GCMKW A192CBC_HS384= %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(len(parts[0]),Equals,128)
+ 	c.Assert(len(parts[1]), Equals, 64);
+ 	c.Assert(len(parts[2]), Equals, 22);
+ 	c.Assert(len(parts[3]), Equals, 43);
+ 	c.Assert(len(parts[4]), Equals, 32);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes192Key)
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_A256GCMKW_A256CBC_HS512(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload,A256GCMKW,A256CBC_HS512,aes256Key)
+	
+	fmt.Printf("\nA256GCMKW A256CBC_HS512= %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(len(parts[0]),Equals, 128)
+ 	c.Assert(len(parts[1]), Equals, 86);
+ 	c.Assert(len(parts[2]), Equals, 22);
+ 	c.Assert(len(parts[3]), Equals, 43);
+ 	c.Assert(len(parts[4]), Equals, 43);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, aes256Key)
+	c.Assert(t, Equals, payload) 
+}
+
 //test utils
 func PubKey() *rsa.PublicKey {
 	key,_ :=Rsa.ReadPublic([]byte(pubKey))	
@@ -1450,7 +1602,3 @@ func Ecc512Private() *ecdsa.PrivateKey {
   						  []byte{ 0, 60, 71, 97, 112, 106, 35, 121, 80, 182, 20, 167, 143, 8, 246, 108, 234, 160, 193, 10, 3, 148, 45, 11, 58, 177, 190, 172, 26, 178, 188, 240, 91, 25, 67, 79, 64, 241, 203, 65, 223, 218, 12, 227, 82, 178, 66, 160, 19, 194, 217, 172, 61, 250, 23, 78, 218, 130, 160, 105, 216, 208, 235, 124, 46, 32 },
 						  []byte{ 0, 222, 129, 9, 133, 207, 123, 116, 176, 83, 95, 169, 29, 121, 160, 137, 22, 21, 176, 59, 203, 129, 62, 111, 19, 78, 14, 174, 20, 211, 56, 160, 83, 42, 74, 219, 208, 39, 231, 33, 84, 114, 71, 106, 109, 161, 116, 243, 166, 146, 252, 231, 137, 228, 99, 149, 152, 123, 201, 157, 155, 131, 181, 106, 179, 112 });
 }
-
-
-
-
