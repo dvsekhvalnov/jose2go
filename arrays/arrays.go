@@ -70,6 +70,13 @@ func UInt64ToBytes(value uint64) []byte {
 	return result
 }
 
+func UInt32ToBytes(value uint32) []byte {
+	result := make([]byte, 4)
+	binary.BigEndian.PutUint32(result, value)
+	
+	return result
+}
+
 func Dump(arr []byte) string {
 	var buf bytes.Buffer    
 	

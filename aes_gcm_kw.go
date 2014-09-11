@@ -84,11 +84,11 @@ func (alg *AesGcmKW) Unwrap(encryptedCek []byte, key interface{}, cekSizeBits in
 		var iv,tag string
 		
 		if iv,ok = header["iv"].(string);!ok {
-			return nil,errors.New(fmt.Sprintf("AesGcmKW.Unwrap(): expected 'iv' param in JWT header, but was not found.", alg.keySizeBits, kekSizeBits))	
+			return nil,errors.New("AesGcmKW.Unwrap(): expected 'iv' param in JWT header, but was not found.")
 		}
 		
 		if tag,ok = header["tag"].(string);!ok {
-			return nil,errors.New(fmt.Sprintf("AesGcmKW.Unwrap(): expected 'tag' param in JWT header, but was not found.", alg.keySizeBits, kekSizeBits))	
+			return nil,errors.New("AesGcmKW.Unwrap(): expected 'tag' param in JWT header, but was not found.")
 		}
 		
 		var ivBytes,tagBytes []byte

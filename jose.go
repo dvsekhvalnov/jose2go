@@ -39,6 +39,9 @@ const (
     A128GCMKW="A128GCMKW"     //AES GCM Key Wrap Algorithm using 128 bit keys
     A192GCMKW="A192GCMKW"     //AES GCM Key Wrap Algorithm using 192 bit keys
     A256GCMKW="A256GCMKW"     //AES GCM Key Wrap Algorithm using 256 bit keys
+    PBES2_HS256_A128KW="PBES2-HS256+A128KW"    //Password Based Encryption using PBES2 schemes with HMAC-SHA and AES Key Wrap using 128 bit key
+    PBES2_HS384_A192KW="PBES2-HS384+A192KW"    //Password Based Encryption using PBES2 schemes with HMAC-SHA and AES Key Wrap using 192 bit key
+    PBES2_HS512_A256KW="PBES2-HS512+A256KW"    //Password Based Encryption using PBES2 schemes with HMAC-SHA and AES Key Wrap using 256 bit key
 )
 
 var jwsHashers = map[string]JwsAlgorithm{}
