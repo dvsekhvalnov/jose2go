@@ -24,6 +24,7 @@ In rather active development. API is not stable at the moment and can change in 
 - RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - A128KW, A192KW, A256KW encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - A128GCMKW, A192GCMKW, A256GCMKW encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
+- PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - Direct symmetric key encryption with pre-shared key A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
 
 ## Installation
@@ -230,6 +231,30 @@ AES128GCMKW, AES192GCMKW and AES256GCMKW key management requires `[]byte` array 
 		}
 	}
 
+#### PBES2 using HMAC SHA with AES Key Wrap key management family of algorithms
+PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW key management requires `string` passphrase from which actual key will be derived 
+
+	package main
+
+	import (
+		"fmt"
+		"github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		payload :=  `{"hello": "world"}`
+
+		passphrase := `top secret`
+
+		token,err := jose.Encrypt(payload,jose.PBES2_HS256_A128KW,jose.A256GCM,passphrase)
+
+		if(err==nil) {
+			//go use token
+			fmt.Printf("\nPBES2_HS256_A128KW A256GCM = %v\n",token)
+		}
+	}
+
 #### DIR direct pre-shared symmetric key management
 Direct key management with pre-shared symmetric keys expecting `[]byte` array key of corresponding length:
 
@@ -349,6 +374,29 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	        fmt.Printf("\npayload = %v\n",payload)
 	    }
 	}  
+
+**PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW** key management algorithms expects `string` passpharase as a key
+
+	package main
+
+	import (
+		"fmt"
+		"github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		token :=  `eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJlbmMiOiJBMjU2R0NNIiwicDJjIjo4MTkyLCJwMnMiOiJlZWpFZTF0YmJVbU5XV2s2In0.J2HTgltxH3p7A2zDgQWpZPgA2CHTSnDmMhlZWeSOMoZ0YvhphCeg-w.FzYG5AOptknu7jsG.L8jAxfxZhDNIqb0T96YWoznQ.yNeOfQWUbm8KuDGZ_5lL_g`
+
+		passphrase := `top secret`
+
+		payload,err := jose.Decode(token,passphrase)
+
+		if(err==nil) {
+			//go use token
+			fmt.Printf("\npayload = %v\n",payload)
+		}
+	}
 
 **ES256, ES284, ES512** signatures expecting `*ecdsa.PublicKey` public elliptic curve key of corresponding length. **jose2go** provides convinient utils to construct `*ecdsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `ecc.ReadPublic([]byte)` or directly from `X,Y` parameters: `ecc.NewPublic(x,y []byte)`under `jose2go/keys/ecc` package:
 
