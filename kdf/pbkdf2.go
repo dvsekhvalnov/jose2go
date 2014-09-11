@@ -15,22 +15,25 @@ func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h has
 	dkLen := keyBitLength >> 3 //size of derived key in bytes
 	
 	l := int(math.Ceil(float64(dkLen) / float64(hLen)))  // l = CEIL (dkLen / hLen)
-	r := dkLen - (l - 1) * hLen
+    r := dkLen - (l - 1) * hLen
 	
 	// 1. If dkLen > (2^32 - 1) * hLen, output "derived key too long" and stop.
 	if dkLen > 4294967295 {
 		panic(fmt.Sprintf("kdf.DerivePBKDF2: expects derived key size to be not more that (2^32-1) bits, but was requested {0} bits.",keyBitLength))
 	}
 
-	t := make([][]byte,l)
-
+	dk := make([]byte,0,dkLen)
+	
 	for i := 0; i < l; i++ {
-	    t[i] = f(salt, iterationCount, i + 1, prf);   // T_l = F (P, S, c, l)
+
+		t:=f(salt, iterationCount, i + 1, prf) // T_l = F (P, S, c, l)
+		
+		if i==(l-1) { t=t[:r] }                // truncate last block to r bits
+				
+		dk=append(dk,t...)                     // DK = T_1 || T_2 ||  ...  || T_l<0..r-1>	
 	}
 
-	t[l - 1] = t[l - 1][:r]  //truncate last block to r bits
-	
-	return arrays.Unwrap(t)   // DK = T_1 || T_2 ||  ...  || T_l<0..r-1>
+	return dk
 }
 
 func f(salt []byte, iterationCount,blockIndex int,  prf hash.Hash) []byte {            
