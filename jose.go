@@ -42,6 +42,7 @@ const (
     PBES2_HS256_A128KW="PBES2-HS256+A128KW"    //Password Based Encryption using PBES2 schemes with HMAC-SHA and AES Key Wrap using 128 bit key
     PBES2_HS384_A192KW="PBES2-HS384+A192KW"    //Password Based Encryption using PBES2 schemes with HMAC-SHA and AES Key Wrap using 192 bit key
     PBES2_HS512_A256KW="PBES2-HS512+A256KW"    //Password Based Encryption using PBES2 schemes with HMAC-SHA and AES Key Wrap using 256 bit key
+	ECDH_ES="ECDH-ES" //Elliptic Curve Diffie Hellman key agreement
 )
 
 var jwsHashers = map[string]JwsAlgorithm{}
