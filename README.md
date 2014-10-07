@@ -24,6 +24,7 @@ In rather active development. API is not stable at the moment and can change in 
 - RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - A128KW, A192KW, A256KW encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - A128GCMKW, A192GCMKW, A256GCMKW encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
+- ECDH-ES with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - Direct symmetric key encryption with pre-shared key A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
 
@@ -231,6 +232,33 @@ AES128GCMKW, AES192GCMKW and AES256GCMKW key management requires `[]byte` array 
 		}
 	}
 
+#### ECDH-ES and ECDH-ES with AES Key Wrap key management family of algorithms
+ECDH-ES key management requires `*ecdsa.PublicKey` elliptic curve key of corresponding length. **jose2go** provides convinient utils to construct `*ecdsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `ecc.ReadPublic([]byte)` or directly from `X,Y` parameters: `ecc.NewPublic(x,y []byte)`under `jose2go/keys/ecc` package:
+
+	package main
+
+	import (
+	    "fmt"
+	    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+	    "github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+	    payload := `{"hello":"world"}`
+
+	    publicKey:=ecc.NewPublic([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+	                             []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53})
+
+	    token,err := jose.Encrypt(payload, jose.ECDH_ES, jose.A128CBC_HS256, publicKey)
+
+	    if(err==nil) {
+	        //go use token
+	        fmt.Printf("\ntoken = %v\n",token)
+	    }
+	}  
+
+
 #### PBES2 using HMAC SHA with AES Key Wrap key management family of algorithms
 PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW key management requires `string` passphrase from which actual key will be derived 
 
@@ -422,6 +450,32 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	        fmt.Printf("\npayload = %v\n",payload)
 	    }
 	}
+	
+**ECDH-ES** key management expecting `*ecdsa.PrivateKey` private elliptic curve key of corresponding length.  **jose2go** provides convinient utils to construct `*ecdsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `ecc.ReadPrivate([]byte)` or directly from `X,Y,D` parameters: `ecc.NewPrivate(x,y,d []byte)` under `jose2go/keys/ecc` package:
+
+	package main
+
+	import (
+	    "fmt"
+	    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+	    "github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+	    token := "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTEyOENCQy1IUzI1NiIsImVwayI6eyJrdHkiOiJFQyIsIngiOiItVk1LTG5NeW9IVHRGUlpGNnFXNndkRm5BN21KQkdiNzk4V3FVMFV3QVhZIiwieSI6ImhQQWNReTgzVS01Qjl1U21xbnNXcFZzbHVoZGJSZE1nbnZ0cGdmNVhXTjgiLCJjcnYiOiJQLTI1NiJ9fQ..UA3N2j-TbYKKD361AxlXUA.XxFur_nY1GauVp5W_KO2DEHfof5s7kUwvOgghiNNNmnB4Vxj5j8VRS8vMOb51nYy2wqmBb2gBf1IHDcKZdACkCOMqMIcpBvhyqbuKiZPLHiilwSgVV6ubIV88X0vK0C8ZPe5lEyRudbgFjdlTnf8TmsvuAsdtPn9dXwDjUR23bD2ocp8UGAV0lKqKzpAw528vTfD0gwMG8gt_op8yZAxqqLLljMuZdTnjofAfsW2Rq3Z6GyLUlxR51DAUlQKi6UpsKMJoXTrm1Jw8sXBHpsRqA.UHCYOtnqk4SfhAknCnymaQ"
+
+		privateKey:=ecc.NewPrivate([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+		 			 			  []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53},
+								  []byte{ 42, 148, 231, 48, 225, 196, 166, 201, 23, 190, 229, 199, 20, 39, 226, 70, 209, 148, 29, 70, 125, 14, 174, 66, 9, 198, 80, 251, 95, 107, 98, 206 })
+
+	    payload,err := jose.Decode(token, privateKey)
+
+	    if(err==nil) {
+	        //go use token
+	        fmt.Printf("\npayload = %v\n",payload)
+	    }
+	}	
 	
 ### More examples
 Checkout `jose_test.go` for more examples.	
