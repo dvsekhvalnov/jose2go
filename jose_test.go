@@ -1735,6 +1735,18 @@ func (s *TestSuite) TestDecrypt_ECDH_ES_A256CBC_HS512(c *C) {
 	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
 }
 
+func (s *TestSuite) TestDecrypt_ECDH_ES_A128GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTEyOEdDTSIsImVwayI6eyJrdHkiOiJFQyIsIngiOiJPbDdqSWk4SDFpRTFrcnZRTmFQeGp5LXEtY3pQME40RVdPM1I3NTg0aEdVIiwieSI6Ik1kU2V1OVNudWtwOWxLZGU5clVuYmp4a3ozbV9kTWpqQXc5NFd3Q0xaa3MiLCJjcnYiOiJQLTI1NiJ9fQ..E4XwpWZ2kO-Vg0xb.lP5LWPlabtmzS-m2EPGhlPGgllLNhI5OF2nAbbV9tVvtCckKpt358IQNRk-W8-JNL9SsLdWmVUMplrw-GO-KA2qwxEeh_8-muYCw3qfdhVVhLnOF-kL4mW9a00Xls_6nIZponGrqpHCwRQM5aSr365kqTNpfOnXgJTKG2459nqv8n4oSfmwV2iRUBlXEgTO-1Tvrq9doDwZCCHj__JKvbuPfyRBp5T7d-QJio0XRF1TO4QY36GtKMXWR264lS7g-T1xxtA.vFevA9zsyOnNA5RZanKqHA"
+	
+	//when	
+	test,err := Decode(token, Ecc256Private())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
+}
+
 func (s *TestSuite) TestEncrypt_ECDH_ES_A128CBC_HS256(c *C) {
 	//given
 	payload :=  `{"hello": "world"}`
@@ -1810,6 +1822,32 @@ func (s *TestSuite) TestEncrypt_ECDH_ES_A256CBC_HS512(c *C) {
 	
 	//make sure we consistent with ourselfs
 	t,_:=Decode(test, Ecc512Private())
+	c.Assert(t, Equals, payload) 
+}
+
+func (s *TestSuite) TestEncrypt_ECDH_ES_A128GCM(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Encrypt(payload, ECDH_ES, A128GCM, Ecc256Public())
+	
+	fmt.Printf("\nECDH-ES A128GCM = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(len(parts[0]),Equals, 222)
+ 	c.Assert(len(parts[1]), Equals, 0);
+ 	c.Assert(len(parts[2]), Equals, 16);
+ 	c.Assert(len(parts[3]), Equals, 24);
+ 	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, Ecc256Private())
 	c.Assert(t, Equals, payload) 
 }
 
