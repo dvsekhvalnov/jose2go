@@ -115,7 +115,7 @@ func (alg *Ecdh) deriveKey(pubKey *ecdsa.PublicKey, privKey *ecdsa.PrivateKey, k
 	var enc,apv,apu []byte
 	var err error
 	
-	enc=[]byte(header[alg.idHeader()].(string))
+	enc=[]byte(header[alg.idHeader()].(string))		
 	
 	if a,ok:=header["apv"].(string);!ok {
 		if apv,err=base64url.Decode(a);err!=nil {
@@ -127,11 +127,12 @@ func (alg *Ecdh) deriveKey(pubKey *ecdsa.PublicKey, privKey *ecdsa.PrivateKey, k
 		if apu,err=base64url.Decode(a);err!=nil {
 			apu = nil
 		}
-	}	
+	}		
 	
-	z, _ := pubKey.Curve.ScalarMult(pubKey.X, pubKey.Y, privKey.D.Bytes())		
+	z, _ := pubKey.Curve.ScalarMult(pubKey.X, pubKey.Y, privKey.D.Bytes())			
+	zBytes := padding.Align(z.Bytes(), privKey.Curve.Params().BitSize)	
 	
-	return kdf.DeriveConcatKDF(keySizeBits,z.Bytes(), prependDatalen(enc), prependDatalen(apu), prependDatalen(apv),arrays.UInt32ToBytes(uint32(keySizeBits)),nil,sha256.New())
+	return kdf.DeriveConcatKDF(keySizeBits,zBytes, prependDatalen(enc), prependDatalen(apu), prependDatalen(apv),arrays.UInt32ToBytes(uint32(keySizeBits)),nil,sha256.New())
 }
 
 func(alg *Ecdh) idHeader() string {
