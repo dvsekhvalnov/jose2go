@@ -20,7 +20,8 @@ In rather active development. API is not stable at the moment and can change in 
 - NONE (unprotected) plain text algorithm without integrity protection
 
 **Encryption**
-- RSAES OAEP encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
+- RSAES OAEP (using SHA-1 and MGF1 with SHA-1) encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
+- RSAES OAEP 256 (using SHA-256 and MGF1 with SHA-256) encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - A128KW, A192KW, A256KW encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - A128GCMKW, A192GCMKW, A256GCMKW encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
@@ -148,8 +149,8 @@ ES256, ES384, ES512 ECDSA signatures expecting `*ecdsa.PrivateKey` private ellip
 	}  
 
 ### Creating encrypted Tokens
-#### RSA-OAEP and RSA1\_5 key management algorithm
-RSA-OAEP and RSA1_5 key management expecting `*rsa.PublicKey` public key of corresponding length.
+#### RSA-OAEP-256, RSA-OAEP and RSA1\_5 key management algorithm
+RSA-OAEP-256, RSA-OAEP and RSA1_5 key management expecting `*rsa.PublicKey` public key of corresponding length.
 
 	package main
 
@@ -369,7 +370,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	    }
 	}  
 
-**RSA-OAEP** and **RSA1_5** key management algorithms expecting `*rsa.PrivateKey` private key of corresponding length:
+**RSA-OAEP-256**, **RSA-OAEP** and **RSA1_5** key management algorithms expecting `*rsa.PrivateKey` private key of corresponding length:
 
 	package main
 
