@@ -47,11 +47,14 @@ const (
 	ECDH_ES_A128KW="ECDH-ES+A128KW" //Elliptic Curve Diffie Hellman key agreement with AES Key Wrap using 128 bit key
 	ECDH_ES_A192KW="ECDH-ES+A192KW" //Elliptic Curve Diffie Hellman key agreement with AES Key Wrap using 192 bit key
 	ECDH_ES_A256KW="ECDH-ES+A256KW"	//Elliptic Curve Diffie Hellman key agreement with AES Key Wrap using 256 bit key
+	
+	DEF="DEF" //DEFLATE compression, RFC 1951
 )
 
 var jwsHashers = map[string]JwsAlgorithm{}
 var jweEncryptors = map[string]JweEncryption{}
 var jwaAlgorithms = map[string]JwaAlgorithm{}
+var jwcCompressors = map[string]JwcAlgorithm{}
 
 func RegisterJwe(alg JweEncryption) {
 	jweEncryptors[alg.Name()]=alg	
@@ -63,6 +66,10 @@ func RegisterJwa(alg JwaAlgorithm) {
 
 func RegisterJws(alg JwsAlgorithm) {
 	jwsHashers[alg.Name()]=alg
+}
+
+func RegisterJwc(alg JwcAlgorithm) {
+	jwcCompressors[alg.Name()]=alg
 }
 
 type JweEncryption interface {
@@ -82,6 +89,12 @@ type JwsAlgorithm interface {
 	Verify(securedInput, signature []byte, key interface{}) error
 	Sign(securedInput []byte, key interface{}) (signature []byte, err error)
 	Name() string
+}
+
+type JwcAlgorithm interface {
+	Compress(plainText []byte) []byte
+	Decompress(compressedText []byte) []byte
+	Name() string	
 }
 
 func Sign(payload string, signingAlg string, key interface{}) (token string, err error) { 
@@ -111,39 +124,30 @@ func Sign(payload string, signingAlg string, key interface{}) (token string, err
 }
 
 func Encrypt(payload string, alg string, enc string, key interface{}) (token string, err error) {
-	
-	var ok bool
-	var keyMgmtAlg JwaAlgorithm
-	var encAlg JweEncryption
-
-	if keyMgmtAlg, ok=jwaAlgorithms[alg];!ok {
-		return "",errors.New(fmt.Sprintf("jwt.Encrypt(): Unknown key management algorithm '%v'",alg))
-	}
-
-	if encAlg, ok=jweEncryptors[enc];!ok {
-		return "",errors.New(fmt.Sprintf("jwt.Encrypt(): Unknown encryption algorithm '%v'",enc))
-	}
-
+		
 	jwtHeader := map[string]interface{} {
 		"enc": enc,
 		"alg": alg,
 	}
 
-	var cek,encryptedCek,header,iv,cipherText,authTag []byte
+	return encrypt([]byte(payload),jwtHeader,key)
+}
 
-	if cek,encryptedCek,err=keyMgmtAlg.WrapNewKey(encAlg.KeySizeBits(), key, jwtHeader);err!=nil {
-		return "",err
-	}
-	
-	if header, err=json.Marshal(jwtHeader);err!=nil {
-		return "",err
-	}			
+func Compress(payload string, alg string, enc string, zip string, key interface{}) (token string, err error) {
 
-    if iv, cipherText, authTag, err=encAlg.Encrypt([]byte(compact.Serialize(header)), []byte(payload), cek);err!=nil {
-		return "",err
-    }
+	if zipAlg, ok:=jwcCompressors[zip];ok {
+		compressed:=zipAlg.Compress([]byte(payload))	
+		
+		jwtHeader := map[string]interface{} {
+			"enc": enc,
+			"alg": alg,
+			"zip": zip,
+		}
+				
+		return encrypt(compressed, jwtHeader, key)
+	}	
 	
-	return compact.Serialize(header,encryptedCek,iv,cipherText,authTag),nil
+	return "",errors.New(fmt.Sprintf("jwt.Compress(): Unknown compression method '%v'",zip))		
 }
 
 func Decode(token string, key interface{}) (string,error) {
@@ -159,6 +163,39 @@ func Decode(token string, key interface{}) (string,error) {
 	}
 	
 	return "",errors.New(fmt.Sprintf("jwt.Decode() expects token of 3 or 5 parts, but was given: %v parts",len(parts)))	
+}
+
+func encrypt(payload []byte, jwtHeader map[string]interface{}, key interface{}) (token string, err error) {
+	var ok bool
+	var keyMgmtAlg JwaAlgorithm
+	var encAlg JweEncryption
+
+	alg:=jwtHeader["alg"].(string)
+	enc:=jwtHeader["enc"].(string)
+
+	if keyMgmtAlg, ok=jwaAlgorithms[alg];!ok {
+		return "",errors.New(fmt.Sprintf("jwt.encrypt(): Unknown key management algorithm '%v'",alg))
+	}
+
+	if encAlg, ok=jweEncryptors[enc];!ok {
+		return "",errors.New(fmt.Sprintf("jwt.encrypt(): Unknown encryption algorithm '%v'",enc))
+	}
+	
+	var cek,encryptedCek,header,iv,cipherText,authTag []byte
+
+	if cek,encryptedCek,err=keyMgmtAlg.WrapNewKey(encAlg.KeySizeBits(), key, jwtHeader);err!=nil {
+		return "",err
+	}
+	
+	if header, err=json.Marshal(jwtHeader);err!=nil {
+		return "",err
+	}			
+
+    if iv, cipherText, authTag, err=encAlg.Encrypt([]byte(compact.Serialize(header)), payload, cek);err!=nil {
+		return "",err
+    }
+	
+	return compact.Serialize(header,encryptedCek,iv,cipherText,authTag),nil
 }
 
 func verify(parts [][]byte, key interface{}) (plainText string,err error) {
@@ -198,18 +235,29 @@ func decrypt(parts [][]byte, key interface{}) (plainText string, err error) {
 	
 	alg := jwtHeader["alg"].(string)
 	enc := jwtHeader["enc"].(string)	
-
+	
 	aad :=[]byte(compact.Serialize(header))
 		
 	var keyMgmtAlg JwaAlgorithm
 	var encAlg JweEncryption
+	var zipAlg JwcAlgorithm
 	var cek,plainBytes []byte
 	var ok bool
 	
 	if keyMgmtAlg, ok = jwaAlgorithms[alg]; ok {
 		if encAlg, ok = jweEncryptors[enc]; ok {
 		    if cek,err=keyMgmtAlg.Unwrap(encryptedCek, key, encAlg.KeySizeBits(), jwtHeader);err==nil {
-				if plainBytes,err = encAlg.Decrypt(aad, cek, iv, cipherText, authTag);err==nil {	
+				if plainBytes,err = encAlg.Decrypt(aad, cek, iv, cipherText, authTag);err==nil {
+										
+					if zip, compressed := jwtHeader["zip"].(string);compressed {						
+						
+						if zipAlg,ok = jwcCompressors[zip]; !ok {
+							return "", errors.New(fmt.Sprintf("jwt.decrypt(): Unknown compression algorithm '%v'",zip))
+						}
+						
+						plainBytes = zipAlg.Decompress(plainBytes)							
+					}
+					
 					return string(plainBytes),nil
 				}
 				

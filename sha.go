@@ -1,4 +1,5 @@
 package jose
+
 import (
 	"hash"
 	"crypto"

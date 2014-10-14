@@ -2079,6 +2079,43 @@ func (s *TestSuite) TestEncrypt_RSA_OAEP_256_A256GCM(c *C) {
 	c.Assert(t, Equals, payload) 
 }
 
+func (s *TestSuite) TestDecrypt_Deflated(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUCIsInppcCI6IkRFRiIsImVuYyI6IkExMjhDQkMtSFMyNTYifQ.nXSS9jDwE0dXkcGI7UquZBhn2nsB2P8u-YSWEuTAgEeuV54qNU4SlE76bToI1z4LUuABHmZOv9S24xkF45b7Mrap_Fu4JXH8euXrQgKQb9o_HL5FvE8m4zk5Ow13MKGPvHvWKOaNEBFriwYIfPi6QBYrpuqn0BaANc_aMyInV0Fn7e8EAgVmvoagmy7Hxic2sPUeLEIlRCDSGa82mpiGusjo7VMJxymkhnMdKufpGPh4wod7pvgb-jDWasUHpsUkHqSKZxlrDQxcy1-Pu1G37TAnImlWPa9NU7500IXc-W07IJccXhR3qhA5QaIyBbmHY0j1Dn3808oSFOYSF85A9w.uwbZhK-8iNzcjvKRb1a2Ig.jxj1GfH9Ndu1y0b7NRz_yfmjrvX2rXQczyK9ZJGWTWfeNPGR_PZdJmddiam15Qtz7R-pzIeyR4_qQoMzOISkq6fDEvEWVZdHnnTUHQzCoGX1dZoG9jXEwfAk2G1vXYT2vynEQZ72xk0V_OBtKhpIAUEFsXwCUeLAAgjFNY4OGWZl_Kmv9RTGhnePZfVbrbwg.WuV64jlV03OZm99qHMP9wQ"
+	
+	//when	
+	test,err := Decode(token, PrivKey())
+	
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "{\"exp\":1392963710,\"sub\":\"alice\",\"nbf\":1392963110,\"aud\":[\"https:\\/\\/app-one.com\",\"https:\\/\\/app-two.com\"],\"iss\":\"https:\\/\\/openid.net\",\"jti\":\"9fa7a38a-28fd-421c-825c-8fab3bbf3fb4\",\"iat\":1392963110}")
+}
+
+func (s *TestSuite) TestEncrypt_Deflated(c *C) {
+	//given
+	payload :=  `{"hello": "world"}`
+	
+	//when	
+	test,err := Compress(payload, RSA_OAEP, A256GCM, DEF, PubKey())
+	
+	fmt.Printf("\nRSA-OAEP A256GCM DEF = %v\n",test)
+	
+	//then
+	c.Assert(err, IsNil)
+	
+	parts := strings.Split(test,".")
+	
+    c.Assert(len(parts), Equals, 5);
+	c.Assert(parts[0],Equals, "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00iLCJ6aXAiOiJERUYifQ")
+ 	c.Assert(len(parts[2]), Equals, 16);
+ 	c.Assert(len(parts[3]), Equals, 32);
+ 	c.Assert(len(parts[4]), Equals, 22);
+	
+	//make sure we consistent with ourselfs
+	t,_:=Decode(test, PrivKey())
+	c.Assert(t, Equals, payload) 
+}
+
 //test utils
 func PubKey() *rsa.PublicKey {
 	key,_ :=Rsa.ReadPublic([]byte(pubKey))	
