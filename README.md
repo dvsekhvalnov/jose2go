@@ -517,8 +517,50 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 #### RSA keys
 1. `Rsa.ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error)` attempts to parse RSA private key from PKCS1 or PKCS8 format (`BEGIN RSA PRIVATE KEY` and `BEGIN PRIVATE KEY` headers)
 
+		package main
+
+		import (
+			"fmt"
+		    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+			"io/ioutil"
+		)
+
+		func main() {
+	
+		    keyBytes,_ := ioutil.ReadFile("private.key")
+
+		    privateKey,err:=Rsa.ReadPrivate(keyBytes)
+
+		    if(err!=nil) {
+		        panic("invalid key format")
+		    }
+	
+			fmt.Printf("privateKey = %v\n",privateKey)
+		}
+
+
 2. `Rsa.ReadPublic(raw []byte) (key *rsa.PublicKey,err error)` attempts to parse RSA public key from PKIX key format or X509 certificate (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
  
+	package main
+
+	import (
+		"fmt"
+	    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+		"io/ioutil"
+	)
+
+	func main() {
+	
+	    keyBytes,_ := ioutil.ReadFile("public.cer")
+
+	    publicKey,err:=Rsa.ReadPrivate(keyBytes)
+
+	    if(err!=nil) {
+	        panic("invalid key format")
+	    }
+	
+		fmt.Printf("publicKey = %v\n",publicKey)
+	}
  
 #### ECC keys
 	
