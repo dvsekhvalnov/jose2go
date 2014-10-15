@@ -91,7 +91,7 @@ Signing with HS256, HS384, HS512 expecting `[]byte` array key of corresponding l
 	}
 	
 #### RS-256, RS-384 and RS-512, PS-256, PS-384 and PS-512
-Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** [provides convinient utils](#Dealing with keys) to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.ReadPrivate([]byte)` under `jose2go/keys/rsa` package.
+Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** [provides convinient utils](#Dealing-with-keys) to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.ReadPrivate([]byte)` under `jose2go/keys/rsa` package.
 
 	package main
 
