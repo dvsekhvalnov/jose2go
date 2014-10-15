@@ -539,7 +539,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 		}
 
 
-2. `Rsa.ReadPublic(raw []byte) (key *rsa.PublicKey,err error)` attempts to parse RSA public key from PKIX key format or X509 certificate (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
+2. `Rsa.ReadPublic(raw []byte) (key *rsa.PublicKey,err error)` attempts to parse RSA public key from PKIX key format or PKCS1 X509 certificate (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
  
 		package main
 
@@ -553,7 +553,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	
 		    keyBytes,_ := ioutil.ReadFile("public.cer")
 
-		    publicKey,err:=Rsa.ReadPrivate(keyBytes)
+		    publicKey,err:=Rsa.ReadPublic(keyBytes)
 
 		    if(err!=nil) {
 		        panic("invalid key format")
@@ -563,6 +563,86 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 		}
  
 #### ECC keys
-	
+1. `ecc.ReadPrivate(raw []byte) (key *ecdsa.PrivateKey,err error)` attemps to parse elliptic curve private key from PKCS1 or PKCS8 format (`BEGIN EC PRIVATE KEY` and `BEGIN PRIVATE KEY` headers)
+
+		package main
+
+		import (
+			"fmt"
+		    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+			"io/ioutil"
+		)
+
+		func main() {
+
+		    keyBytes,_ := ioutil.ReadFile("ec-private.pem")
+
+		    ecPrivKey,err:=ecc.ReadPrivate(keyBytes)
+
+		    if(err!=nil) {
+		        panic("invalid key format")
+		    }
+
+			fmt.Printf("ecPrivKey = %v\n",ecPrivKey)
+		}
+
+2. `ecc.ReadPublic(raw []byte) (key *ecdsa.PublicKey,err error)` attemps to parse elliptic curve public key from PKCS1 X509 or PKIX format (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
+
+		package main
+
+		import (
+			"fmt"
+		    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+			"io/ioutil"
+		)
+
+		func main() {
+
+		    keyBytes,_ := ioutil.ReadFile("ec-public.key")
+
+		    ecPubKey,err:=ecc.ReadPublic(keyBytes)
+
+		    if(err!=nil) {
+		        panic("invalid key format")
+		    }
+
+			fmt.Printf("ecPubKey = %v\n",ecPubKey)
+		}
+
+3. `ecc.NewPublic(x,y []byte) (*ecdsa.PublicKey)` constructs elliptic public key from (X,Y) represented as bytes. Supported are NIST curves P-256,P-384 and P-521. Curve detected automatically by input length.
+
+		package main
+
+		import (
+			"fmt"
+		    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+		)
+
+		func main() {
+
+		    ecPubKey:=ecc.NewPublic([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+				 				    []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53})
+
+			fmt.Printf("ecPubKey = %v\n",ecPubKey)
+		}
+
+4. `ecc.NewPrivate(x,y,d []byte) (*ecdsa.PrivateKey)` constructs elliptic private key from (X,Y) and D represented as bytes. Supported are NIST curves P-256,P-384 and P-521. Curve detected automatically by input length.
+
+		package main
+
+		import (
+			"fmt"
+		    "github.com/dvsekhvalnov/jose2go/keys/ecc"
+		)
+
+		func main() {
+
+		    ecPrivKey:=ecc.NewPrivate([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+				 					  []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53},
+									  []byte{ 42, 148, 231, 48, 225, 196, 166, 201, 23, 190, 229, 199, 20, 39, 226, 70, 209, 148, 29, 70, 125, 14, 174, 66, 9, 198, 80, 251, 95, 107, 98, 206 })
+
+			fmt.Printf("ecPrivKey = %v\n",ecPrivKey)
+		}
+
 ### More examples
 Checkout `jose_test.go` for more examples.	
