@@ -512,7 +512,7 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	}	
 	
 ### Dealing with keys	
-**jose2go** provides several helper methods to simplify loading & importing of elliptic and rsa keys to use them import `jose2go/keys/rsa` or `jose2go/keys/ecc` respectively: 
+**jose2go** provides several helper methods to simplify loading & importing of elliptic and rsa keys. Import `jose2go/keys/rsa` or `jose2go/keys/ecc` respectively: 
 
 #### RSA keys
 1. `Rsa.ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error)` attempts to parse RSA private key from PKCS1 or PKCS8 format (`BEGIN RSA PRIVATE KEY` and `BEGIN PRIVATE KEY` headers)
@@ -541,26 +541,26 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 
 2. `Rsa.ReadPublic(raw []byte) (key *rsa.PublicKey,err error)` attempts to parse RSA public key from PKIX key format or X509 certificate (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
  
-	package main
+		package main
 
-	import (
-		"fmt"
-	    "github.com/dvsekhvalnov/jose2go/keys/rsa"
-		"io/ioutil"
-	)
+		import (
+			"fmt"
+		    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+			"io/ioutil"
+		)
 
-	func main() {
+		func main() {
 	
-	    keyBytes,_ := ioutil.ReadFile("public.cer")
+		    keyBytes,_ := ioutil.ReadFile("public.cer")
 
-	    publicKey,err:=Rsa.ReadPrivate(keyBytes)
+		    publicKey,err:=Rsa.ReadPrivate(keyBytes)
 
-	    if(err!=nil) {
-	        panic("invalid key format")
-	    }
+		    if(err!=nil) {
+		        panic("invalid key format")
+		    }
 	
-		fmt.Printf("publicKey = %v\n",publicKey)
-	}
+			fmt.Printf("publicKey = %v\n",publicKey)
+		}
  
 #### ECC keys
 	
