@@ -317,7 +317,7 @@ Direct key management with pre-shared symmetric keys expecting `[]byte` array ke
 	
 ### Creating compressed & encrypted tokens
 #### DEFLATE compression
-*jose2go* supports optional DEFLATE compression of payload before encrypting, can be used with all supported encryption and key management algorithms:
+**jose2go** supports optional DEFLATE compression of payload before encrypting, can be used with all supported encryption and key management algorithms:
 
 	package main
 
@@ -512,6 +512,15 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	}	
 	
 ### Dealing with keys	
+**jose2go** provides several helper methods to simplify loading & importing of elliptic and rsa keys to use them import `jose2go/keys/rsa` or `jose2go/keys/ecc` respectively: 
+
+#### RSA keys
+1. `Rsa.ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error)` attempts to parse RSA private key from PKCS1 or PKCS8 format (`BEGIN RSA PRIVATE KEY` and `BEGIN PRIVATE KEY` headers)
+
+2. `Rsa.ReadPublic(raw []byte) (key *rsa.PublicKey,err error)` attempts to parse RSA public key from PKIX key format or X509 certificate (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
+ 
+ 
+#### ECC keys
 	
 ### More examples
 Checkout `jose_test.go` for more examples.	
