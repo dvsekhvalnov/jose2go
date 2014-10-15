@@ -1,14 +1,16 @@
 # Golang (GO) Javascript Object Signing and Encryption (JOSE) and JSON Web Token (JWT) implementation
 
-Pure Golang (GO) library for generating, decoding and encryption [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10). Supports all signature algorithms and some key management of [JSON Web Algorithms](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-23). 
-Extensively unit tested and cross tested for compatibility with [jose.4.j](https://bitbucket.org/b_c/jose4j/wiki/Home), [Nimbus-JOSE-JWT](https://bitbucket.org/nimbusds/nimbus-jose-jwt/wiki/Home), [json-jwt](https://github.com/nov/json-jwt) and
+Pure Golang (GO) library for generating, decoding and encrypting [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10). Zero dependency, relies only
+on standard library.
+
+Supports full suite of signing, encryption and compression algorithms defined by [JSON Web Algorithms](https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31) as of July 4, 2014 version.
+
+Extensively unit tested and cross tested (100+ tests) for compatibility with [jose.4.j](https://bitbucket.org/b_c/jose4j/wiki/Home), [Nimbus-JOSE-JWT](https://bitbucket.org/nimbusds/nimbus-jose-jwt/wiki/Home), [json-jwt](https://github.com/nov/json-jwt) and
 [jose-jwt](https://github.com/dvsekhvalnov/jose-jwt) libraries. 
 
-## Goal
-The project goal is to provide full suite of JOSE algorithms. Ideally relying only on standard Golang (GO) packages only.
 
 ##Status
-In rather active development. API is not stable at the moment and can change in future versions.
+Used in production. GA ready.
 
 ## Supported JWA algorithms
 
@@ -29,6 +31,9 @@ In rather active development. API is not stable at the moment and can change in 
 - ECDH-ES+A128KW, ECDH-ES+A192KW, ECDH-ES+A256KW with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM, A256GCM
 - Direct symmetric key encryption with pre-shared key A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
+
+**Compression**
+- DEFLATE compression
 
 ## Installation
 ### Grab package from github
@@ -148,7 +153,7 @@ ES256, ES384, ES512 ECDSA signatures expecting `*ecdsa.PrivateKey` private ellip
 	    }
 	}  
 
-### Creating encrypted Tokens
+### Creating encrypted tokens
 #### RSA-OAEP-256, RSA-OAEP and RSA1\_5 key management algorithm
 RSA-OAEP-256, RSA-OAEP and RSA1_5 key management expecting `*rsa.PublicKey` public key of corresponding length.
 
@@ -309,8 +314,35 @@ Direct key management with pre-shared symmetric keys expecting `[]byte` array ke
 		}
 	}
 	
-### Verifying and Decoding Tokens
-Decoding json web tokens is fully symmetric to creating signed or encrypted tokens (with respect to public/private cryptography):		
+	
+### Creating compressed & encrypted tokens
+#### DEFLATE compression
+*jose2go* supports optional DEFLATE compression of payload before encrypting, can be used with all supported encryption and key management algorithms:
+
+	package main
+
+	import (
+		"fmt"
+		"github.com/dvsekhvalnov/jose2go"
+	)
+
+	func main() {
+
+		payload :=  `{"hello": "world"}`
+
+		sharedKey :=[]byte{194,164,235,6,138,248,171,239,24,216,11,22,137,199,215,133}
+
+		token,err := jose.Compress(payload,jose.DIR,jose.A128GCM,jose.DEF, sharedKey)
+
+		if(err==nil) {
+			//go use token
+			fmt.Printf("\nDIR A128GCM DEFLATED= %v\n",token)
+		}
+	}
+
+	
+### Verifying, Decoding and Decompressing tokens
+Decoding json web tokens is fully symmetric to creating signed or encrypted tokens (with respect to public/private cryptography), decompressing deflated payloads is handled automatically:
 
 **HS256, HS384, HS512** signatures, **A128KW, A192KW, A256KW**,**A128GCMKW, A192GCMKW, A256GCMKW** and **DIR** key management algorithm expecting `[]byte` array key:
 
@@ -478,6 +510,8 @@ Decoding json web tokens is fully symmetric to creating signed or encrypted toke
 	        fmt.Printf("\npayload = %v\n",payload)
 	    }
 	}	
+	
+### Dealing with keys	
 	
 ### More examples
 Checkout `jose_test.go` for more examples.	
