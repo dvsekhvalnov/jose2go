@@ -1,3 +1,4 @@
+// package base64url provides base64url encoding/decoding support
 package base64url
 
 import (
@@ -5,6 +6,7 @@ import (
 	"encoding/base64"
 )
 
+// Decode decodes base64url string to byte array
 func Decode(data string) ([]byte,error) {
 	data = strings.Replace(data, "-", "+", -1) // 62nd char of encoding
 	data = strings.Replace(data, "_", "/", -1) // 63rd char of encoding
@@ -18,6 +20,7 @@ func Decode(data string) ([]byte,error) {
 	return base64.StdEncoding.DecodeString(data)
 }
 
+// Encode encodes given byte array to base64url string
 func Encode(data []byte) string {
 	result := base64.StdEncoding.EncodeToString(data)
 	result = strings.Replace(result, "+", "-", -1) // 62nd char of encoding

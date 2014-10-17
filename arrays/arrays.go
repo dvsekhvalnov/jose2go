@@ -1,3 +1,4 @@
+// Package arrays provides various byte array utilities
 package arrays
 
 import (
@@ -8,6 +9,7 @@ import (
 	"fmt"		
 )
 
+// Xor is doing byte by byte exclusive or of 2 byte arrays
 func Xor(left,right []byte) []byte {
 	result:=make([]byte,len(left))
 	
@@ -18,6 +20,7 @@ func Xor(left,right []byte) []byte {
 	return result
 }
 
+// Slice is splitting input byte array into slice of subarrays. Each of count length.
 func Slice(arr []byte, count int) [][]byte {
 	
 	sliceCount := len(arr) / count;
@@ -33,6 +36,7 @@ func Slice(arr []byte, count int) [][]byte {
 	return result
 }
 
+// Random generates byte array with random data of byteCount length
 func Random(byteCount int) ([]byte,error) {
 	data := make([]byte,byteCount)
 	
@@ -43,6 +47,7 @@ func Random(byteCount int) ([]byte,error) {
 	return data,nil
 }
 
+// Concat combine several arrays into single one, resulting slice = A1 | A2 | A3 | ... | An
 func Concat(arrays ...[]byte) []byte {
 	var result []byte=arrays[0]
 	
@@ -53,6 +58,7 @@ func Concat(arrays ...[]byte) []byte {
 	return result
 }
 
+// Unwrap same thing as Contact, just different interface, combines several array into single one
 func Unwrap(arrays [][]byte) []byte {
 	var result []byte=arrays[0]
 	
@@ -63,6 +69,7 @@ func Unwrap(arrays [][]byte) []byte {
 	return result
 }
 
+// UInt64ToBytes unwrap uint64 value to byte array of length 8 using big endian
 func UInt64ToBytes(value uint64) []byte {
 	result := make([]byte, 8)
 	binary.BigEndian.PutUint64(result, value)
@@ -70,6 +77,7 @@ func UInt64ToBytes(value uint64) []byte {
 	return result
 }
 
+// UInt32ToBytes unwrap uint32 value to byte array of length 4 using big endian
 func UInt32ToBytes(value uint32) []byte {
 	result := make([]byte, 4)
 	binary.BigEndian.PutUint32(result, value)
@@ -77,6 +85,7 @@ func UInt32ToBytes(value uint32) []byte {
 	return result
 }
 
+// Dump produces printable debug representation of byte array as string
 func Dump(arr []byte) string {
 	var buf bytes.Buffer    
 	

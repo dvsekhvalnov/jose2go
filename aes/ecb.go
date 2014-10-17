@@ -1,3 +1,4 @@
+// Package aes contains provides AES Key Wrap and ECB mode implementations
 package aes
 
 import (
@@ -11,10 +12,12 @@ type ecb struct {
 type ecbEncrypter ecb
 type ecbDecrypter ecb
 
+// NewECBEncrypter creates BlockMode for AES encryption in ECB mode
 func NewECBEncrypter(b cipher.Block) cipher.BlockMode {
 	return &ecbEncrypter {b:b}
 }
 
+// NewECBDecrypter creates BlockMode for AES decryption in ECB mode
 func NewECBDecrypter(b cipher.Block) cipher.BlockMode {
 	return &ecbDecrypter {b:b}
 }

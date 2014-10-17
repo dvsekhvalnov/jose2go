@@ -1,3 +1,4 @@
+// package kdf contains implementations of various key derivation functions
 package kdf
 
 import (
@@ -8,6 +9,7 @@ import (
 	"fmt"
 )
 
+// DerivePBKDF2 implements Password Based Key Derivation Function 2, RFC 2898. Derives key of keyBitLength size, given password, salt, iteration count and hash function
 func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h hash.Hash) []byte {
 	
 	prf := hmac.New(func() hash.Hash { return h }, password)

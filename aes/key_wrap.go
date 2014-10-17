@@ -10,6 +10,7 @@ import (
 
 var	defaultIV=[]byte { 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6, 0xA6 }
 
+// KeyWrap encrypts provided key (CEK) with KEK key using AES Key Wrap (rfc 3394) algorithm
 func KeyWrap(cek,kek []byte) ([]byte,error) {
 	// 1) Initialize variables
     a := defaultIV              // Set A = IV, an initial value
@@ -43,6 +44,7 @@ func KeyWrap(cek,kek []byte) ([]byte,error) {
 	return arrays.Unwrap(c),nil
 }
 
+// KeyUnwrap decrypts previously encrypted key (CEK) with KEK key using AES Key Wrap (rfc 3394) algorithm
 func KeyUnwrap(encryptedCek, kek []byte) ([]byte,error) {
     // 1) Initialize variables
 	c := arrays.Slice(encryptedCek, 8);

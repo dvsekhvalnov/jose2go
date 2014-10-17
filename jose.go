@@ -1,3 +1,5 @@
+//Package jose provides high level functions for producing (signing, encrypting and 
+// compressing) or consuming (decoding) Json Web Tokens using Java Object Signing and Encryption spec
 package jose
 
 import (
@@ -56,47 +58,60 @@ var jweEncryptors = map[string]JweEncryption{}
 var jwaAlgorithms = map[string]JwaAlgorithm{}
 var jwcCompressors = map[string]JwcAlgorithm{}
 
+// RegisterJwe register new encryption algorithm
 func RegisterJwe(alg JweEncryption) {
 	jweEncryptors[alg.Name()]=alg	
 }
 
+// RegisterJwa register new key management algorithm
 func RegisterJwa(alg JwaAlgorithm) {
 	jwaAlgorithms[alg.Name()]=alg
 }
 
+// RegisterJws register new signing algorithm
 func RegisterJws(alg JwsAlgorithm) {
 	jwsHashers[alg.Name()]=alg
 }
 
+// RegisterJwc register new compression algorithm
 func RegisterJwc(alg JwcAlgorithm) {
 	jwcCompressors[alg.Name()]=alg
 }
 
-type JweEncryption interface {
+// JweEncryption is a contract for implementing encryption algorithm
+type JweEncryption interface {	
 	Encrypt(aad, plainText, cek []byte) (iv, cipherText, authTag []byte, err error)
 	Decrypt(aad, cek, iv, cipherText, authTag []byte) (plainText []byte, err error)
 	KeySizeBits() int
 	Name() string	
 }
 
+// JwaAlgorithm is a contract for implementing key management algorithm
 type JwaAlgorithm interface {
 	WrapNewKey(cekSizeBits int, key interface{}, header map[string]interface{}) (cek []byte, encryptedCek []byte, err error)
 	Unwrap(encryptedCek []byte, key interface{}, cekSizeBits int, header map[string]interface{}) (cek []byte, err error)
 	Name() string	
 }
 
+// JwsAlgorithm is a contract for implementing signing algorithm
 type JwsAlgorithm interface {
 	Verify(securedInput, signature []byte, key interface{}) error
 	Sign(securedInput []byte, key interface{}) (signature []byte, err error)
 	Name() string
 }
 
+// JwcAlgorithm is a contract for implementing compression algorithm
 type JwcAlgorithm interface {
 	Compress(plainText []byte) []byte
 	Decompress(compressedText []byte) []byte
 	Name() string	
 }
 
+// Sign produces signed JWT token given arbitrary payload, signature algorithm to use (see constants for list of supported algs) and signing key.
+// Signing key is of different type for different signing alg, see specific
+// signing alg implementation documentation.
+//
+// It returns 3 parts signed JWT token as string and not nil error if something went wrong.
 func Sign(payload string, signingAlg string, key interface{}) (token string, err error) { 
 	if signer, ok := jwsHashers[signingAlg]; ok {
 		
@@ -123,6 +138,11 @@ func Sign(payload string, signingAlg string, key interface{}) (token string, err
 	return "",errors.New(fmt.Sprintf("jwt.Sign(): unknown algorithm: '%v'",signingAlg))
 }
 
+// Encrypt produces encrypted JWT token given arbitrary payload, key management and encryption algorithms to use (see constants for list of supported algs) and management key.
+// Management key is of different type for different key management alg, see specific
+// key management alg implementation documentation.
+//
+// It returns 5 parts encrypted JWT token as string and not nil error if something went wrong.
 func Encrypt(payload string, alg string, enc string, key interface{}) (token string, err error) {
 		
 	jwtHeader := map[string]interface{} {
@@ -133,6 +153,11 @@ func Encrypt(payload string, alg string, enc string, key interface{}) (token str
 	return encrypt([]byte(payload),jwtHeader,key)
 }
 
+// Compress produces encrypted & comressed JWT token given arbitrary payload, key management , encryption and compression algorithms to use (see constants for list of supported algs) and management key.
+// Management key is of different type for different key management alg, see specific
+// key management alg implementation documentation.
+//
+// It returns 5 parts encrypted & compressed JWT token as string and not nil error if something went wrong.
 func Compress(payload string, alg string, enc string, zip string, key interface{}) (token string, err error) {
 
 	if zipAlg, ok:=jwcCompressors[zip];ok {
@@ -150,6 +175,10 @@ func Compress(payload string, alg string, enc string, zip string, key interface{
 	return "",errors.New(fmt.Sprintf("jwt.Compress(): Unknown compression method '%v'",zip))		
 }
 
+// Decode verifies, decrypts and decompresses given JWT token using management key. 
+// Management key is of different type for different key management or signing algorithms, see specific alg implementation documentation.
+//
+// Returns decoded payload as a string and not nil error if something went wrong.
 func Decode(token string, key interface{}) (string,error) {
 		
 	parts:=compact.Parse(token)
