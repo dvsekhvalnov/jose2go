@@ -10,6 +10,7 @@ func init() {
 	RegisterJwc(new(Deflate))
 }
 
+// Deflate compression algorithm implementation
 type Deflate struct {}
 
 func (alg *Deflate) Name() string {

@@ -6,7 +6,9 @@ import (
 	"jose2go/arrays"
 )
 
-// DeriveConcatKDF implements NIST SP 800-56A ConcatKDF function
+// DeriveConcatKDF implements NIST SP 800-56A Concatenation Key Derivation Function. Derives 
+// key material of keydatalen bits size given Z (sharedSecret), OtherInfo (AlgorithmID | 
+// PartyUInfo | PartyVInfo | SuppPubInfo | SuppPrivInfo) and hash function
 func DeriveConcatKDF(keydatalen int, sharedSecret, algId, partyUInfo, partyVInfo, suppPubInfo, suppPrivInfo []byte, h hash.Hash) []byte {
 	
 	otherInfo := arrays.Concat(algId, partyUInfo, partyVInfo, suppPubInfo, suppPrivInfo)

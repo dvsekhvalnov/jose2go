@@ -15,6 +15,7 @@ func init() {
 	RegisterJwa(&AesGcmKW{ keySizeBits: 256})
 }
 
+// AES GCM Key Wrap key management algorithm implementation
 type AesGcmKW struct {
 	keySizeBits int
 }

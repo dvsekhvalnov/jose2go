@@ -16,6 +16,7 @@ func init() {
 	RegisterJws(&EcdsaUsingSha{keySizeBits: 521, hashSizeBits: 512})
 }
 
+// ECDSA signing algorithm implementation
 type EcdsaUsingSha struct{
 	keySizeBits int
 	hashSizeBits int
@@ -23,9 +24,9 @@ type EcdsaUsingSha struct{
 
 func (alg *EcdsaUsingSha) Name() string {
 	switch alg.keySizeBits {
-		case 256: return "ES256"
-		case 384: return "ES384"
-		default: return  "ES512"
+		case 256: return ES256
+		case 384: return ES384
+		default: return  ES512
 	}
 }
 

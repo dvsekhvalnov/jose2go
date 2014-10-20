@@ -10,6 +10,7 @@ import (
 	"fmt"
 )
 
+// AES CBC with HMAC authenticated encryption algorithm implementation
 type AesCbcHmac struct{
 	keySizeBits int
 }

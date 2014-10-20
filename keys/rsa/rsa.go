@@ -1,3 +1,4 @@
+//package Rsa provides helpers for creating rsa leys
 package Rsa
 
 import (
@@ -7,6 +8,7 @@ import (
 		"errors"
 )
 
+// ReadPrivate loads rsa.PrivateKey from PKCS1 or PKCS8 blobs 
 func ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error) {	
 	var encoded *pem.Block
 
@@ -31,6 +33,7 @@ func ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error) {
 	return key,nil
 }
 
+// ReadPublic loads rsa.PublicKey from PKIX or PKCS1 X509 blobs
 func ReadPublic(raw []byte) (key *rsa.PublicKey,err error)  {
 	var encoded *pem.Block
 	

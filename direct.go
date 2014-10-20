@@ -8,6 +8,7 @@ func init() {
 	RegisterJwa(new(Direct))
 }
 
+// Direct (pre-shared) key management algorithm implementation
 type Direct struct{
 }
 

@@ -1,9 +1,11 @@
+// package padding provides various padding algorithms
 package padding
 
 import (
 	"bytes"
 )
 
+// Align left pads given byte array with zeros till it have at least bitSize length. 
 func Align(data []byte, bitSize int) []byte {
 	
 	actual:=len(data)	

@@ -13,6 +13,7 @@ func init() {
 	RegisterJwa(&AesKW{ keySizeBits: 256})
 }
 
+// AES Key Wrap key management algorithm implementation
 type AesKW struct {
 	keySizeBits int
 }

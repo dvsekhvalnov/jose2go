@@ -11,11 +11,12 @@ func init() {
 	RegisterJwa(new(RsaPkcs1v15))
 }
 
+// RS-AES using PKCS #1 v1.5 padding key management algorithm implementation
 type RsaPkcs1v15 struct{
 }
 
 func (alg *RsaPkcs1v15) Name() string {
-	return "RSA1_5"
+	return RSA1_5
 }
 
 func (alg *RsaPkcs1v15) WrapNewKey(cekSizeBits int, key interface{}, header map[string]interface{}) (cek []byte, encryptedCek []byte, err error) {

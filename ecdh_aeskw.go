@@ -6,6 +6,7 @@ func init() {
 	RegisterJwa(&EcdhAesKW{ keySizeBits: 256, aesKW: &AesKW{ keySizeBits: 256}, ecdh: &Ecdh{directAgreement:false}})
 }
 
+// Elliptic curve Diffie–Hellman with AES Key Wrap key management algorithm implementation
 type EcdhAesKW struct{
 	keySizeBits int
 	aesKW JwaAlgorithm

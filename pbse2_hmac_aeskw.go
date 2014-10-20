@@ -16,6 +16,7 @@ func init() {
 	RegisterJwa(&Pbse2HmacAesKW{keySizeBits: 256,aesKW: &AesKW{ keySizeBits: 256}})
 }
 
+// PBSE2 with HMAC key management algorithm implementation
 type Pbse2HmacAesKW struct{
 	keySizeBits int
 	aesKW JwaAlgorithm

@@ -11,15 +11,16 @@ func init() {
 	RegisterJws(&HmacUsingSha{keySizeBits: 512})		
 }
 
+// HMAC with SHA signing algorithm implementation
 type HmacUsingSha struct{
 	keySizeBits int
 }
 
 func (alg *HmacUsingSha) Name() string {
 	switch alg.keySizeBits {
-		case 256: return "HS256"
-		case 384: return "HS384"
-		default: return  "HS512"
+		case 256: return HS256
+		case 384: return HS384
+		default: return  HS512
 	}
 }
 

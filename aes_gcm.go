@@ -8,6 +8,7 @@ import (
 	"jose2go/arrays"
 )
 
+// AES GCM authenticated encryption algorithm implementation
 type AesGcm struct{
 	keySizeBits int
 }

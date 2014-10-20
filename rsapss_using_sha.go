@@ -12,6 +12,7 @@ func init() {
 	RegisterJws(&RsaPssUsingSha{keySizeBits: 512, saltSizeBytes: 64})
 }
 
+// RSA with PSS using SHA signing algorithm implementation
 type RsaPssUsingSha struct{
 	keySizeBits int
 	saltSizeBytes int
@@ -19,9 +20,9 @@ type RsaPssUsingSha struct{
 
 func (alg *RsaPssUsingSha) Name() string {
 	switch alg.keySizeBits {
-		case 256: return "PS256"
-		case 384: return "PS384"
-		default: return  "PS512"
+		case 256: return PS256
+		case 384: return PS384
+		default: return  PS512
 	}
 }
 

@@ -19,6 +19,7 @@ func init() {
 	RegisterJwa(&Ecdh{directAgreement:true})
 }
 
+// Elliptic curve Diffie–Hellman key management (key agreement) algorithm implementation
 type Ecdh struct{
 	directAgreement bool
 }

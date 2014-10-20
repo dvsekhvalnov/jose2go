@@ -10,6 +10,7 @@ import (
 	"jose2go/arrays"
 )
 
+// RS-AES using OAEP key management algorithm implementation
 func init() {
 	RegisterJwa(&RsaOaep {shaSizeBits:1})
 	RegisterJwa(&RsaOaep {shaSizeBits:256})

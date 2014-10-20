@@ -1,5 +1,6 @@
 package jose
 
+// Plaintext (no signing) signing algorithm implementation
 type Plaintext struct{}
 
 func init() {
@@ -7,7 +8,7 @@ func init() {
 }
 
 func (alg *Plaintext) Name() string {
-	return "none"
+	return NONE
 }
 
 func (alg *Plaintext) Verify(securedInput []byte, signature []byte, key interface{}) error {

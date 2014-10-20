@@ -4,6 +4,7 @@ import (
 	"bytes"
 )
 
+// AddPkcs7 pads given byte array using pkcs7 padding schema till it has blockSize length in bytes
 func AddPkcs7(data []byte, blockSize int) []byte {
 	
 	var paddingCount int
@@ -15,6 +16,7 @@ func AddPkcs7(data []byte, blockSize int) []byte {
 	return append(data, bytes.Repeat([]byte{byte(paddingCount)}, paddingCount)...)
 }
 
+// RemovePkcs7 removes pkcs7 padding from previously padded byte array
 func RemovePkcs7(padded []byte, blockSize int) []byte {	
 	
 	dataLen:=len(padded)		

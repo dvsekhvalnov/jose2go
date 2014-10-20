@@ -1,3 +1,4 @@
+//package ecc provides helpers for creating elliptic curve leys
 package ecc
 
 import (
@@ -9,6 +10,7 @@ import (
 	"errors"
 )
 
+// ReadPublic loads ecdsa.PublicKey from given PKCS1 X509 or PKIX blobs
 func ReadPublic(raw []byte) (key *ecdsa.PublicKey,err error) {
 	var encoded *pem.Block
 	
@@ -36,6 +38,7 @@ func ReadPublic(raw []byte) (key *ecdsa.PublicKey,err error) {
 	return key, nil
 }
 
+// ReadPrivate loads ecdsa.PrivateKey from given PKCS1 or PKCS8 blobs
 func ReadPrivate(raw []byte) (key *ecdsa.PrivateKey,err error) {
 	var encoded *pem.Block
 
@@ -60,12 +63,14 @@ func ReadPrivate(raw []byte) (key *ecdsa.PrivateKey,err error) {
 	return key,nil
 }
 
+// NewPublic constructs ecdsa.PublicKey from given (X,Y)
 func NewPublic(x,y []byte) (*ecdsa.PublicKey) {
 	return &ecdsa.PublicKey{ Curve: curve(len(x)), 
 							 X:new(big.Int).SetBytes(x), 
 							 Y:new(big.Int).SetBytes(y) }
 }
 
+// NewPrivate constructs ecdsa.PrivateKey from given (X,Y) and D
 func NewPrivate(x,y,d []byte) (*ecdsa.PrivateKey) {
 	return &ecdsa.PrivateKey {D:new(big.Int).SetBytes(d),
 							  PublicKey: ecdsa.PublicKey{ Curve:curve(len(x)),
