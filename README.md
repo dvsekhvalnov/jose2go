@@ -40,7 +40,7 @@ Used in production. GA ready.
 `go get github.com/dvsekhvalnov/jose2go` or `go get -u github.com/dvsekhvalnov/jose2go` to update to latest version
 
 ### Import package
-```GO
+```Go
 import (
 	"github.com/dvsekhvalnov/jose2go"
 )
