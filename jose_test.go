@@ -2016,7 +2016,7 @@ func (s *TestSuite) TestEncrypt_RSA_OAEP_256_A128GCM(c *C) {
 	parts := strings.Split(test,".")
 	
     c.Assert(len(parts), Equals, 5);
-	c.Assert(len(parts[0]),Equals, 51)
+	c.Assert(parts[0],Equals, "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4R0NNIn0")
  	c.Assert(len(parts[1]), Equals, 342);
  	c.Assert(len(parts[2]), Equals, 16);
  	c.Assert(len(parts[3]), Equals, 24);

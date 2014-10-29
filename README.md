@@ -40,9 +40,11 @@ Used in production. GA ready.
 `go get github.com/dvsekhvalnov/jose2go` or `go get -u github.com/dvsekhvalnov/jose2go` to update to latest version
 
 ### Import package
-	import (
-		"github.com/dvsekhvalnov/jose2go"
-	)
+```GO
+import (
+	"github.com/dvsekhvalnov/jose2go"
+)
+```
 
 ## Usage
 #### Creating Plaintext (unprotected) Tokens	
