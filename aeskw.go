@@ -3,8 +3,8 @@ package jose
 import (
 	"errors"
 	"fmt"
-	"jose2go/aes"
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/aes"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 func init() {

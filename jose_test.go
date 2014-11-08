@@ -6,8 +6,8 @@ import (
 	"testing"
 	"fmt"
 	"strings"
-	"jose2go/keys/rsa"
-	"jose2go/keys/ecc"
+	"github.com/dvsekhvalnov/jose2go/keys/rsa"
+	"github.com/dvsekhvalnov/jose2go/keys/ecc"
 	. "gopkg.in/check.v1"
 )
 

@@ -4,7 +4,7 @@ package arrays
 import (
 	"encoding/binary"
 	"bytes"
-	"jose2go/base64url"
+	"github.com/dvsekhvalnov/jose2go/base64url"
 	"crypto/rand"
 	"fmt"		
 )

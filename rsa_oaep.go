@@ -7,7 +7,7 @@ import (
 	"hash"
 	"crypto/sha1"
 	"crypto/sha256"
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 // RS-AES using OAEP key management algorithm implementation

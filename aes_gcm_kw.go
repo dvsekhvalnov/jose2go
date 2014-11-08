@@ -3,8 +3,8 @@ package jose
 import (
 	"errors"
 	"fmt"
-	"jose2go/base64url"
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/base64url"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 	"crypto/aes"
 	"crypto/cipher"	
 )

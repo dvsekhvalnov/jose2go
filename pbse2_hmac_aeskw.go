@@ -2,9 +2,9 @@ package jose
 
 import (
 	"errors"
-	"jose2go/arrays"
-	"jose2go/base64url"
-	"jose2go/kdf"
+	"github.com/dvsekhvalnov/jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/base64url"
+	"github.com/dvsekhvalnov/jose2go/kdf"
 	"crypto/sha256"
 	"crypto/sha512"	
 	"hash"

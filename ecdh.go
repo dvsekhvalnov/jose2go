@@ -8,11 +8,11 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"math/big"
-	"jose2go/base64url"	
-	"jose2go/arrays"		
-	"jose2go/keys/ecc"		
-	"jose2go/kdf"		
-	"jose2go/padding"
+	"github.com/dvsekhvalnov/jose2go/base64url"	
+	"github.com/dvsekhvalnov/jose2go/arrays"		
+	"github.com/dvsekhvalnov/jose2go/keys/ecc"		
+	"github.com/dvsekhvalnov/jose2go/kdf"		
+	"github.com/dvsekhvalnov/jose2go/padding"
 )
 
 func init() {

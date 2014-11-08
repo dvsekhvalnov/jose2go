@@ -3,7 +3,7 @@
 package jose
 
 import (
-	"jose2go/compact"
+	"github.com/dvsekhvalnov/jose2go/compact"
 	"fmt"
 	"errors"
 	"encoding/json"

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"crypto/aes"
 	"crypto/cipher"	
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 // AES GCM authenticated encryption algorithm implementation

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"crypto/rsa"
 	"crypto/rand"
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 func init() {

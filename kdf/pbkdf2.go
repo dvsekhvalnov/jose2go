@@ -5,7 +5,7 @@ import (
 	"hash"
 	"crypto/hmac"
 	"math"
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 	"fmt"
 )
 

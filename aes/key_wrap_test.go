@@ -4,7 +4,7 @@ import (
 	"testing"	
 	// "fmt"
 	. "gopkg.in/check.v1"
-	// "jose2go/arrays"
+	// "github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 func Test(t *testing.T) { TestingT(t) }

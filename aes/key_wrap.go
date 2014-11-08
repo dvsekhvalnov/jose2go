@@ -1,7 +1,7 @@
 package aes
 
 import (
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 	"crypto/cipher"
 	"crypto/aes"
 	"crypto/hmac"

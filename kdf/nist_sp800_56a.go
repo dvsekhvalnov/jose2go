@@ -3,7 +3,7 @@ package kdf
 import (
 	"hash"
 	"math"
-	"jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 // DeriveConcatKDF implements NIST SP 800-56A Concatenation Key Derivation Function. Derives 

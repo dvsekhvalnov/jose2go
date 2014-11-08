@@ -2,8 +2,8 @@ package jose
 
 import (
 	"errors"
-	"jose2go/arrays"	
-	"jose2go/padding"
+	"github.com/dvsekhvalnov/jose2go/arrays"	
+	"github.com/dvsekhvalnov/jose2go/padding"
 	"crypto/hmac"
 	"crypto/cipher"
 	"crypto/aes"

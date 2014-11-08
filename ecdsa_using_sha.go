@@ -5,8 +5,8 @@ import (
 	"math/big"
 	"crypto/ecdsa"
 	"errors"
-	"jose2go/arrays"
-	"jose2go/padding"
+	"github.com/dvsekhvalnov/jose2go/arrays"
+	"github.com/dvsekhvalnov/jose2go/padding"
 	"fmt"
 )
 
