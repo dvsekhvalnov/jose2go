@@ -10,7 +10,7 @@ Extensively unit tested and cross tested (100+ tests) for compatibility with [jo
 
 
 ##Status
-Used in production. GA ready.
+Used in production. GA ready. Current version is 1.1
 
 ## Supported JWA algorithms
 
@@ -692,3 +692,10 @@ func main() {
 
 ### More examples
 Checkout `jose_test.go` for more examples.	
+
+##Changelog
+### 1.1
+- security and bug fixes
+
+### 1.0
+- initial stable version with full suite JOSE spec support 
