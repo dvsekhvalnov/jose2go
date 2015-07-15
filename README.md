@@ -9,8 +9,25 @@ Extensively unit tested and cross tested (100+ tests) for compatibility with [jo
 [jose-jwt](https://github.com/dvsekhvalnov/jose-jwt) libraries. 
 
 
-##Status
+## Status
 Used in production. GA ready. Current version is 1.1
+
+## Important
+v1.2 breaks `jose.Decode` interface by returning 3 values instead of 2.
+
+###Migration to v1.2
+Pre v1.2 decoding:
+
+```Go
+payload,err := jose.Decode(token,sharedKey)
+```
+
+Should be updated to v1.2:
+
+```Go
+payload, headers, err := jose.Decode(token,sharedKey)
+```
+
 
 ## Supported JWA algorithms
 
@@ -367,6 +384,8 @@ func main() {
 ### Verifying, Decoding and Decompressing tokens
 Decoding json web tokens is fully symmetric to creating signed or encrypted tokens (with respect to public/private cryptography), decompressing deflated payloads is handled automatically:
 
+As of v1.2 decode method defined as `jose.Decode() payload string, headers map[string]interface{}, err error` and returns both payload as unprocessed string and headers as map.
+
 **HS256, HS384, HS512** signatures, **A128KW, A192KW, A256KW**,**A128GCMKW, A192GCMKW, A256GCMKW** and **DIR** key management algorithm expecting `[]byte` array key:
 
 ```Go
@@ -383,11 +402,14 @@ func main() {
 
 	sharedKey :=[]byte{97,48,97,50,97,98,100,56,45,54,49,54,50,45,52,49,99,51,45,56,51,100,54,45,49,99,102,53,53,57,98,52,54,97,102,99}
 
-	payload,err := jose.Decode(token,sharedKey)
+	payload, headers, err := jose.Decode(token,sharedKey)
 
 	if(err==nil) {
 		//go use token
 		fmt.Printf("\npayload = %v\n",payload)
+        
+        //and/or use headers 
+        fmt.Printf("\nheaders = %v\n",headers)        
 	}
 }
 ```
@@ -408,23 +430,26 @@ func main() {
 
     token := "eyJhbGciOiJSUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.NL_dfVpZkhNn4bZpCyMq5TmnXbT4yiyecuB6Kax_lV8Yq2dG8wLfea-T4UKnrjLOwxlbwLwuKzffWcnWv3LVAWfeBxhGTa0c4_0TX_wzLnsgLuU6s9M2GBkAIuSMHY6UTFumJlEeRBeiqZNrlqvmAzQ9ppJHfWWkW4stcgLCLMAZbTqvRSppC1SMxnvPXnZSWn_Fk_q3oGKWw6Nf0-j-aOhK0S0Lcr0PV69ZE4xBYM9PUS1MpMe2zF5J3Tqlc1VBcJ94fjDj1F7y8twmMT3H1PI9RozO-21R0SiXZ_a93fxhE_l_dj5drgOek7jUN9uBDjkXUwJPAyp9YPehrjyLdw"
 
-    keyBytes,err := ioutil.ReadFile("public.key")
+    keyBytes, err := ioutil.ReadFile("public.key")
 
     if(err!=nil) {
         panic("invalid key file")
     }
 
-    publicKey,e:=Rsa.ReadPublic(keyBytes)
+    publicKey, e:=Rsa.ReadPublic(keyBytes)
 
     if(e!=nil) {
         panic("invalid key format")
     }
 
-    payload,err := jose.Decode(token, publicKey)
+    payload, headers, err := jose.Decode(token, publicKey)
 
     if(err==nil) {
         //go use token
         fmt.Printf("\npayload = %v\n",payload)
+        
+        //and/or use headers 
+        fmt.Printf("\nheaders = %v\n",headers)                
     }
 }  
 ```
@@ -445,23 +470,26 @@ func main() {
 
     token := "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMjU2R0NNIn0.ixD3WVOkvaxeLKi0kyVqTzM6W2EW25SHHYCAr9473Xq528xSK0AVux6kUtv7QMkQKgkMvO8X4VdvonyGkDZTK2jgYUiI06dz7I1sjWJIbyNVrANbBsmBiwikwB-9DLEaKuM85Lwu6gnzbOF6B9R0428ckxmITCPDrzMaXwYZHh46FiSg9djChUTex0pHGhNDiEIgaINpsmqsOFX1L2Y7KM2ZR7wtpR3kidMV3JlxHdKheiPKnDx_eNcdoE-eogPbRGFdkhEE8Dyass1ZSxt4fP27NwsIer5pc0b922_3XWdi1r1TL_fLvGktHLvt6HK6IruXFHpU4x5Z2gTXWxEIog.zzTNmovBowdX2_hi.QSPSgXn0w25ugvzmu2TnhePn.0I3B9BE064HFNP2E0I7M9g"
 
-    keyBytes,err := ioutil.ReadFile("private.key")
+    keyBytes, err := ioutil.ReadFile("private.key")
 
     if(err!=nil) {
         panic("invalid key file")
     }
 
-    privateKey,e:=Rsa.ReadPrivate(keyBytes)
+    privateKey, e:=Rsa.ReadPrivate(keyBytes)
 
     if(e!=nil) {
         panic("invalid key format")
     }
 
-    payload,err := jose.Decode(token, privateKey)
+    payload, headers, err := jose.Decode(token, privateKey)
 
     if(err==nil) {
         //go use payload
         fmt.Printf("\npayload = %v\n",payload)
+        
+        //and/or use headers 
+        fmt.Printf("\nheaders = %v\n",headers)                
     }
 }  
 ```
@@ -482,11 +510,14 @@ func main() {
 
 	passphrase := `top secret`
 
-	payload,err := jose.Decode(token,passphrase)
+	payload, headers, err := jose.Decode(token,passphrase)
 
 	if(err==nil) {
 		//go use token
 		fmt.Printf("\npayload = %v\n",payload)
+        
+        //and/or use headers 
+        fmt.Printf("\nheaders = %v\n",headers)                
 	}
 }
 ```
@@ -509,11 +540,14 @@ func main() {
 	publicKey:=ecc.NewPublic([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
 	 			 			 []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53})
 
-    payload,err := jose.Decode(token, publicKey)
+    payload, headers, err := jose.Decode(token, publicKey)
 
     if(err==nil) {
         //go use token
         fmt.Printf("\npayload = %v\n",payload)
+        
+        //and/or use headers 
+        fmt.Printf("\nheaders = %v\n",headers)                
     }
 }
 ```
@@ -537,11 +571,14 @@ func main() {
 	 			 			   []byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53},
 							   []byte{ 42, 148, 231, 48, 225, 196, 166, 201, 23, 190, 229, 199, 20, 39, 226, 70, 209, 148, 29, 70, 125, 14, 174, 66, 9, 198, 80, 251, 95, 107, 98, 206 })
 
-    payload,err := jose.Decode(token, privateKey)
+    payload, headers, err := jose.Decode(token, privateKey)
 
     if(err==nil) {
         //go use token
         fmt.Printf("\npayload = %v\n",payload)
+        
+        //and/or use headers 
+        fmt.Printf("\nheaders = %v\n",headers)                
     }
 }	
 ```
@@ -563,9 +600,9 @@ import (
 
 func main() {
 
-    keyBytes,_ := ioutil.ReadFile("private.key")
+    keyBytes, _ := ioutil.ReadFile("private.key")
 
-    privateKey,err:=Rsa.ReadPrivate(keyBytes)
+    privateKey, err:=Rsa.ReadPrivate(keyBytes)
 
     if(err!=nil) {
         panic("invalid key format")
@@ -588,9 +625,9 @@ import (
 
 func main() {
 
-    keyBytes,_ := ioutil.ReadFile("public.cer")
+    keyBytes, _ := ioutil.ReadFile("public.cer")
 
-    publicKey,err:=Rsa.ReadPublic(keyBytes)
+    publicKey, err:=Rsa.ReadPublic(keyBytes)
 
     if(err!=nil) {
         panic("invalid key format")
@@ -614,9 +651,9 @@ import (
 
 func main() {
 
-    keyBytes,_ := ioutil.ReadFile("ec-private.pem")
+    keyBytes, _ := ioutil.ReadFile("ec-private.pem")
 
-    ecPrivKey,err:=ecc.ReadPrivate(keyBytes)
+    ecPrivKey, err:=ecc.ReadPrivate(keyBytes)
 
     if(err!=nil) {
         panic("invalid key format")
@@ -639,9 +676,9 @@ import (
 
 func main() {
 
-    keyBytes,_ := ioutil.ReadFile("ec-public.key")
+    keyBytes, _ := ioutil.ReadFile("ec-public.key")
 
-    ecPubKey,err:=ecc.ReadPublic(keyBytes)
+    ecPubKey, err:=ecc.ReadPublic(keyBytes)
 
     if(err!=nil) {
         panic("invalid key format")
@@ -694,6 +731,9 @@ func main() {
 Checkout `jose_test.go` for more examples.	
 
 ##Changelog
+### 1.2
+- interface to access token headers after decoding 
+    
 ### 1.1
 - security and bug fixes
 
