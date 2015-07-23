@@ -2165,6 +2165,41 @@ func (s *TestSuite) TestDecodeEncryptedHeader(c *C) {
 	c.Assert(test, DeepEquals, map[string]interface{}{"enc": "A256CBC-HS512", "alg": "RSA-OAEP-256"})
 }
 
+func (s *TestSuite) TestDecrypt_TwoPhased(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.Pt1q6MNdaiVWhMnY7r6DVpkYQmzyIjhb0cj10LowP_FgMu1dOQVuNwhK14MO1ki1y1Pvxouct9wwmb5gE7jNJBy6vU-FrrY62WNr_hKL3Cq2030LlJwauv1XQrEE-GCw1srxOAsw6LNT14v4f0qjeW46mIHNX4CZMEO9ntwojWsHTNsh4Qk6SU1QlS3WbbVl7gjjfqTP54j2ZwZM38s7Cs4pSAChP04UbW6Uhrm65JSi0lyg25OBXIxMEt1z9WY8lnjuh3iL_WttnFn9lf5fUuuR2N70HwANz2mxH3CxjO0ygXJtV-FhFzz3HqI2-ELrve4Igj_2f2_S6OrRTWRucA.er5K9Gk0wp3wF_sq7ib7BQ.L80B9FGSjUbEblpJ6tuiaq6NAsW89YQGD0awxtE-irKN65PT8nndBd0hlel8RRThXRF0kiYYor2GpgvVVaoOzSQcwL-aDgNO7BeRsaOL5ku2NlyT1erbg_8jEVG5BFMM0-jCb4kD0jBKWYCGoB7qs_QQxZ394H5GPwG68vlizKEa8PoaNIM0at5oFT7EHPdmGmwQyQCHR43e6uN4k28PWNxjN9Ndo5lvlYnxnAyDGVDu8lCjozaA_ZTrEPS-UBb6lOEW39CXdwVk1MgvyQfswQ.yuDMf_77Wr9Er3FG1_0FwHXJTOVQPjzBwGoKEg81mQo"
+
+	//when
+	test, _, err := Decode(token, func(headers map[string]interface{}, payload string) interface{} {
+		//ensure that callback executed with correct arguments
+		c.Assert(headers, DeepEquals, map[string]interface{}{"alg": "RSA-OAEP-256", "enc": "A256CBC-HS512"})
+
+		return PrivKey()
+	})
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
+}
+
+func (s *TestSuite) TestDecode_TwoPhased(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+
+	//when
+	test, _, err := Decode(token, func(headers map[string]interface{}, payload string) interface{} {
+		//ensure that callback executed with correct arguments
+		c.Assert(headers, DeepEquals, map[string]interface{}{"alg": "ES256", "cty": "text/plain"})
+		c.Assert(payload, Equals, `{"hello": "world"}`)
+
+		return Ecc256Public()
+	})
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"hello": "world"}`)
+}
+
 //test utils
 func PubKey() *rsa.PublicKey {
 	key, _ := Rsa.ReadPublic([]byte(pubKey))
