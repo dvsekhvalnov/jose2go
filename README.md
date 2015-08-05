@@ -588,11 +588,40 @@ In some cases validation (decoding) key can be unknown prior to examining token 
 
 **jose2go** allows to pass `func(headers map[string]interface{}, payload string) key interface{}` callback instead of key to `jose.Decode(..)`. Callback will be executed prior to decoding and integrity validation and will recieve parsed headers and payload as is (for encrypted tokens it will be cipher text). Callback should return key to be used for actual decoding process.    
 
-Example of decoding signed token with callback:
+Example of decoding token with callback:
 
-Example of decoding encrypted token with callback:
+```Go
+package main
 
+import (
+	"crypto/rsa"
+	"fmt"
+	"github.com/dvsekhvalnov/jose2go"
+	"github.com/dvsekhvalnov/jose2go/keys/rsa"
+	"io/ioutil"
+)
 
+func main() {
+
+	token := "eyJhbGciOiJSUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.NL_dfVpZkhNn4bZpCyMq5TmnXbT4yiyecuB6Kax_lV8Yq2dG8wLfea-T4UKnrjLOwxlbwLwuKzffWcnWv3LVAWfeBxhGTa0c4_0TX_wzLnsgLuU6s9M2GBkAIuSMHY6UTFumJlEeRBeiqZNrlqvmAzQ9ppJHfWWkW4stcgLCLMAZbTqvRSppC1SMxnvPXnZSWn_Fk_q3oGKWw6Nf0-j-aOhK0S0Lcr0PV69ZE4xBYM9PUS1MpMe2zF5J3Tqlc1VBcJ94fjDj1F7y8twmMT3H1PI9RozO-21R0SiXZ_a93fxhE_l_dj5drgOek7jUN9uBDjkXUwJPAyp9YPehrjyLdw"
+
+	payload, _, err := jose.Decode(token,
+		func(headers map[string]interface{}, payload string) interface{} {            
+            //log something
+			fmt.Printf("\nHeaders before decoding: %v\n", headers)
+			fmt.Printf("\nPayload before decoding: %v\n", payload)
+
+            //lookup key based on keyid header as en example
+            //or lookup based on something from payload, e.g. 'iss' claim for instance
+			return FindKey(headers['keyid'])
+		})
+
+	if err == nil {
+		//go use token
+		fmt.Printf("\ndecoded payload = %v\n", payload)
+	}
+}
+```
     
 ### Dealing with keys	
 **jose2go** provides several helper methods to simplify loading & importing of elliptic and rsa keys. Import `jose2go/keys/rsa` or `jose2go/keys/ecc` respectively: 
