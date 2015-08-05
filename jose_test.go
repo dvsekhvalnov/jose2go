@@ -2200,6 +2200,31 @@ func (s *TestSuite) TestDecode_TwoPhased(c *C) {
 	c.Assert(test, Equals, `{"hello": "world"}`)
 }
 
+func (s *TestSuite) TestSignWithExtraHeaders(c *C) {
+	//given
+	payload := `{"hello": "world"}`
+
+	//when
+	test, err := Sign(payload, ES256, Ecc256Private(), Header("keyid", "111-222-333"), Header("trans-id", "aaa-bbb"),
+		Headers(map[string]interface{}{"alg": "RS256", "cty": "text/plain"}))
+
+	fmt.Printf("\nES256 + extra headers = %v\n", test)
+
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test, ".")
+
+	c.Assert(len(parts), Equals, 3)
+	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHQvcGxhaW4iLCJrZXlpZCI6IjExMS0yMjItMzMzIiwidHJhbnMtaWQiOiJhYWEtYmJiIiwidHlwIjoiSldUIn0")
+	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
+	c.Assert(len(parts[2]), Equals, 86)
+
+	//make sure we consistent with ourselfs
+	t, _, _ := Decode(test, Ecc256Public())
+	c.Assert(t, Equals, payload)
+}
+
 //test utils
 func PubKey() *rsa.PublicKey {
 	key, _ := Rsa.ReadPublic([]byte(pubKey))

@@ -583,6 +583,17 @@ func main() {
 }	
 ```
 	
+### Two phase validation
+In some cases validation (decoding) key can be unknown prior to examining token content. For instance one can use different keys per token issuer or rely on headers information to determine which key to use, do logging or other things.
+
+**jose2go** allows to pass `func(headers map[string]interface{}, payload string) key interface{}` callback instead of key to `jose.Decode(..)`. Callback will be executed prior to decoding and integrity validation and will recieve parsed headers and payload as is (for encrypted tokens it will be cipher text). Callback should return key to be used for actual decoding process.    
+
+Example of decoding signed token with callback:
+
+Example of decoding encrypted token with callback:
+
+
+    
 ### Dealing with keys	
 **jose2go** provides several helper methods to simplify loading & importing of elliptic and rsa keys. Import `jose2go/keys/rsa` or `jose2go/keys/ecc` respectively: 
 
