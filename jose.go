@@ -221,7 +221,11 @@ func Compress(payload string, alg string, enc string, zip string, key interface{
 // Returns decoded payload as a string and not nil error if something went wrong.
 func Decode(token string, key interface{}) (string, map[string]interface{}, error) {
 
-	parts := compact.Parse(token)
+	parts, err := compact.Parse(token)
+
+	if err != nil {
+		return "", nil, err
+	}
 
 	if len(parts) == 3 {
 		return verify(parts, key)
