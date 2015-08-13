@@ -2121,7 +2121,7 @@ func (s *TestSuite) TestEncrypt_Deflated(c *C) {
 	payload := `{"hello": "world"}`
 
 	//when
-	test, err := Compress(payload, RSA_OAEP, A256GCM, DEF, PubKey())
+	test, err := Encrypt(payload, RSA_OAEP, A256GCM, PubKey(), Zip(DEF))
 
 	fmt.Printf("\nRSA-OAEP A256GCM DEF = %v\n", test)
 
@@ -2222,6 +2222,35 @@ func (s *TestSuite) TestSignWithExtraHeaders(c *C) {
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, Ecc256Public())
+	c.Assert(t, Equals, payload)
+}
+
+func (s *TestSuite) TestEncryptWithExtraHeaders(c *C) {
+	//given
+	payload := `{"hello": "world"}`
+
+	//when
+	test, err := Encrypt(payload, ECDH_ES, A128CBC_HS256, Ecc256Public(),
+		Header("keyid", "111-222-333"),
+		Header("trans-id", "aaa-bbb"),
+		Headers(map[string]interface{}{"alg": "RS256", "cty": "text/plain", "zip": "DEFLATE"}))
+
+	fmt.Printf("\nECDH-ES A128CBC_HS256 + extra headers = %v\n", test)
+
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test, ".")
+
+	c.Assert(len(parts), Equals, 5)
+	c.Assert(len(parts[0]), Equals, 312)
+	c.Assert(len(parts[1]), Equals, 0)
+	c.Assert(len(parts[2]), Equals, 22)
+	c.Assert(len(parts[3]), Equals, 43)
+	c.Assert(len(parts[4]), Equals, 22)
+
+	//make sure we consistent with ourselfs
+	t, _, _ := Decode(test, Ecc256Private())
 	c.Assert(t, Equals, payload)
 }
 

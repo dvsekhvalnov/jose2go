@@ -15,6 +15,9 @@ Used in production. GA ready. Current version is 1.1
 ## Important
 v1.2 breaks `jose.Decode` interface by returning 3 values instead of 2.
 
+v1.2 deprecates `jose.Compress` method in favor of using configuration options to `jose.Encrypt`,
+the method will be removed in next release.
+
 ###Migration to v1.2
 Pre v1.2 decoding:
 
@@ -28,6 +31,17 @@ Should be updated to v1.2:
 payload, headers, err := jose.Decode(token,sharedKey)
 ```
 
+Pre v1.2 compression:
+
+```Go
+token,err := jose.Compress(payload,jose.DIR,jose.A128GCM,jose.DEF, key)
+```
+
+Should be update to v1.2:
+
+```Go
+token, err := jose.Encrypt(payload, jose.DIR, jose.A128GCM, key, jose.Zip(jose.DEF))
+```
 
 ## Supported JWA algorithms
 
@@ -368,15 +382,15 @@ import (
 
 func main() {
 
-	payload :=  `{"hello": "world"}`
+	payload := `{"hello": "world"}`
 
-	sharedKey :=[]byte{194,164,235,6,138,248,171,239,24,216,11,22,137,199,215,133}
+	sharedKey := []byte{194, 164, 235, 6, 138, 248, 171, 239, 24, 216, 11, 22, 137, 199, 215, 133}
 
-	token,err := jose.Compress(payload,jose.DIR,jose.A128GCM,jose.DEF, sharedKey)
+	token, err := jose.Encrypt(payload, jose.DIR, jose.A128GCM, sharedKey, jose.Zip(jose.DEF))
 
-	if(err==nil) {
+	if err == nil {
 		//go use token
-		fmt.Printf("\nDIR A128GCM DEFLATED= %v\n",token)
+		fmt.Printf("\nDIR A128GCM DEFLATED= %v\n", token)
 	}
 }
 ```
