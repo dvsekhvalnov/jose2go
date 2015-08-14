@@ -10,7 +10,7 @@ Extensively unit tested and cross tested (100+ tests) for compatibility with [jo
 
 
 ## Status
-Used in production. GA ready. Current version is 1.1
+Used in production. GA ready. Current version is 1.2
 
 ## Important
 v1.2 breaks `jose.Decode` interface by returning 3 values instead of 2.
@@ -805,6 +805,8 @@ Checkout `jose_test.go` for more examples.
 ##Changelog
 ### 1.2
 - interface to access token headers after decoding 
+- interface to provide extra headers for token encoding
+- two-phase validation support
     
 ### 1.1
 - security and bug fixes
