@@ -597,6 +597,24 @@ func main() {
 }	
 ```
 	
+### Adding extra headers    
+It's possible to pass additional headers while encoding token with **jose2go** provides convenience configuration helpers: `Header(name string, value interface{})` and `Headers(headers map[string]interface{})` that can be passed to `Sign(..)` and `Encrypt(..)` calls. 
+
+Note: **jose2go** is not allow to override `alg`, `enc` and `zip` headers.
+
+Example of signing with extra headers:
+```Go
+	token, err := jose.Sign(payload, jose.ES256, key,
+                    		jose.Header("keyid", "111-222-333"),
+                    		jose.Header("trans-id", "aaa-bbb"))
+```
+
+Encryption with extra headers:
+```Go
+token, err := jose.Encrypt(payload, jose.DIR, jose.A128GCM, sharedKey,
+                    jose.Headers(map[string]interface{}{"keyid": "111-22-33", "cty": "text/plain"}))
+```
+    
 ### Two phase validation
 In some cases validation (decoding) key can be unknown prior to examining token content. For instance one can use different keys per token issuer or rely on headers information to determine which key to use, do logging or other things.
 
