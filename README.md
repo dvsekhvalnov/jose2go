@@ -598,9 +598,9 @@ func main() {
 ```
 	
 ### Adding extra headers    
-It's possible to pass additional headers while encoding token with **jose2go** provides convenience configuration helpers: `Header(name string, value interface{})` and `Headers(headers map[string]interface{})` that can be passed to `Sign(..)` and `Encrypt(..)` calls. 
+It's possible to pass additional headers while encoding token. **jose2go** provides convenience configuration helpers: `Header(name string, value interface{})` and `Headers(headers map[string]interface{})` that can be passed to `Sign(..)` and `Encrypt(..)` calls. 
 
-Note: **jose2go** is not allow to override `alg`, `enc` and `zip` headers.
+Note: **jose2go** do not allow to override `alg`, `enc` and `zip` headers.
 
 Example of signing with extra headers:
 ```Go
