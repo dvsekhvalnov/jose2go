@@ -20,7 +20,7 @@ func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h has
 	r := dkLen - (l-1)*hLen
 
 	// 1. If dkLen > (2^32 - 1) * hLen, output "derived key too long" and stop.
-	if dkLen > int(^uint(0)>>1) {
+	if dkLen > MAX_INT {
 		panic(fmt.Sprintf("kdf.DerivePBKDF2: expects derived key size to be not more that (2^32-1) bits, but was requested %v bits.", keyBitLength))
 	}
 
