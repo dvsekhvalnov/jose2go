@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	MAX_INT = int(^uint(0)>>1);
+	MaxInt = int(^uint(0)>>1);
 )
 
 // DeriveConcatKDF implements NIST SP 800-56A Concatenation Key Derivation Function. Derives 
@@ -21,7 +21,7 @@ func DeriveConcatKDF(keydatalen int, sharedSecret, algId, partyUInfo, partyVInfo
 	
 	reps := int(math.Ceil(float64(keyLenBytes) / float64(h.Size())))
 	
-	if reps > MAX_INT {
+	if reps > MaxInt {
 		panic("kdf.DeriveConcatKDF: too much iterations (more than 2^32-1).")
 	}
 	
