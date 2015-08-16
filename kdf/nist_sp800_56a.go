@@ -17,7 +17,7 @@ func DeriveConcatKDF(keydatalen int, sharedSecret, algId, partyUInfo, partyVInfo
 	
 	reps := int(math.Ceil(float64(keyLenBytes) / float64(h.Size())))
 	
-	if reps > 4294967295 {
+	if reps > int(^uint(0)>>1) {
 		panic("kdf.DeriveConcatKDF: too much iterations (more than 2^32-1).")
 	}
 	
