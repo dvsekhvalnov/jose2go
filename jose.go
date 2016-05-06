@@ -300,20 +300,21 @@ func verify(parts [][]byte, key interface{}) (plainText string, headers map[stri
 		return "", nil, err
 	}
 
-	alg := jwtHeader["alg"].(string)
+	if alg, ok := jwtHeader["alg"].(string); ok {
+		if verifier, ok := jwsHashers[alg]; ok {
+			key = retrieveActualKey(jwtHeader, string(payload), key)
 
-	if verifier, ok := jwsHashers[alg]; ok {
+			if err = verifier.Verify(secured, signature, key); err == nil {
+				return string(payload), jwtHeader, nil
+			}
 
-		key = retrieveActualKey(jwtHeader, string(payload), key)
-
-		if err = verifier.Verify(secured, signature, key); err == nil {
-			return string(payload), jwtHeader, nil
+			return "", nil, err
 		}
 
-		return "", nil, err
+		return "", nil, errors.New(fmt.Sprintf("jwt.Decode(): Unknown algorithm: '%v'", alg))
 	}
 
-	return "", nil, errors.New(fmt.Sprintf("jwt.Decode(): Unknown algorithm: '%v'", alg))
+	return "", nil, errors.New(fmt.Sprint("jwt.Decode(): required 'alg' header is missing or of invalid type"))
 }
 
 func decrypt(parts [][]byte, key interface{}) (plainText string, headers map[string]interface{}, err error) {
@@ -326,16 +327,22 @@ func decrypt(parts [][]byte, key interface{}) (plainText string, headers map[str
 		return "", nil, e
 	}
 
-	alg := jwtHeader["alg"].(string)
-	enc := jwtHeader["enc"].(string)
-
-	aad := []byte(compact.Serialize(header))
-
 	var keyMgmtAlg JwaAlgorithm
 	var encAlg JweEncryption
 	var zipAlg JwcAlgorithm
 	var cek, plainBytes []byte
 	var ok bool
+	var alg, enc string
+
+	if alg, ok = jwtHeader["alg"].(string); !ok {
+		return "", nil, errors.New(fmt.Sprint("jwt.Decode(): required 'alg' header is missing or of invalid type"))
+	}
+
+	if enc, ok = jwtHeader["enc"].(string); !ok {
+		return "", nil, errors.New(fmt.Sprint("jwt.Decode(): required 'enc' header is missing or of invalid type"))
+	}
+
+	aad := []byte(compact.Serialize(header))
 
 	if keyMgmtAlg, ok = jwaAlgorithms[alg]; ok {
 		if encAlg, ok = jweEncryptors[enc]; ok {
