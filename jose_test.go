@@ -3,6 +3,7 @@ package jose
 import (
 	"crypto/ecdsa"
 	"crypto/rsa"
+	"errors"
 	"fmt"
 	"github.com/dvsekhvalnov/jose2go/keys/ecc"
 	"github.com/dvsekhvalnov/jose2go/keys/rsa"
@@ -2198,6 +2199,21 @@ func (s *TestSuite) TestDecode_TwoPhased(c *C) {
 	//then
 	c.Assert(err, IsNil)
 	c.Assert(test, Equals, `{"hello": "world"}`)
+}
+
+func (s *TestSuite) TestDecode_TwoPhased_Error(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+
+	//when
+	test, _, err := Decode(token, func(headers map[string]interface{}, payload string) interface{} {
+		return errors.New("Test error")
+	})
+
+	//then
+	fmt.Printf("\ntwo phased err= %v\n", err)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
 }
 
 func (s *TestSuite) TestSignWithExtraHeaders(c *C) {

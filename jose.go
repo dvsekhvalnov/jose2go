@@ -302,7 +302,9 @@ func verify(parts [][]byte, key interface{}) (plainText string, headers map[stri
 
 	if alg, ok := jwtHeader["alg"].(string); ok {
 		if verifier, ok := jwsHashers[alg]; ok {
-			key = retrieveActualKey(jwtHeader, string(payload), key)
+			if key, err = retrieveActualKey(jwtHeader, string(payload), key); err != nil {
+				return "", nil, err
+			}
 
 			if err = verifier.Verify(secured, signature, key); err == nil {
 				return string(payload), jwtHeader, nil
@@ -347,7 +349,9 @@ func decrypt(parts [][]byte, key interface{}) (plainText string, headers map[str
 	if keyMgmtAlg, ok = jwaAlgorithms[alg]; ok {
 		if encAlg, ok = jweEncryptors[enc]; ok {
 
-			key = retrieveActualKey(jwtHeader, string(cipherText), key)
+			if key, err = retrieveActualKey(jwtHeader, string(cipherText), key); err != nil {
+				return "", nil, err
+			}
 
 			if cek, err = keyMgmtAlg.Unwrap(encryptedCek, key, encAlg.KeySizeBits(), jwtHeader); err == nil {
 				if plainBytes, err = encAlg.Decrypt(aad, cek, iv, cipherText, authTag); err == nil {
@@ -376,10 +380,16 @@ func decrypt(parts [][]byte, key interface{}) (plainText string, headers map[str
 	return "", nil, errors.New(fmt.Sprintf("jwt.decrypt(): Unknown key management algorithm '%v'", alg))
 }
 
-func retrieveActualKey(headers map[string]interface{}, payload string, key interface{}) interface{} {
+func retrieveActualKey(headers map[string]interface{}, payload string, key interface{}) (interface{}, error) {
 	if keyCallback, ok := key.(func(headers map[string]interface{}, payload string) interface{}); ok {
-		return keyCallback(headers, payload)
+		result := keyCallback(headers, payload)
+
+		if err, ok := result.(error); ok {
+			return nil, err
+		}
+
+		return result, nil
 	}
 
-	return key
+	return key, nil
 }

@@ -618,7 +618,7 @@ token, err := jose.Encrypt(payload, jose.DIR, jose.A128GCM, sharedKey,
 ### Two phase validation
 In some cases validation (decoding) key can be unknown prior to examining token content. For instance one can use different keys per token issuer or rely on headers information to determine which key to use, do logging or other things.
 
-**jose2go** allows to pass `func(headers map[string]interface{}, payload string) key interface{}` callback instead of key to `jose.Decode(..)`. Callback will be executed prior to decoding and integrity validation and will recieve parsed headers and payload as is (for encrypted tokens it will be cipher text). Callback should return key to be used for actual decoding process.    
+**jose2go** allows to pass `func(headers map[string]interface{}, payload string) key interface{}` callback instead of key to `jose.Decode(..)`. Callback will be executed prior to decoding and integrity validation and will recieve parsed headers and payload as is (for encrypted tokens it will be cipher text). Callback should return key to be used for actual decoding process or `error` if decoding should be stopped, given error object will be returned from `jose.Decode(..)` call.
 
 Example of decoding token with callback:
 
@@ -631,6 +631,7 @@ import (
 	"github.com/dvsekhvalnov/jose2go"
 	"github.com/dvsekhvalnov/jose2go/keys/rsa"
 	"io/ioutil"
+    "errors"
 )
 
 func main() {
@@ -644,8 +645,14 @@ func main() {
 			fmt.Printf("\nPayload before decoding: %v\n", payload)
 
             //lookup key based on keyid header as en example
-            //or lookup based on something from payload, e.g. 'iss' claim for instance
-			return FindKey(headers['keyid'])
+            //or lookup based on something from payload, e.g. 'iss' claim for instance                        
+            key := FindKey(headers['keyid'])
+            
+            if(key==nil) {
+                return errors.New("Key not found") 
+            }
+            
+            return key;
 		})
 
 	if err == nil {
