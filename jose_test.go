@@ -2354,6 +2354,74 @@ func (s *TestSuite) TestDecryptInvalidEncHeader(c *C) {
 	c.Assert(test, Equals, "")
 }
 
+func (s *TestSuite) TestDecodeBytes_HS512(c *C) {
+	//given
+	token := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.AAECAwQFBgcICQ.iTZ3VKv6n2JdDxMyM4qRZMuiYZOOaZ-58yCvs48vRaCRYQZmbAK6q-DWuBNEutL1LorEVGo8LZC0LyE7b8L1UA"
+
+	//when
+	test, _, err := DecodeBytes(token, shaKey)
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, DeepEquals, []byte{0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9})
+}
+
+func (s *TestSuite) TestDecodeBytes_RSA_OAEP_A256GCM(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.G23wC6QtVVaxoCp9ijgvbK5veMJ6YvoQW_Zdcaxb_2-cNHBbRP8E44kDRVkHXXIj_gPlm1knqK9-y-7lyxhyVbG0w71gZnfSuOKegKwXO9KpCX60dc8NbkrlTSDDey5EbSjmoqLlnllajdCdkssrF1KFPzIcnct8ecfJkhxTeKnmjis8xSfGB2sk6HP8C8eYDAEjeO5qPuYmfGwpm4BaYycbylqv4r0zZpFMOADZx2oJw3u7aFe8DL-JYAo5WbfFukg30MBHAfNNiLMu1tLRrjXvcr9i7MeHaUGgo281d9B8d7KUonbwJSwi4Ov3Lm00zrGYFE5WTgtan3vb33ndpg.tLpzdIKoJeytyZv_.RKIL2pXKTmIa3g.5SjeG9R0jmNtgdNY-sMZKw"
+
+	//when
+	test, _, err := DecodeBytes(token, PrivKey())
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, DeepEquals, []byte{0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9})
+}
+
+func (s *TestSuite) TestEncodeBytes_HS256(c *C) {
+	//given
+	payload := []byte{0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9}
+
+	//when
+	test, err := SignBytes(payload, HS256, shaKey)
+
+	fmt.Printf("\nHS256 (bytes) = %v\n", test)
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.AAECAwQFBgcICQ.NN-xrkVjzemjSg7VkP5bs_jJnk4mUGxK3ylhCsymo9Y")
+
+	//make sure we consistent with ourselfs
+	t, _, _ := DecodeBytes(test, shaKey)
+	c.Assert(t, DeepEquals, payload)
+}
+
+func (s *TestSuite) TestEncryptBytes_RSA_OAEP_256_A128GCM(c *C) {
+	//given
+	payload := []byte{0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9}
+
+	//when
+	test, err := EncryptBytes(payload, RSA_OAEP_256, A128GCM, PubKey())
+
+	fmt.Printf("\nRSA-OAEP-256 A128GCM (bytes) = %v\n", test)
+
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test, ".")
+
+	c.Assert(len(parts), Equals, 5)
+	c.Assert(parts[0], Equals, "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4R0NNIn0")
+	c.Assert(len(parts[1]), Equals, 342)
+	c.Assert(len(parts[2]), Equals, 16)
+	c.Assert(len(parts[3]), Equals, 14)
+	c.Assert(len(parts[4]), Equals, 22)
+
+	//make sure we consistent with ourselfs
+	t, _, _ := DecodeBytes(test, PrivKey())
+	c.Assert(t, DeepEquals, payload)
+}
+
 //test utils
 func PubKey() *rsa.PublicKey {
 	key, _ := Rsa.ReadPublic([]byte(pubKey))
