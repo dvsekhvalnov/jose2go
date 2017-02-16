@@ -10,9 +10,12 @@ Extensively unit tested and cross tested (100+ tests) for compatibility with [jo
 
 
 ## Status
-Used in production. GA ready. Current version is 1.2
+Used in production. GA ready. Current version is 1.3.
 
 ## Important
+v1.3 fixed potential Invalid Curve Attack on NIST curves within ECDH key management.
+Upgrade strongly recommended.
+
 v1.2 breaks `jose.Decode` interface by returning 3 values instead of 2.
 
 v1.2 deprecates `jose.Compress` method in favor of using configuration options to `jose.Encrypt`,
