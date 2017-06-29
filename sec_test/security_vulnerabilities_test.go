@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"github.com/dvsekhvalnov/jose2go"
+	"github.com/dvsekhvalnov/jose2go/arrays"
 	"github.com/dvsekhvalnov/jose2go/keys/ecc"
 	. "gopkg.in/check.v1"
 	"testing"
@@ -42,6 +43,54 @@ func (s *SecurityTestSuite) Test_InvalidCurve(c *C) {
 	c.Assert(err, NotNil)
 	fmt.Printf("\nerr= %v\n", err)
 	c.Assert(test, Equals, "")
+}
+
+func (s *SecurityTestSuite) Test_AAD_IntegerOverflow(c *C) {
+	//Borrowed test case from https://bitbucket.org/b_c/jose4j/commits/b79e67c13c23
+
+	cek := []byte{57, 188, 52, 101, 199, 208, 135, 76, 159, 67, 65, 71, 196, 136, 137, 113, 227, 232, 28, 1, 61, 157, 73, 156, 68, 103, 67, 250, 215, 162, 181, 161}
+
+	aad := []byte{0, 1, 2, 3, 4, 5, 6, 7}
+	plainText := make([]byte, 536870928, 536870928)
+
+	//generate random plaintext
+	for i := 0; i < len(plainText); i += 8 {
+		bytes := arrays.UInt64ToBytes(uint64(i))
+		plainText[i] = bytes[0]
+		plainText[i+1] = bytes[1]
+		plainText[i+2] = bytes[2]
+		plainText[i+3] = bytes[3]
+		plainText[i+4] = bytes[4]
+		plainText[i+5] = bytes[5]
+		plainText[i+6] = bytes[6]
+		plainText[i+7] = bytes[7]
+	}
+
+	enc := &jose.AesCbcHmac{}
+	enc.SetKeySizeBits(256)
+
+	iv, cipherText, authTag, _ := enc.Encrypt(aad, plainText, cek)
+
+	// Now shift aad and ciphertext around so that HMAC doesn't change,
+	// but the plaintext will change.
+
+	buffer := arrays.Concat(aad, iv, cipherText)
+
+	// Note that due to integer overflow 536870920 * 8 = 64
+	newAadSize := 536870920
+
+	newAad := buffer[0:newAadSize]
+	newIv := buffer[newAadSize : newAadSize+16]
+	newCipherText := buffer[newAadSize+16:]
+
+	//decrypt shifted binary, it should fail, since content is different now
+	test, err := enc.Decrypt(newAad, cek, newIv, newCipherText, authTag)
+
+	//if we reach that point HMAC check was bypassed although the decrypted data is different
+
+	c.Assert(err, NotNil)
+	fmt.Printf("\nerr= %v\n", err)
+	c.Assert(test, IsNil)
 }
 
 func Ecc256() *ecdsa.PrivateKey {
