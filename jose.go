@@ -255,9 +255,9 @@ func Compress(payload string, alg string, enc string, zip string, key interface{
 // Management key is of different type for different key management or signing algorithms, see specific alg implementation documentation.
 //
 // Returns decoded payload as a string, headers and not nil error if something went wrong.
-func Decode(token string, key interface{}) (string, map[string]interface{}, error) {
+func Decode(token string, key interface{}, checkAlg string) (string, map[string]interface{}, error) {
 
-	payload, headers, err := DecodeBytes(token, key)
+	payload, headers, err := DecodeBytes(token, key, checkAlg)
 
 	if err != nil {
 		return "", nil, err
@@ -270,7 +270,7 @@ func Decode(token string, key interface{}) (string, map[string]interface{}, erro
 // Management key is of different type for different key management or signing algorithms, see specific alg implementation documentation.
 //
 // Returns decoded payload as a raw bytes, headers and not nil error if something went wrong.
-func DecodeBytes(token string, key interface{}) ([]byte, map[string]interface{}, error) {
+func DecodeBytes(token string, key interface{}, checkAlg string) ([]byte, map[string]interface{}, error) {
 	parts, err := compact.Parse(token)
 
 	if err != nil {
@@ -278,11 +278,11 @@ func DecodeBytes(token string, key interface{}) ([]byte, map[string]interface{},
 	}
 
 	if len(parts) == 3 {
-		return verify(parts, key)
+		return verify(parts, key, checkAlg)
 	}
 
 	if len(parts) == 5 {
-		return decrypt(parts, key)
+		return decrypt(parts, key, checkAlg)
 	}
 
 	return nil, nil, errors.New(fmt.Sprintf("jwt.DecodeBytes() expects token of 3 or 5 parts, but was given: %v parts", len(parts)))
@@ -321,7 +321,7 @@ func encrypt(payload []byte, jwtHeader map[string]interface{}, key interface{}) 
 	return compact.Serialize(header, encryptedCek, iv, cipherText, authTag), nil
 }
 
-func verify(parts [][]byte, key interface{}) (plainText []byte, headers map[string]interface{}, err error) {
+func verify(parts [][]byte, key interface{}, checkAlg string) (plainText []byte, headers map[string]interface{}, err error) {
 
 	header, payload, signature := parts[0], parts[1], parts[2]
 
@@ -334,16 +334,18 @@ func verify(parts [][]byte, key interface{}) (plainText []byte, headers map[stri
 	}
 
 	if alg, ok := jwtHeader["alg"].(string); ok {
-		if verifier, ok := jwsHashers[alg]; ok {
-			if key, err = retrieveActualKey(jwtHeader, string(payload), key); err != nil {
+		if checkAlg == "" || alg == checkAlg {
+			if verifier, ok := jwsHashers[alg]; ok {
+				if key, err = retrieveActualKey(jwtHeader, string(payload), key); err != nil {
+					return nil, nil, err
+				}
+
+				if err = verifier.Verify(secured, signature, key); err == nil {
+					return payload, jwtHeader, nil
+				}
+
 				return nil, nil, err
 			}
-
-			if err = verifier.Verify(secured, signature, key); err == nil {
-				return payload, jwtHeader, nil
-			}
-
-			return nil, nil, err
 		}
 
 		return nil, nil, errors.New(fmt.Sprintf("jwt.Decode(): Unknown algorithm: '%v'", alg))
@@ -352,7 +354,7 @@ func verify(parts [][]byte, key interface{}) (plainText []byte, headers map[stri
 	return nil, nil, errors.New(fmt.Sprint("jwt.Decode(): required 'alg' header is missing or of invalid type"))
 }
 
-func decrypt(parts [][]byte, key interface{}) (plainText []byte, headers map[string]interface{}, err error) {
+func decrypt(parts [][]byte, key interface{}, checkAlg string) (plainText []byte, headers map[string]interface{}, err error) {
 
 	header, encryptedCek, iv, cipherText, authTag := parts[0], parts[1], parts[2], parts[3], parts[4]
 
@@ -378,38 +380,38 @@ func decrypt(parts [][]byte, key interface{}) (plainText []byte, headers map[str
 	}
 
 	aad := []byte(compact.Serialize(header))
+	if checkAlg == "" || alg == checkAlg {
+		if keyMgmtAlg, ok = jwaAlgorithms[alg]; ok {
+			if encAlg, ok = jweEncryptors[enc]; ok {
 
-	if keyMgmtAlg, ok = jwaAlgorithms[alg]; ok {
-		if encAlg, ok = jweEncryptors[enc]; ok {
+				if key, err = retrieveActualKey(jwtHeader, string(cipherText), key); err != nil {
+					return nil, nil, err
+				}
 
-			if key, err = retrieveActualKey(jwtHeader, string(cipherText), key); err != nil {
-				return nil, nil, err
-			}
+				if cek, err = keyMgmtAlg.Unwrap(encryptedCek, key, encAlg.KeySizeBits(), jwtHeader); err == nil {
+					if plainBytes, err = encAlg.Decrypt(aad, cek, iv, cipherText, authTag); err == nil {
 
-			if cek, err = keyMgmtAlg.Unwrap(encryptedCek, key, encAlg.KeySizeBits(), jwtHeader); err == nil {
-				if plainBytes, err = encAlg.Decrypt(aad, cek, iv, cipherText, authTag); err == nil {
+						if zip, compressed := jwtHeader["zip"].(string); compressed {
 
-					if zip, compressed := jwtHeader["zip"].(string); compressed {
+							if zipAlg, ok = jwcCompressors[zip]; !ok {
+								return nil, nil, errors.New(fmt.Sprintf("jwt.decrypt(): Unknown compression algorithm '%v'", zip))
+							}
 
-						if zipAlg, ok = jwcCompressors[zip]; !ok {
-							return nil, nil, errors.New(fmt.Sprintf("jwt.decrypt(): Unknown compression algorithm '%v'", zip))
+							plainBytes = zipAlg.Decompress(plainBytes)
 						}
 
-						plainBytes = zipAlg.Decompress(plainBytes)
+						return plainBytes, jwtHeader, nil
 					}
 
-					return plainBytes, jwtHeader, nil
+					return nil, nil, err
 				}
 
 				return nil, nil, err
 			}
 
-			return nil, nil, err
+			return nil, nil, errors.New(fmt.Sprintf("jwt.decrypt(): Unknown encryption algorithm '%v'", enc))
 		}
-
-		return nil, nil, errors.New(fmt.Sprintf("jwt.decrypt(): Unknown encryption algorithm '%v'", enc))
 	}
-
 	return nil, nil, errors.New(fmt.Sprintf("jwt.decrypt(): Unknown key management algorithm '%v'", alg))
 }
 
