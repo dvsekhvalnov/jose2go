@@ -1,4 +1,4 @@
-package Rsa
+package rsa
 
 import (
 	"io/ioutil"

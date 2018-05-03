@@ -1,5 +1,5 @@
-//package Rsa provides helpers for creating rsa leys
-package Rsa
+// Package rsa provides helpers for reading RSA private/public keys.
+package rsa
 
 import (
 		"crypto/rsa"
