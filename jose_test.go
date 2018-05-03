@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dvsekhvalnov/jose2go/keys/ecc"
-	"github.com/dvsekhvalnov/jose2go/keys/rsa"
+	Rsa "github.com/dvsekhvalnov/jose2go/keys/rsa"
 	. "gopkg.in/check.v1"
 	"strings"
 	"testing"

@@ -132,7 +132,7 @@ func main() {
 ```
 
 #### RS-256, RS-384 and RS-512, PS-256, PS-384 and PS-512
-Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** [provides convinient utils](#dealing-with-keys) to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `Rsa.ReadPrivate([]byte)` under `jose2go/keys/rsa` package.
+Signing with RS256, RS384, RS512, PS256, PS384, PS512 expecting `*rsa.PrivateKey` private key of corresponding length. **jose2go** [provides convinient utils](#dealing-with-keys) to construct `*rsa.PrivateKey` instance from PEM encoded PKCS1 or PKCS8 data: `rsa.ReadPrivate([]byte)` under `jose2go/keys/rsa` package.
 
 ```Go
 package main
@@ -154,8 +154,7 @@ func main() {
 		panic("invalid key file")
 	}
 
-	privateKey,e:=Rsa.ReadPrivate(keyBytes)
-
+	privateKey,e := rsa.ReadPrivate(keyBytes)
 	if(e!=nil) {
 		panic("invalid key format")
 	}
@@ -207,7 +206,7 @@ package main
 
 import (
     "fmt"
-	"io/ioutil"
+    "io/ioutil"
     "github.com/dvsekhvalnov/jose2go/keys/rsa"
     "github.com/dvsekhvalnov/jose2go"
 )
@@ -222,7 +221,7 @@ func main() {
 		panic("invalid key file")
 	}
 
-	publicKey,e:=Rsa.ReadPublic(keyBytes)
+	publicKey,e := rsa.ReadPublic(keyBytes)
 
 	if(e!=nil) {
 		panic("invalid key format")
@@ -232,11 +231,11 @@ func main() {
 	//token,err := jose.Encrypt(payload, jose.RSA1_5, jose.A256GCM, publicKey)		
 	token,err := jose.Encrypt(payload, jose.RSA_OAEP, jose.A256GCM, publicKey)
 
-    if(err==nil) {
-        //go use token
-        fmt.Printf("\ntoken = %v\n",token)
-    }
-}  
+	if(err==nil) {
+		//go use token
+		fmt.Printf("\ntoken = %v\n",token)
+	}
+}
 ```
 
 #### AES Key Wrap key management family of algorithms
@@ -431,7 +430,7 @@ func main() {
 }
 ```
 
-**RS256, RS384, RS512**,**PS256, PS384, PS512** signatures expecting `*rsa.PublicKey` public key of corresponding length. **jose2go** [provides convinient utils](#dealing-with-keys) to construct `*rsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `Rsa.ReadPublic([]byte)` under `jose2go/keys/rsa` package:
+**RS256, RS384, RS512**,**PS256, PS384, PS512** signatures expecting `*rsa.PublicKey` public key of corresponding length. **jose2go** [provides convinient utils](#dealing-with-keys) to construct `*rsa.PublicKey` instance from PEM encoded PKCS1 X509 certificate or PKIX data: `rsa.ReadPublic([]byte)` under `jose2go/keys/rsa` package:
 
 ```Go
 package main
@@ -439,7 +438,7 @@ package main
 import (
     "fmt"
     "io/ioutil"
-    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+    Rsa "github.com/dvsekhvalnov/jose2go/keys/rsa"
     "github.com/dvsekhvalnov/jose2go"
 )
 
@@ -453,7 +452,7 @@ func main() {
         panic("invalid key file")
     }
 
-    publicKey, e:=Rsa.ReadPublic(keyBytes)
+    publicKey, e := Rsa.ReadPublic(keyBytes)
 
     if(e!=nil) {
         panic("invalid key format")
@@ -479,7 +478,7 @@ package main
 import (
     "fmt"
     "io/ioutil"
-    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+    Rsa "github.com/dvsekhvalnov/jose2go/keys/rsa"
     "github.com/dvsekhvalnov/jose2go"
 )
 
@@ -493,7 +492,7 @@ func main() {
         panic("invalid key file")
     }
 
-    privateKey, e:=Rsa.ReadPrivate(keyBytes)
+    privateKey, e := Rsa.ReadPrivate(keyBytes)
 
     if(e!=nil) {
         panic("invalid key format")
@@ -715,7 +714,7 @@ func main() {
         panic("invalid key file")
     }
 
-    privateKey,e:=Rsa.ReadPrivate(keyBytes)
+    privateKey,e := rsa.ReadPrivate(keyBytes)
 
     if(e!=nil) {
         panic("invalid key format")
@@ -750,7 +749,7 @@ func main() {
         panic("invalid key file")
     }
 
-    publicKey,e:=Rsa.ReadPublic(keyBytes)
+    publicKey,e := rsa.ReadPublic(keyBytes)
 
     if(e!=nil) {
         panic("invalid key format")
@@ -768,14 +767,14 @@ func main() {
 **jose2go** provides several helper methods to simplify loading & importing of elliptic and rsa keys. Import `jose2go/keys/rsa` or `jose2go/keys/ecc` respectively:
 
 #### RSA keys
-1. `Rsa.ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error)` attempts to parse RSA private key from PKCS1 or PKCS8 format (`BEGIN RSA PRIVATE KEY` and `BEGIN PRIVATE KEY` headers)
+1. `rsa.ReadPrivate(raw []byte) (key *rsa.PrivateKey,err error)` attempts to parse RSA private key from PKCS1 or PKCS8 format (`BEGIN RSA PRIVATE KEY` and `BEGIN PRIVATE KEY` headers)
 
 ```Go
 package main
 
 import (
 	"fmt"
-    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+	"github.com/dvsekhvalnov/jose2go/keys/rsa"
 	"io/ioutil"
 )
 
@@ -783,7 +782,7 @@ func main() {
 
     keyBytes, _ := ioutil.ReadFile("private.key")
 
-    privateKey, err:=Rsa.ReadPrivate(keyBytes)
+    privateKey, err := rsa.ReadPrivate(keyBytes)
 
     if(err!=nil) {
         panic("invalid key format")
@@ -793,14 +792,14 @@ func main() {
 }
 ```
 
-2. `Rsa.ReadPublic(raw []byte) (key *rsa.PublicKey,err error)` attempts to parse RSA public key from PKIX key format or PKCS1 X509 certificate (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
+2. `rsa.ReadPublic(raw []byte) (key *rsa.PublicKey,err error)` attempts to parse RSA public key from PKIX key format or PKCS1 X509 certificate (`BEGIN PUBLIC KEY` and `BEGIN CERTIFICATE` headers)
 
 ```Go
 package main
 
 import (
 	"fmt"
-    "github.com/dvsekhvalnov/jose2go/keys/rsa"
+	"github.com/dvsekhvalnov/jose2go/keys/rsa"
 	"io/ioutil"
 )
 
@@ -808,7 +807,7 @@ func main() {
 
     keyBytes, _ := ioutil.ReadFile("public.cer")
 
-    publicKey, err:=Rsa.ReadPublic(keyBytes)
+    publicKey, err := rsa.ReadPublic(keyBytes)
 
     if(err!=nil) {
         panic("invalid key format")
