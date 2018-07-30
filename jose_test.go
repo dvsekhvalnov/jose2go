@@ -154,7 +154,7 @@ func (s *TestSuite) TestEncodePlaintext(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.")
+	c.Assert(test, Equals, "eyJhbGciOiJub25lIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, nil)
@@ -172,7 +172,7 @@ func (s *TestSuite) TestEncodeHS256(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.VleAUqv_-nc6dwZ9xQ8-4NiOpVRdSSrCCPCQl-7HQ2k")
+	c.Assert(test, Equals, "eyJhbGciOiJIUzI1NiJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.UAuHfK1tObqUzQj2tdMoKjKq1SWoI17hAg17VJ2l8j0")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, shaKey)
@@ -190,7 +190,7 @@ func (s *TestSuite) TestEncodeHS384(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.VjsBP04wkLVQ9SXqN0qe-J7FHQPGhnMAXnQvVEUdDh8wsvWNEN4wVlSkGuWIIk-b")
+	c.Assert(test, Equals, "eyJhbGciOiJIUzM4NCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.c92ouMmuQ1EmFN6IQmCEKAv5JZoVIeo_ehQl79OskFw3_y5GE_OLiUEfcRikturb")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, shaKey)
@@ -208,7 +208,7 @@ func (s *TestSuite) TestEncodeHS512(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.IIif-Hyd8cS2_oqRb_3PzL7IwoIcPUVl_BVvOr6QbJT_x15RyNy2m_tFfUcm6lriqfAnOudqpyN-yylAXu1eFw")
+	c.Assert(test, Equals, "eyJhbGciOiJIUzUxMiJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.tfZJJbT-Nht5_JkM0vylscOSwiuf9-X7mcBdxTIB_fdHBC-LylKQGPWLqjzDWFnx29f7U_s9c4EjA3WUahib7w")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, shaKey)
@@ -262,7 +262,7 @@ func (s *TestSuite) TestEncodeRS256(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.AzXfyb6BuwLgNUqVkfiKeQRctG25u3-5DJIsGyDnFxOGTet74SjW6Aabm3LSXZ2HgQ5yp8_tCfqA12oDmPiviq4muhgc0LKujTpGtFlf0fcSJQJpxSTMGQZdZnxdKpz7dCSlQNvW6j1tGy1UWkXod-kf4FZckoDkGEbnRAVVVL7xRupFtLneUJGoWZCiMz5oYAoYMUY1bVil1S6lIwUJLtgsvrQMoVIcjlivjZ8fzF3tjQdInxCjYeOKD3WQ2-n3APg-1GEJT-l_2y-scbE55TPSxo9fpHoDn7G0Kcgl8wpjY4j3KR9dEa4unJN3necd83yCMOUzs6vmFncEMTrRZw")
+	c.Assert(test, Equals, "eyJhbGciOiJSUzI1NiJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.fLVmWBDvVKZZPKNAaGrSitQpRGLoku1JPDafaTJhQUjfvrgvu8_RgTO4WmwQVngbAdT0i57EXt28WZHpAdBEJK4wi6sVzRADxO3aSiAxZn_aY_QwH7B4CGeeCvdvjUBX-wNj-4S3F9xCygq2VGtl8PknzAJLtcPmG9V-2hEfyLeL8lcOgK6SGaWWoGC5PjvVW46ilYSbySCr2c3B86TPITcx29_g4juuAM_AtHUdGimOVX1eKyHKSB8_U2IXWc2ujMMgphc0eZNY0W2nl_MwEwq-SvcdyLGfWVuEhgmfqlRHXu5eztHZsw1ejki0J-9r9reG1FbV6GzTMsU9HARW_Q")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, PubKey())
@@ -280,7 +280,7 @@ func (s *TestSuite) TestEncodeRS384(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJSUzM4NCIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.UW4uZuwV8UCFieKAX0IansM0u4-mYfarpim9JKD792an-HcSaq7inyI9GLt-iYflG0M_DmovC8QrjU4mP2FtWYR-Jnu4Ms467TreeDM4KOHSpPYOmdTG2N78L3JsXVZYEibHt5GHBzWUXqEnSthvSq-RHJsOXNjNVJACK2IWXc_PKvIbTVhoukZX_ejfA4B5ynEPax7Bt5mlyf9tSadfIGh1g29sm0hslPcZ9OKbwjvxWb17CdFy4gLq1bqvf7XnroeJGerYSXvbiOjulYizRXWBeDg5VKiEZWyyNt1rc9w_GNIIpY8B17jx6I0_hh_gjSMTTQoKqOp6Q2FWg7ZgLg")
+	c.Assert(test, Equals, "eyJhbGciOiJSUzM4NCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.BqDcZoC0pWa1k_gFRRSOJnDrU_0c78SdRphUikML36JrZs6fVwcP2NtdVUpDl40CwRdeHFjJF9skXI0KmMbj2bRTFyxL-At8WOVAMVRY0N9jFOjK67nwdafSDCKBqPAjw-Vv1f9yKwNvDoObI2isvhKqTF_EK_wEj-AwQIsmJNqUNF3yD3IgB6PCLS8mW5zXEp6xwf8hMguco6aHV7WBU-ZhdMFjJRydyrwBinUFig68QCdcAUI7KFVbsjani4W87jHgJhinv2GyVyKw5QpIDdvcMQKeoTZWLKQg9BBW4Ar9-YhQIuuO-7chTn2KCMpFCq3hrdrZTqVtX1nEDvBYpA")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, PubKey())
@@ -298,7 +298,7 @@ func (s *TestSuite) TestEncodeRS512(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.EkP4VYlDO9a0ycFt6e_vSFwfI5MICvDqLCNFI779lodbs92EwBtxgzoYdgqz8E8H1ZtWEnyULsc7TkwgV-1xj_wbWVLDvQxjZ4wQfGaQBjD5yO9RTxwReWab3mtfixh7pPKi7lpmuO65sWBVnco2p1RXGsM7KtHjToRIFxu9ncA7YYdQ7i-YL1HcUHjjOc95NJzDyfqkwnaD10Wq7GM4XAixZFYYNDaz2nP7Gt8DwvEvFhtP2iPxeK3_AqhQ4T3B2GgcIDnNCjhETtx4oal-gZzujMEbrMx7ea_jdS5QpKv0EEiA2Ppv0-_4dDKELCwhmBuYzHZIGbSJUFMC_fKVqw")
+	c.Assert(test, Equals, "eyJhbGciOiJSUzUxMiJ9.eyJoZWxsbyI6ICJ3b3JsZCJ9.AqwiRtgwP0th1K8mvmL1oW8bbf8EuqDiUGLIfSQLY7Z9eXzct3Zcd3diri_-v6WczQWKtQ-NipCSEl8CWJQSZY8cRqDhFjiDnLEImY5SzC-xqYxDVb5zu_iQZNd18nlmSw504W3IvxIwk1_avZ6Q12OvRNbG3gLGZtcWi3VLdTa-SGEemEicnlRfLpTAaCk3kkJq6St5NLbiVdQMpfhDBeGCOTFMptLZ6Tw1rWaHy6y5b7_PRwWG1Cb8QEl8du-dxmhDgbenreq5EiybOL05qZRFxJ-1861j5xduG-AY6xum6HtWKPGTSsIZNxepK3DTYfovN5HidcubV747w_6PXw")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, PubKey())
@@ -356,7 +356,7 @@ func (s *TestSuite) TestEncodePS256(c *C) {
 	parts := strings.Split(test, ".")
 
 	c.Assert(len(parts), Equals, 3)
-	c.Assert(parts[0], Equals, "eyJhbGciOiJQUzI1NiIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[0], Equals, "eyJhbGciOiJQUzI1NiJ9")
 	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
 	c.Assert(len(parts[1]), Equals, 24)
 
@@ -380,7 +380,7 @@ func (s *TestSuite) TestEncodePS384(c *C) {
 	parts := strings.Split(test, ".")
 
 	c.Assert(len(parts), Equals, 3)
-	c.Assert(parts[0], Equals, "eyJhbGciOiJQUzM4NCIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[0], Equals, "eyJhbGciOiJQUzM4NCJ9")
 	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
 	c.Assert(len(parts[1]), Equals, 24)
 
@@ -404,7 +404,7 @@ func (s *TestSuite) TestEncodePS512(c *C) {
 	parts := strings.Split(test, ".")
 
 	c.Assert(len(parts), Equals, 3)
-	c.Assert(parts[0], Equals, "eyJhbGciOiJQUzUxMiIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[0], Equals, "eyJhbGciOiJQUzUxMiJ9")
 	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
 	c.Assert(len(parts[1]), Equals, 24)
 
@@ -464,7 +464,7 @@ func (s *TestSuite) TestEncodeES256(c *C) {
 	parts := strings.Split(test, ".")
 
 	c.Assert(len(parts), Equals, 3)
-	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzI1NiJ9")
 	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
 	c.Assert(len(parts[2]), Equals, 86)
 
@@ -488,7 +488,7 @@ func (s *TestSuite) TestEncodeES384(c *C) {
 	parts := strings.Split(test, ".")
 
 	c.Assert(len(parts), Equals, 3)
-	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzM4NCJ9")
 	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
 	c.Assert(len(parts[2]), Equals, 128)
 
@@ -512,7 +512,7 @@ func (s *TestSuite) TestEncodeES512(c *C) {
 	parts := strings.Split(test, ".")
 
 	c.Assert(len(parts), Equals, 3)
-	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9")
+	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzUxMiJ9")
 	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
 	c.Assert(len(parts[2]), Equals, 176)
 
@@ -2232,7 +2232,7 @@ func (s *TestSuite) TestSignWithExtraHeaders(c *C) {
 	parts := strings.Split(test, ".")
 
 	c.Assert(len(parts), Equals, 3)
-	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHQvcGxhaW4iLCJrZXlpZCI6IjExMS0yMjItMzMzIiwidHJhbnMtaWQiOiJhYWEtYmJiIiwidHlwIjoiSldUIn0")
+	c.Assert(parts[0], Equals, "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHQvcGxhaW4iLCJrZXlpZCI6IjExMS0yMjItMzMzIiwidHJhbnMtaWQiOiJhYWEtYmJiIn0")
 	c.Assert(parts[1], Equals, "eyJoZWxsbyI6ICJ3b3JsZCJ9")
 	c.Assert(len(parts[2]), Equals, 86)
 
@@ -2389,7 +2389,7 @@ func (s *TestSuite) TestEncodeBytes_HS256(c *C) {
 
 	//then
 	c.Assert(err, IsNil)
-	c.Assert(test, Equals, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.AAECAwQFBgcICQ.NN-xrkVjzemjSg7VkP5bs_jJnk4mUGxK3ylhCsymo9Y")
+	c.Assert(test, Equals, "eyJhbGciOiJIUzI1NiJ9.AAECAwQFBgcICQ.HmKT9jcQJZVtDWPipYjkbyy7cdCMUjyUhiTw25B49Gc")
 
 	//make sure we consistent with ourselfs
 	t, _, _ := DecodeBytes(test, shaKey)
