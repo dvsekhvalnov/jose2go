@@ -5,11 +5,13 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
-	"github.com/dvsekhvalnov/jose2go/keys/ecc"
-	"github.com/dvsekhvalnov/jose2go/keys/rsa"
-	. "gopkg.in/check.v1"
 	"strings"
 	"testing"
+
+	"github.com/dvsekhvalnov/jose2go/keys/ecc"
+	"github.com/dvsekhvalnov/jose2go/keys/rsa"
+
+	. "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }
@@ -645,6 +647,17 @@ func (s *TestSuite) TestDecrypt_DIR_A128GCM(c *C) {
 	//then
 	c.Assert(err, IsNil)
 	c.Assert(test, Equals, `{"exp":1392548520,"sub":"alice","nbf":1392547920,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"0e659a67-1cd3-438b-8888-217e72951ec9","iat":1392547920}`)
+}
+
+func (s *TestSuite) TestDecrypt_DIR_A128GCM_WRONG_NONCE_SIZE(c *C) {
+	//given
+	token := "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..yVi-LQQngN0C5WS.1McwSmhZzAtmmLp9y-OdnJwaJFo1nj_4ashmzl2LhubGf0Jl1OTEVJzsHZb7bkup7cGTkuxh6Vfv10ljHsjWf_URXoxP3stQqQeViVcuPV0y2Q_WHYzTNGZpmHGe-hM6gjDhyZyvu3yeXGFSvfPQmp9pWVOgDjI4RC0MQ83rzzn-rRdnZkznWjbmOPxwPrR72Qng0BISsEwbkPn4oO8-vlHkVmPpuDTaYzCT2ZR5K9JnIU8d8QdxEAGb7-s8GEJ1yqtd_w._umbK59DAKA3O89h15VoKQ"
+
+	//when
+	_, _, err := Decode(token, aes128Key)
+
+	//then
+	c.Assert(err, NotNil)
 }
 
 func (s *TestSuite) TestDecrypt_DIR_A192GCM(c *C) {
