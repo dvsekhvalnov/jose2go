@@ -39,19 +39,24 @@ func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h has
 
 		dk = append(dk, t...) // DK = T_1 || T_2 ||  ...  || T_l<0..r-1>
 
-		fmt.Printf("i=%v: t=%v, dk=%v\n", i, t, arrays.Dump(dk))
+		fmt.Printf("\ni=%v: t=%v, dk=%v\n", i, t, arrays.Dump(dk))
 	}
 
 	return dk
 }
 
 func f(salt []byte, iterationCount, blockIndex int, prf hash.Hash) []byte {
+	bi := arrays.UInt32ToBytes(uint32(blockIndex))
+	fmt.Printf("f(): salt=%v\n", arrays.Dump(salt))
+	fmt.Printf("f(): bi=%v\n", arrays.Dump(bi))
 
 	prf.Reset()
 	prf.Write(salt)
-	prf.Write(arrays.UInt32ToBytes(uint32(blockIndex)))
+	prf.Write(bi)
 
 	u := prf.Sum(nil) // U_1 = PRF (P, S || INT (i))
+
+	fmt.Printf("f(): u=%v\n", arrays.Dump(u))
 
 	result := u
 
