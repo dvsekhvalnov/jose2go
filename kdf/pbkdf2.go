@@ -4,9 +4,10 @@ package kdf
 import (
 	"crypto/hmac"
 	"fmt"
-	"github.com/dvsekhvalnov/jose2go/arrays"
 	"hash"
 	"math"
+
+	"github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 // DerivePBKDF2 implements Password Based Key Derivation Function 2, RFC 2898. Derives key of keyBitLength size, given password, salt, iteration count and hash function
@@ -26,6 +27,8 @@ func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h has
 
 	dk := make([]byte, 0, dkLen)
 
+	fmt.Printf("l=%v, r=%v, hLen=%v, dkLen=%v, dk=%v\n\n", l, r, hLen, dkLen, arrays.Dump(dk))
+
 	for i := 0; i < l; i++ {
 
 		t := f(salt, iterationCount, i+1, prf) // T_l = F (P, S, c, l)
@@ -35,6 +38,8 @@ func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h has
 		} // truncate last block to r bits
 
 		dk = append(dk, t...) // DK = T_1 || T_2 ||  ...  || T_l<0..r-1>
+
+		fmt.Printf("i=%v: t=%v, dk=%v\n", i, t, arrays.Dump(dk))
 	}
 
 	return dk
