@@ -11,9 +11,9 @@ import (
 )
 
 // DerivePBKDF2 implements Password Based Key Derivation Function 2, RFC 2898. Derives key of keyBitLength size, given password, salt, iteration count and hash function
-func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h hash.Hash) []byte {
+func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h func() hash.Hash) []byte {
 
-	prf := hmac.New(func() hash.Hash { return h }, password)
+	prf := hmac.New(h, password)
 	hLen := prf.Size()
 	dkLen := keyBitLength >> 3 //size of derived key in bytes
 
