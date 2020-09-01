@@ -27,8 +27,6 @@ func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h fun
 
 	dk := make([]byte, 0, dkLen)
 
-	fmt.Printf("l=%v, r=%v, hLen=%v, dkLen=%v, dk=%v\n\n", l, r, hLen, dkLen, arrays.Dump(dk))
-
 	for i := 0; i < l; i++ {
 
 		t := f(salt, iterationCount, i+1, prf) // T_l = F (P, S, c, l)
@@ -38,25 +36,18 @@ func DerivePBKDF2(password, salt []byte, iterationCount, keyBitLength int, h fun
 		} // truncate last block to r bits
 
 		dk = append(dk, t...) // DK = T_1 || T_2 ||  ...  || T_l<0..r-1>
-
-		fmt.Printf("\ni=%v: t=%v, dk=%v\n", i, t, arrays.Dump(dk))
 	}
 
 	return dk
 }
 
 func f(salt []byte, iterationCount, blockIndex int, prf hash.Hash) []byte {
-	bi := arrays.UInt32ToBytes(uint32(blockIndex))
-	fmt.Printf("f(): salt=%v\n", arrays.Dump(salt))
-	fmt.Printf("f(): bi=%v\n", arrays.Dump(bi))
 
 	prf.Reset()
 	prf.Write(salt)
-	prf.Write(bi)
+	prf.Write(arrays.UInt32ToBytes(uint32(blockIndex)))
 
 	u := prf.Sum(nil) // U_1 = PRF (P, S || INT (i))
-
-	fmt.Printf("f(): u=%v\n", arrays.Dump(u))
 
 	result := u
 
