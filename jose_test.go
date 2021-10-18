@@ -1786,6 +1786,41 @@ func (s *TestSuite) TestDecrypt_ECDH_ES_A128GCM(c *C) {
 	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
 }
 
+func (s *TestSuite) TestEncrypt_ECDH_ES_A128CBC_HS256_Panic(c *C) {
+
+	// this test recreates the panic - sometimes a 31 byte curve is created on an ephemeral key
+	//
+	// if d, x, y, err = elliptic.GenerateKey(pubKey.Curve, rand.Reader); err != nil {
+	//	return nil, nil, err
+	// }
+
+	//given
+	payload := `{"hello": "world"}`
+
+	//when
+	for i := 0; i < 1000; i++ {
+		test, err := Encrypt(payload, ECDH_ES, A128CBC_HS256, Ecc256Public())
+
+		fmt.Printf("\nECDH-ES A128CBC_HS256= %v\n", test)
+
+		//then
+		c.Assert(err, IsNil)
+
+		parts := strings.Split(test, ".")
+
+		c.Assert(len(parts), Equals, 5)
+		c.Assert(len(parts[0]), Equals, 230)
+		c.Assert(len(parts[1]), Equals, 0)
+		c.Assert(len(parts[2]), Equals, 22)
+		c.Assert(len(parts[3]), Equals, 43)
+		c.Assert(len(parts[4]), Equals, 22)
+
+		//make sure we consistent with ourselfs
+		t, _, _ := Decode(test, Ecc256Private())
+		c.Assert(t, Equals, payload)
+	}
+}
+
 func (s *TestSuite) TestEncrypt_ECDH_ES_A128CBC_HS256(c *C) {
 	//given
 	payload := `{"hello": "world"}`
