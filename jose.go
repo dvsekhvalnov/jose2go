@@ -1,4 +1,4 @@
-//Package jose provides high level functions for producing (signing, encrypting and
+// Package jose provides high level functions for producing (signing, encrypting and
 // compressing) or consuming (decoding) Json Web Tokens using Java Object Signing and Encryption spec
 package jose
 
@@ -77,6 +77,42 @@ func RegisterJws(alg JwsAlgorithm) {
 // RegisterJwc register new compression algorithm
 func RegisterJwc(alg JwcAlgorithm) {
 	jwcCompressors[alg.Name()] = alg
+}
+
+// DeregisterJwa deregister existing key management algorithm
+func DeregisterJwa(alg string) JwaAlgorithm {
+	jwa := jwaAlgorithms[alg]
+
+	delete(jwaAlgorithms, alg)
+
+	return jwa
+}
+
+// DeregisterJws deregister existing signing algorithm
+func DeregisterJws(alg string) JwsAlgorithm {
+	jws := jwsHashers[alg]
+
+	delete(jwsHashers, alg)
+
+	return jws
+}
+
+// DeregisterJws deregister existing encryption algorithm
+func DeregisterJwe(alg string) JweEncryption {
+	jwe := jweEncryptors[alg]
+
+	delete(jweEncryptors, alg)
+
+	return jwe
+}
+
+// DeregisterJwc deregister existing compression algorithm
+func DeregisterJwc(alg string) JwcAlgorithm {
+	jwc := jwcCompressors[alg]
+
+	delete(jwcCompressors, alg)
+
+	return jwc
 }
 
 // JweEncryption is a contract for implementing encryption algorithm

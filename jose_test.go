@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/dvsekhvalnov/jose2go/keys/ecc"
-	"github.com/dvsekhvalnov/jose2go/keys/rsa"
+	Rsa "github.com/dvsekhvalnov/jose2go/keys/rsa"
 
 	. "gopkg.in/check.v1"
 )
@@ -2435,7 +2435,71 @@ func (s *TestSuite) TestEncryptBytes_RSA_OAEP_256_A128GCM(c *C) {
 	c.Assert(t, DeepEquals, payload)
 }
 
-//test utils
+func (s *TestSuite) TestDeregisterJwa(c *C) {
+	//given
+	alg := DeregisterJwa(PBES2_HS256_A128KW)
+	token := "eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwicDJjIjo4MTkyLCJwMnMiOiJiMFlFVmxMemtaNW9UUjBMIn0.dhPAhJ9kmaEbP-02VtEoPOF2QSEYM5085V6zYt1U1qIlVNRcHTGDgQ.4QAAq0dVQT41dQKDG7dhRA.H9MgJmesbU1ow6GCa0lEMwv8A_sHvgaWKkaMcdoj_z6O8LaMSgquxA-G85R_5hEILnHUnFllNJ48oJY7VmAJw0BQW73dMnn58u161S6Ftq7Mjxxq7bcksWvFTVtG5RsqqYSol5BZz5xm8Fcj-y5BMYMvrsCyQhYdeGEHkAvwzRdvZ8pGMsU2XPzl6GqxGjjuRh2vApAeNrj6MwKuD-k6AR0MH46EiNkVCmMkd2w8CNAXjJe9z97zky93xbxlOLozaC3NBRO2Q4bmdGdRg5y4Ew.xNqRi0ouQd7uo5UrPraedg"
+
+	//when
+	test, _, err := Decode(token, shaKey)
+
+	fmt.Printf("\nunknown 'alg' header err= %v\n", err)
+
+	//then
+	RegisterJwa(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDeregisterJwe(c *C) {
+	//given
+	alg := DeregisterJwe(A128CBC_HS256)
+	token := "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..3lClLoerWhxIc811QXDLbg.iFd5MNk2eWDlW3hbq7vTFLPJlC0Od_MSyWGakEn5kfYbbPk7BM_SxUMptwcvDnZ5uBKwwPAYOsHIm5IjZ79LKZul9ZnOtJONRvxWLeS9WZiX4CghOLZL7dLypKn-mB22xsmSUbtizMuNSdgJwUCxEmms7vYOpL0Che-0_YrOu3NmBCLBiZzdWVtSSvYw6Ltzbch4OAaX2ye_IIemJoU1VnrdW0y-AjPgnAUA-GY7CAKJ70leS1LyjTW8H_ecB4sDCkLpxNOUsWZs3DN0vxxSQw.bxrZkcOeBgFAo3t0585ZdQ"
+
+	//when
+	test, _, err := Decode(token, shaKey)
+
+	fmt.Printf("\nunknown 'enc' header err= %v\n", err)
+
+	//then
+	RegisterJwe(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDeregisterJws(c *C) {
+	//given
+	alg := DeregisterJws(HS256)
+	token := "eyJhbGciOiJIUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.chIoYWrQMA8XL5nFz6oLDJyvgHk2KA4BrFGrKymjC8E"
+
+	//when
+	test, _, err := Decode(token, shaKey)
+
+	fmt.Printf("\nunknown 'alg' header err= %v\n", err)
+
+	//then
+	RegisterJws(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDeregisterJwc(c *C) {
+	//given
+	alg := DeregisterJwc(DEF)
+	token := "eyJhbGciOiJSU0EtT0FFUCIsInppcCI6IkRFRiIsImVuYyI6IkExMjhDQkMtSFMyNTYifQ.nXSS9jDwE0dXkcGI7UquZBhn2nsB2P8u-YSWEuTAgEeuV54qNU4SlE76bToI1z4LUuABHmZOv9S24xkF45b7Mrap_Fu4JXH8euXrQgKQb9o_HL5FvE8m4zk5Ow13MKGPvHvWKOaNEBFriwYIfPi6QBYrpuqn0BaANc_aMyInV0Fn7e8EAgVmvoagmy7Hxic2sPUeLEIlRCDSGa82mpiGusjo7VMJxymkhnMdKufpGPh4wod7pvgb-jDWasUHpsUkHqSKZxlrDQxcy1-Pu1G37TAnImlWPa9NU7500IXc-W07IJccXhR3qhA5QaIyBbmHY0j1Dn3808oSFOYSF85A9w.uwbZhK-8iNzcjvKRb1a2Ig.jxj1GfH9Ndu1y0b7NRz_yfmjrvX2rXQczyK9ZJGWTWfeNPGR_PZdJmddiam15Qtz7R-pzIeyR4_qQoMzOISkq6fDEvEWVZdHnnTUHQzCoGX1dZoG9jXEwfAk2G1vXYT2vynEQZ72xk0V_OBtKhpIAUEFsXwCUeLAAgjFNY4OGWZl_Kmv9RTGhnePZfVbrbwg.WuV64jlV03OZm99qHMP9wQ"
+
+	//when
+	test, _, err := Decode(token, PrivKey())
+
+	fmt.Printf("\nunknown 'zip' header err= %v\n", err)
+
+	//then
+	RegisterJwc(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+// test utils
 func PubKey() *rsa.PublicKey {
 	key, _ := Rsa.ReadPublic([]byte(pubKey))
 	return key
