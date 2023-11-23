@@ -1634,6 +1634,40 @@ func (s *TestSuite) TestDecrypt_PBSE2_HS512_A256KW_A256CBC_HS512(c *C) {
 	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
 }
 
+func (s *TestSuite) TestDecrypt_PBSE2_HS512_A256KW_A256CBC_HS512_MinIterationViolation(c *C) {
+	//given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 300000, 10000))
+	token := "eyJhbGciOiJQQkVTMi1IUzUxMitBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwicDJjIjo4MTkyLCJwMnMiOiJCUlkxQ1M3VXNpaTZJNzhkIn0.ovjAL7yRnB_XdJbK8lAaUDRZ-CyVeio8f4pnqOt1FPj1PoQAdEX3S5x6DlzR8aqN_WR5LUwdqDSyUDYhSurnmq8VLfzd3AEe.YAjH6g_zekXJIlPN4Ooo5Q.tutaltxpeVyayXZ9pQovGXTWTf_GWWvtu25Jeg9jgoH0sUX9KCnL00A69e4GJR6EMxalmWsa45AItffbwjUBmwdyklC4ZbTgaovVRs-UwqsZFBO2fpEb7qLajjwra7o4OegzgXDD0jhrKrUusvRWGBvenvumb5euibUxmIfBUcVF1JbdfYxx7ztFeS-QKJpDkE00zyEkViq-QxfrMVl5p7LGmTz8hMrFL3LXLokypZSDgFBfsUzChJf3mlYzxiGaGUqhs7NksQJDoUYf6prPow.XwRVfVTTPogO74RnxZD_9Mse26fTSehna1pbWy4VHfY"
+
+	//when
+	test, headers, err := Decode(token, "top secret")
+	fmt.Printf("\np2c min iteration err= %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+	c.Assert(headers, IsNil)
+}
+
+func (s *TestSuite) TestDecrypt_PBSE2_HS512_A256KW_A256CBC_HS512_MaxIterationViolation(c *C) {
+	//given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 8000, 0))
+	token := "eyJhbGciOiJQQkVTMi1IUzUxMitBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwicDJjIjo4MTkyLCJwMnMiOiJCUlkxQ1M3VXNpaTZJNzhkIn0.ovjAL7yRnB_XdJbK8lAaUDRZ-CyVeio8f4pnqOt1FPj1PoQAdEX3S5x6DlzR8aqN_WR5LUwdqDSyUDYhSurnmq8VLfzd3AEe.YAjH6g_zekXJIlPN4Ooo5Q.tutaltxpeVyayXZ9pQovGXTWTf_GWWvtu25Jeg9jgoH0sUX9KCnL00A69e4GJR6EMxalmWsa45AItffbwjUBmwdyklC4ZbTgaovVRs-UwqsZFBO2fpEb7qLajjwra7o4OegzgXDD0jhrKrUusvRWGBvenvumb5euibUxmIfBUcVF1JbdfYxx7ztFeS-QKJpDkE00zyEkViq-QxfrMVl5p7LGmTz8hMrFL3LXLokypZSDgFBfsUzChJf3mlYzxiGaGUqhs7NksQJDoUYf6prPow.XwRVfVTTPogO74RnxZD_9Mse26fTSehna1pbWy4VHfY"
+
+	//when
+	test, headers, err := Decode(token, "top secret")
+	fmt.Printf("\np2c max iteration err= %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+	c.Assert(headers, IsNil)
+}
+
 func (s *TestSuite) TestEncrypt_PBSE2_HS256_A128KW_A128GCM(c *C) {
 	//given
 	payload := `{"hello": "world"}`
