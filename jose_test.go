@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dvsekhvalnov/jose2go/base64url"
 	"github.com/dvsekhvalnov/jose2go/keys/ecc"
 	Rsa "github.com/dvsekhvalnov/jose2go/keys/rsa"
 
@@ -1766,6 +1767,36 @@ func (s *TestSuite) TestEncrypt_PBSE2_HS256_A128KW_A256CBC_HS512(c *C) {
 	c.Assert(len(parts[2]), Equals, 22)
 	c.Assert(len(parts[3]), Equals, 43)
 	c.Assert(len(parts[4]), Equals, 43)
+
+	//make sure we consistent with ourselfs
+	t, _, _ := Decode(test, "top secret")
+	c.Assert(t, Equals, payload)
+}
+
+func (s *TestSuite) TestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_Custom_p2c(c *C) {
+	// given
+	payload := `{"exp":1389189552,"sub":"alice","nbf":1389188952,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"e543edf6-edf0-4348-8940-c4e28614d463","iat":1389188952}"`
+
+	// when
+	test, err := Encrypt(payload, PBES2_HS256_A128KW, A256CBC_HS512, "top secret", Header("p2c", 10000))
+
+	fmt.Printf("\nPBES2-HS256+A128KW A256CBC_HS512 (custom p2c=10000)= %v\n", test)
+
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test, ".")
+
+	c.Assert(len(parts), Equals, 5)
+	c.Assert(len(parts[0]), Equals, 116)
+	c.Assert(len(parts[1]), Equals, 96)
+	c.Assert(len(parts[2]), Equals, 22)
+	c.Assert(len(parts[3]), Equals, 278)
+	c.Assert(len(parts[4]), Equals, 43)
+
+	// ensure custom 'p2c' header have been included
+	v, _ := base64url.Decode(parts[0])
+	c.Assert(string(v), Matches, `.*"p2c":10000.*`)
 
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, "top secret")
