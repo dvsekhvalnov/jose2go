@@ -1803,6 +1803,42 @@ func (s *TestSuite) TestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_Custom_p2c(c *C
 	c.Assert(t, Equals, payload)
 }
 
+func (s *TestSuite) TestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MaxIterationViolation(c *C) {
+	// given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 8000, 0))
+
+	payload := `{"hello": "world"}`
+
+	// when
+	test, err := Encrypt(payload, PBES2_HS512_A256KW, A256CBC_HS512, "top secret", Header("p2c", 10000))
+
+	fmt.Printf("\nTestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MaxIterationViolation, err = %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MinIterationViolation(c *C) {
+	// given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 800000, 300000))
+
+	payload := `{"hello": "world"}`
+
+	// when
+	test, err := Encrypt(payload, PBES2_HS512_A256KW, A256CBC_HS512, "top secret", Header("p2c", 10000))
+
+	fmt.Printf("\nTestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MinIterationViolation, err = %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
 func (s *TestSuite) TestDecrypt_ECDH_ES_A128CBC_HS256(c *C) {
 	//given
 	token := "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTEyOENCQy1IUzI1NiIsImVwayI6eyJrdHkiOiJFQyIsIngiOiItVk1LTG5NeW9IVHRGUlpGNnFXNndkRm5BN21KQkdiNzk4V3FVMFV3QVhZIiwieSI6ImhQQWNReTgzVS01Qjl1U21xbnNXcFZzbHVoZGJSZE1nbnZ0cGdmNVhXTjgiLCJjcnYiOiJQLTI1NiJ9fQ..UA3N2j-TbYKKD361AxlXUA.XxFur_nY1GauVp5W_KO2DEHfof5s7kUwvOgghiNNNmnB4Vxj5j8VRS8vMOb51nYy2wqmBb2gBf1IHDcKZdACkCOMqMIcpBvhyqbuKiZPLHiilwSgVV6ubIV88X0vK0C8ZPe5lEyRudbgFjdlTnf8TmsvuAsdtPn9dXwDjUR23bD2ocp8UGAV0lKqKzpAw528vTfD0gwMG8gt_op8yZAxqqLLljMuZdTnjofAfsW2Rq3Z6GyLUlxR51DAUlQKi6UpsKMJoXTrm1Jw8sXBHpsRqA.UHCYOtnqk4SfhAknCnymaQ"
