@@ -16,7 +16,9 @@ Used in production. GA ready. Current version is 1.6.
 
 ## Important
 v1.6 security tuning options
+
 v1.5 bug fix release
+
 v1.4 changes default behavior of inserting `typ=JWT` header if not overriden. As of 1.4 no
 extra headers added by library automatically. To mimic pre 1.4 behaviour use:
 ```Go
