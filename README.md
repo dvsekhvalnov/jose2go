@@ -981,6 +981,15 @@ test, headers, err := Decode(token, func(headers map[string]interface{}, payload
 - ability to deregister specific algorithms
 - configurable min/max restrictions for PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW
 
+### 1.5
+- security and bug fixes
+
+### 1.4
+- removed extra headers to be inserted by library
+
+### 1.3
+- security fixes: Invalid Curve Attack on NIST curves
+
 ### 1.2
 - interface to access token headers after decoding
 - interface to provide extra headers for token encoding
