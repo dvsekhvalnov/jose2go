@@ -12,11 +12,9 @@ Extensively unit tested and cross tested (100+ tests) for compatibility with [jo
 
 
 ## Status
-Used in production. GA ready. Current version is 1.5.
+Used in production. GA ready. Current version is 1.6.
 
 ## Important
-v1.5 bug fix release
-
 v1.4 changes default behavior of inserting `typ=JWT` header if not overriden. As of 1.4 no
 extra headers added by library automatically. To mimic pre 1.4 behaviour use:
 ```Go
@@ -926,7 +924,7 @@ func main() {
 Checkout `jose_test.go` for more examples.
 
 ## Customizing library for security
-In response to ever increasing attacks on various JWT implementations, `jose2go` as of version v1.3 introduced number of additional security controls to limit potential attack surface on services and projects using the library.
+In response to ever increasing attacks on various JWT implementations, `jose2go` as of version v1.6 introduced number of additional security controls to limit potential attack surface on services and projects using the library.
 
 ### Deregister algorithm implementations
 One can use following methods to deregister any signing, encryption, key management or compression algorithms from runtime suite, that is considered unsafe or simply not expected by service.
@@ -939,7 +937,7 @@ One can use following methods to deregister any signing, encryption, key managem
 All of them expecting alg name matching `jose` constants and returns implementation that have been deregistered.
 
 ### Customizing PBKDF2
-As it quite easy to abuse PBES2 family of algorithms via forging header with extra large p2c values, jose-jwt library introduced iteration count limits in v1.3 to reduce runtime exposure.
+As it quite easy to abuse PBES2 family of algorithms via forging header with extra large p2c values, jose-jwt library introduced iteration count limits in v1.6 to reduce runtime exposure.
 
 By default, maxIterations is set according to [OWASP PBKDF2](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2) Recomendations:
 
@@ -975,7 +973,7 @@ test, headers, err := Decode(token, func(headers map[string]interface{}, payload
 ```
 
 ## Changelog
-### 1.3
+### 1.6
 - ability to deregister specific algorithms
 - configurable min/max restrictions for PBES2-HS256+A128KW, PBES2-HS384+A192KW, PBES2-HS512+A256KW
 
