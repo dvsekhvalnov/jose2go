@@ -13,9 +13,9 @@ import (
 )
 
 func init() {
-	RegisterJwa(NewPbse2HmacAesKWAlg(128, 310000, 0))
-	RegisterJwa(NewPbse2HmacAesKWAlg(192, 250000, 0))
-	RegisterJwa(NewPbse2HmacAesKWAlg(256, 120000, 0))
+	RegisterJwa(NewPbse2HmacAesKWAlg(128, 1300000, 0))
+	RegisterJwa(NewPbse2HmacAesKWAlg(192, 950000, 0))
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 600000, 0))
 }
 
 // PBSE2 with HMAC key management algorithm implementation
