@@ -458,3 +458,14 @@ func retrieveActualKey(headers map[string]interface{}, payload string, key inter
 
 	return key, nil
 }
+
+func MatchAlg(expected string, key interface{}) func(headers map[string]interface{}, payload string) interface{} {
+	return func(headers map[string]interface{}, payload string) interface{} {
+		alg := headers["alg"].(string)
+		if expected == alg {
+			return key
+		}
+
+		return errors.New("Expected alg to be '" + expected + "' but got '" + alg + "'")
+	}
+}

@@ -2600,6 +2600,33 @@ func (s *TestSuite) TestDeregisterJwc(c *C) {
 	c.Assert(test, Equals, "")
 }
 
+func (s *TestSuite) TestDecode_TwoPhased_MatchAlg(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+
+	//when
+	test, _, err := Decode(token, MatchAlg("ES256", Ecc256Public()))
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"hello": "world"}`)
+}
+
+func (s *TestSuite) TestDecode_TwoPhased_MatchAlg_Invalid(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+
+	//when
+	test, headers, err := Decode(token, MatchAlg("RS256", Ecc256Public()))
+
+	fmt.Printf("\nalg doesn't match err=%v\n", err)
+
+	//then
+	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
 // test utils
 func PubKey() *rsa.PublicKey {
 	key, _ := Rsa.ReadPublic([]byte(pubKey))
