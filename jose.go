@@ -459,13 +459,27 @@ func retrieveActualKey(headers map[string]interface{}, payload string, key inter
 	return key, nil
 }
 
-func MatchAlg(expected string, key interface{}) func(headers map[string]interface{}, payload string) interface{} {
+func Alg(key interface{}, jws string) func(headers map[string]interface{}, payload string) interface{} {
 	return func(headers map[string]interface{}, payload string) interface{} {
 		alg := headers["alg"].(string)
-		if expected == alg {
+
+		if jws == alg {
 			return key
 		}
 
-		return errors.New("Expected alg to be '" + expected + "' but got '" + alg + "'")
+		return errors.New("Expected alg to be '" + jws + "' but got '" + alg + "'")
+	}
+}
+
+func Enc(key interface{}, jwa string, jwe string) func(headers map[string]interface{}, payload string) interface{} {
+	return func(headers map[string]interface{}, payload string) interface{} {
+		alg := headers["alg"].(string)
+		enc := headers["enc"].(string)
+
+		if jwa == alg && jwe == enc {
+			return key
+		}
+
+		return errors.New("Expected alg to be '" + jwa + "' and enc to be '" + jwe + "' but got '" + alg + "' and '" + enc + "'")
 	}
 }
