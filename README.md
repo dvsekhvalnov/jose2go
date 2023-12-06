@@ -681,6 +681,8 @@ func main() {
 }
 ```
 
+Two phase validation can be used for implementing additional things like strict `alg` or `enc` validation, see [Customizing library for security](#customizing-library-for-security) for more information.
+
 ### Working with binary payload
 In addition to work with string payloads (typical use-case) `jose2go` supports
 encoding and decoding of raw binary data. `jose.DecodeBytes`, `jose.SignBytes`
@@ -939,6 +941,25 @@ One can use following methods to deregister any signing, encryption, key managem
 - `func DeregisterJwc(alg string) JwcAlgorithm`
 
 All of them expecting alg name matching `jose` constants and returns implementation that have been deregistered.
+
+### Strict validation
+Sometimes it is desirable to verify that `alg` or `enc` values are matching expected before attempting to decode actual payload.
+`jose2go` provides helper matchers to be used within [Two-phase validation](#two-phase-validation) precheck:
+
+- `jose.Alg(key, alg)` - to match alg header
+- `jose.Enc(key, alg)` - to match alg and enc headers
+
+```Go
+	token := "eyJhbGciOiJSUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.NL_dfVpZkhNn4bZpCyMq5TmnXbT4yiyecuB6Kax_lV8Yq2dG8wLfea-T4UKnrjLOwxlbwLwuKzffWcnWv3LVAWfeBxhGTa0c4_0TX_wzLnsgLuU6s9M2GBkAIuSMHY6UTFumJlEeRBeiqZNrlqvmAzQ9ppJHfWWkW4stcgLCLMAZbTqvRSppC1SMxnvPXnZSWn_Fk_q3oGKWw6Nf0-j-aOhK0S0Lcr0PV69ZE4xBYM9PUS1MpMe2zF5J3Tqlc1VBcJ94fjDj1F7y8twmMT3H1PI9RozO-21R0SiXZ_a93fxhE_l_dj5drgOek7jUN9uBDjkXUwJPAyp9YPehrjyLdw"
+
+	key := Rsa.ReadPublic(....)
+
+	// we expecting 'RS256' alg here and if matching continue to decode with a key
+	payload, header, err := jose.Decode(token, Alg(key, "RS256"))
+
+	// or match both alg and enc for decrypting scenarios
+	payload, header, err := jose.Decode(token, Enc(key, "RSA-OAEP-256", "A192CBC-HS384"))
+```
 
 ### Customizing PBKDF2
 As it quite easy to abuse PBES2 family of algorithms via forging header with extra large p2c values, jose-jwt library introduced iteration count limits in v1.6 to reduce runtime exposure.
