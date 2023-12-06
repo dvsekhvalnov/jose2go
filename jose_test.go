@@ -8,8 +8,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dvsekhvalnov/jose2go/base64url"
 	"github.com/dvsekhvalnov/jose2go/keys/ecc"
-	"github.com/dvsekhvalnov/jose2go/keys/rsa"
+	Rsa "github.com/dvsekhvalnov/jose2go/keys/rsa"
 
 	. "gopkg.in/check.v1"
 )
@@ -1634,6 +1635,40 @@ func (s *TestSuite) TestDecrypt_PBSE2_HS512_A256KW_A256CBC_HS512(c *C) {
 	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
 }
 
+func (s *TestSuite) TestDecrypt_PBSE2_HS512_A256KW_A256CBC_HS512_MinIterationViolation(c *C) {
+	//given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 300000, 10000))
+	token := "eyJhbGciOiJQQkVTMi1IUzUxMitBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwicDJjIjo4MTkyLCJwMnMiOiJCUlkxQ1M3VXNpaTZJNzhkIn0.ovjAL7yRnB_XdJbK8lAaUDRZ-CyVeio8f4pnqOt1FPj1PoQAdEX3S5x6DlzR8aqN_WR5LUwdqDSyUDYhSurnmq8VLfzd3AEe.YAjH6g_zekXJIlPN4Ooo5Q.tutaltxpeVyayXZ9pQovGXTWTf_GWWvtu25Jeg9jgoH0sUX9KCnL00A69e4GJR6EMxalmWsa45AItffbwjUBmwdyklC4ZbTgaovVRs-UwqsZFBO2fpEb7qLajjwra7o4OegzgXDD0jhrKrUusvRWGBvenvumb5euibUxmIfBUcVF1JbdfYxx7ztFeS-QKJpDkE00zyEkViq-QxfrMVl5p7LGmTz8hMrFL3LXLokypZSDgFBfsUzChJf3mlYzxiGaGUqhs7NksQJDoUYf6prPow.XwRVfVTTPogO74RnxZD_9Mse26fTSehna1pbWy4VHfY"
+
+	//when
+	test, headers, err := Decode(token, "top secret")
+	fmt.Printf("\np2c min iteration err= %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+	c.Assert(headers, IsNil)
+}
+
+func (s *TestSuite) TestDecrypt_PBSE2_HS512_A256KW_A256CBC_HS512_MaxIterationViolation(c *C) {
+	//given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 8000, 0))
+	token := "eyJhbGciOiJQQkVTMi1IUzUxMitBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwicDJjIjo4MTkyLCJwMnMiOiJCUlkxQ1M3VXNpaTZJNzhkIn0.ovjAL7yRnB_XdJbK8lAaUDRZ-CyVeio8f4pnqOt1FPj1PoQAdEX3S5x6DlzR8aqN_WR5LUwdqDSyUDYhSurnmq8VLfzd3AEe.YAjH6g_zekXJIlPN4Ooo5Q.tutaltxpeVyayXZ9pQovGXTWTf_GWWvtu25Jeg9jgoH0sUX9KCnL00A69e4GJR6EMxalmWsa45AItffbwjUBmwdyklC4ZbTgaovVRs-UwqsZFBO2fpEb7qLajjwra7o4OegzgXDD0jhrKrUusvRWGBvenvumb5euibUxmIfBUcVF1JbdfYxx7ztFeS-QKJpDkE00zyEkViq-QxfrMVl5p7LGmTz8hMrFL3LXLokypZSDgFBfsUzChJf3mlYzxiGaGUqhs7NksQJDoUYf6prPow.XwRVfVTTPogO74RnxZD_9Mse26fTSehna1pbWy4VHfY"
+
+	//when
+	test, headers, err := Decode(token, "top secret")
+	fmt.Printf("\np2c max iteration err= %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+	c.Assert(headers, IsNil)
+}
+
 func (s *TestSuite) TestEncrypt_PBSE2_HS256_A128KW_A128GCM(c *C) {
 	//given
 	payload := `{"hello": "world"}`
@@ -1736,6 +1771,72 @@ func (s *TestSuite) TestEncrypt_PBSE2_HS256_A128KW_A256CBC_HS512(c *C) {
 	//make sure we consistent with ourselfs
 	t, _, _ := Decode(test, "top secret")
 	c.Assert(t, Equals, payload)
+}
+
+func (s *TestSuite) TestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_Custom_p2c(c *C) {
+	// given
+	payload := `{"exp":1389189552,"sub":"alice","nbf":1389188952,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"e543edf6-edf0-4348-8940-c4e28614d463","iat":1389188952}"`
+
+	// when
+	test, err := Encrypt(payload, PBES2_HS256_A128KW, A256CBC_HS512, "top secret", Header("p2c", 10000))
+
+	fmt.Printf("\nPBES2-HS256+A128KW A256CBC_HS512 (custom p2c=10000)= %v\n", test)
+
+	//then
+	c.Assert(err, IsNil)
+
+	parts := strings.Split(test, ".")
+
+	c.Assert(len(parts), Equals, 5)
+	c.Assert(len(parts[0]), Equals, 116)
+	c.Assert(len(parts[1]), Equals, 96)
+	c.Assert(len(parts[2]), Equals, 22)
+	c.Assert(len(parts[3]), Equals, 278)
+	c.Assert(len(parts[4]), Equals, 43)
+
+	// ensure custom 'p2c' header have been included
+	v, _ := base64url.Decode(parts[0])
+	c.Assert(string(v), Matches, `.*"p2c":10000.*`)
+
+	//make sure we consistent with ourselfs
+	t, _, _ := Decode(test, "top secret")
+	c.Assert(t, Equals, payload)
+}
+
+func (s *TestSuite) TestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MaxIterationViolation(c *C) {
+	// given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 8000, 0))
+
+	payload := `{"hello": "world"}`
+
+	// when
+	test, err := Encrypt(payload, PBES2_HS512_A256KW, A256CBC_HS512, "top secret", Header("p2c", 10000))
+
+	fmt.Printf("\nTestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MaxIterationViolation, err = %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MinIterationViolation(c *C) {
+	// given
+	pbes2Hs512 := DeregisterJwa(PBES2_HS512_A256KW)
+	RegisterJwa(NewPbse2HmacAesKWAlg(256, 800000, 300000))
+
+	payload := `{"hello": "world"}`
+
+	// when
+	test, err := Encrypt(payload, PBES2_HS512_A256KW, A256CBC_HS512, "top secret", Header("p2c", 10000))
+
+	fmt.Printf("\nTestEncrypt_PBES2_HS512_A256KW_A256CBC_HS512_MinIterationViolation, err = %v\n", err)
+
+	//then
+	RegisterJwa(pbes2Hs512)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
 }
 
 func (s *TestSuite) TestDecrypt_ECDH_ES_A128CBC_HS256(c *C) {
@@ -2435,7 +2536,138 @@ func (s *TestSuite) TestEncryptBytes_RSA_OAEP_256_A128GCM(c *C) {
 	c.Assert(t, DeepEquals, payload)
 }
 
-//test utils
+func (s *TestSuite) TestDeregisterJwa(c *C) {
+	//given
+	alg := DeregisterJwa(PBES2_HS256_A128KW)
+	token := "eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwicDJjIjo4MTkyLCJwMnMiOiJiMFlFVmxMemtaNW9UUjBMIn0.dhPAhJ9kmaEbP-02VtEoPOF2QSEYM5085V6zYt1U1qIlVNRcHTGDgQ.4QAAq0dVQT41dQKDG7dhRA.H9MgJmesbU1ow6GCa0lEMwv8A_sHvgaWKkaMcdoj_z6O8LaMSgquxA-G85R_5hEILnHUnFllNJ48oJY7VmAJw0BQW73dMnn58u161S6Ftq7Mjxxq7bcksWvFTVtG5RsqqYSol5BZz5xm8Fcj-y5BMYMvrsCyQhYdeGEHkAvwzRdvZ8pGMsU2XPzl6GqxGjjuRh2vApAeNrj6MwKuD-k6AR0MH46EiNkVCmMkd2w8CNAXjJe9z97zky93xbxlOLozaC3NBRO2Q4bmdGdRg5y4Ew.xNqRi0ouQd7uo5UrPraedg"
+
+	//when
+	test, _, err := Decode(token, shaKey)
+
+	fmt.Printf("\nunknown 'alg' header err= %v\n", err)
+
+	//then
+	RegisterJwa(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDeregisterJwe(c *C) {
+	//given
+	alg := DeregisterJwe(A128CBC_HS256)
+	token := "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..3lClLoerWhxIc811QXDLbg.iFd5MNk2eWDlW3hbq7vTFLPJlC0Od_MSyWGakEn5kfYbbPk7BM_SxUMptwcvDnZ5uBKwwPAYOsHIm5IjZ79LKZul9ZnOtJONRvxWLeS9WZiX4CghOLZL7dLypKn-mB22xsmSUbtizMuNSdgJwUCxEmms7vYOpL0Che-0_YrOu3NmBCLBiZzdWVtSSvYw6Ltzbch4OAaX2ye_IIemJoU1VnrdW0y-AjPgnAUA-GY7CAKJ70leS1LyjTW8H_ecB4sDCkLpxNOUsWZs3DN0vxxSQw.bxrZkcOeBgFAo3t0585ZdQ"
+
+	//when
+	test, _, err := Decode(token, shaKey)
+
+	fmt.Printf("\nunknown 'enc' header err= %v\n", err)
+
+	//then
+	RegisterJwe(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDeregisterJws(c *C) {
+	//given
+	alg := DeregisterJws(HS256)
+	token := "eyJhbGciOiJIUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.chIoYWrQMA8XL5nFz6oLDJyvgHk2KA4BrFGrKymjC8E"
+
+	//when
+	test, _, err := Decode(token, shaKey)
+
+	fmt.Printf("\nunknown 'alg' header err= %v\n", err)
+
+	//then
+	RegisterJws(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDeregisterJwc(c *C) {
+	//given
+	alg := DeregisterJwc(DEF)
+	token := "eyJhbGciOiJSU0EtT0FFUCIsInppcCI6IkRFRiIsImVuYyI6IkExMjhDQkMtSFMyNTYifQ.nXSS9jDwE0dXkcGI7UquZBhn2nsB2P8u-YSWEuTAgEeuV54qNU4SlE76bToI1z4LUuABHmZOv9S24xkF45b7Mrap_Fu4JXH8euXrQgKQb9o_HL5FvE8m4zk5Ow13MKGPvHvWKOaNEBFriwYIfPi6QBYrpuqn0BaANc_aMyInV0Fn7e8EAgVmvoagmy7Hxic2sPUeLEIlRCDSGa82mpiGusjo7VMJxymkhnMdKufpGPh4wod7pvgb-jDWasUHpsUkHqSKZxlrDQxcy1-Pu1G37TAnImlWPa9NU7500IXc-W07IJccXhR3qhA5QaIyBbmHY0j1Dn3808oSFOYSF85A9w.uwbZhK-8iNzcjvKRb1a2Ig.jxj1GfH9Ndu1y0b7NRz_yfmjrvX2rXQczyK9ZJGWTWfeNPGR_PZdJmddiam15Qtz7R-pzIeyR4_qQoMzOISkq6fDEvEWVZdHnnTUHQzCoGX1dZoG9jXEwfAk2G1vXYT2vynEQZ72xk0V_OBtKhpIAUEFsXwCUeLAAgjFNY4OGWZl_Kmv9RTGhnePZfVbrbwg.WuV64jlV03OZm99qHMP9wQ"
+
+	//when
+	test, _, err := Decode(token, PrivKey())
+
+	fmt.Printf("\nunknown 'zip' header err= %v\n", err)
+
+	//then
+	RegisterJwc(alg)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDecode_TwoPhased_MatchAlg(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+
+	//when
+	test, _, err := Decode(token, Alg(Ecc256Public(), "ES256"))
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"hello": "world"}`)
+}
+
+func (s *TestSuite) TestDecode_TwoPhased_MatchAlg_Invalid(c *C) {
+	//given
+	token := "eyJhbGciOiJFUzI1NiIsImN0eSI6InRleHRcL3BsYWluIn0.eyJoZWxsbyI6ICJ3b3JsZCJ9.EVnmDMlz-oi05AQzts-R3aqWvaBlwVZddWkmaaHyMx5Phb2NSLgyI0kccpgjjAyo1S5KCB3LIMPfmxCX_obMKA"
+
+	//when
+	test, headers, err := Decode(token, Alg(Ecc256Public(), "RS256"))
+
+	fmt.Printf("\nalg doesn't match err=%v\n", err)
+
+	//then
+	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDecode_TwoPhased_MatchEnc(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0In0.COuKvozBVi2vkEPpFdx0HTMpU9tmpP1lLngbmGn8RVphY-vjhVaduv8D_Ay_1j8LuMz4tgP98xWtbJkTyhxY1kBwXe0CgqFUOSJ1mTEPRkKSXpdFR7rT1Pv68qug2yKaXT_qcviyBerIcUVFbXBmtiYAosYO4kaPSOE1IvLadFOrMkxdZv6QiiCROzWgJNCCMgNQZGRoPhqLe3wrcxi86DhNO7Bpqq_yeNVyHdU_qObMuMVZIWWEQIDhiU4nE8WGJLG_NtKElc_nQwbmclL_YYgTiHsIAKWZCdj0nwfLe5mwJQN4r7pjakiUVzCbNNgI1-iBH1vJD5VCPxgWldzfYA.7cDs4wzbNDt1Kq40Q5ae4w.u1bR6ChVd90QkFIp3H6IkOCIMwf5aIKsQOvqgFangRLrDjctl5qO5jTHr1o1GwBQvAkRmaGSE7fRIwWB_l-Ayx2c2WDFOkVXFSR_D23GrWaLMLbugPItQd2Mny6H4QOzO3O0EK_Qm7frqwKQI3og72SB8DUqzEaKsrz7HR2z_qMa2CEEApxai_R6NIlAdMUbYvOfZx262MWFGrITBDmma-Mnqiz9WJUv2wexfwjROaaS4wXfkGy5B6ltESifpZZk5NerExR3GA6yX7cFqJc4pQ.FKcbLyB9eP1UXmxyliTu1_GQrnS-JtAB"
+
+	//when
+	test, _, err := Decode(token, Enc(PrivKey(), "RSA-OAEP-256", "A192CBC-HS384"))
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
+}
+
+func (s *TestSuite) TestDecode_TwoPhased_MatchEnc_InvalidAlg(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0In0.COuKvozBVi2vkEPpFdx0HTMpU9tmpP1lLngbmGn8RVphY-vjhVaduv8D_Ay_1j8LuMz4tgP98xWtbJkTyhxY1kBwXe0CgqFUOSJ1mTEPRkKSXpdFR7rT1Pv68qug2yKaXT_qcviyBerIcUVFbXBmtiYAosYO4kaPSOE1IvLadFOrMkxdZv6QiiCROzWgJNCCMgNQZGRoPhqLe3wrcxi86DhNO7Bpqq_yeNVyHdU_qObMuMVZIWWEQIDhiU4nE8WGJLG_NtKElc_nQwbmclL_YYgTiHsIAKWZCdj0nwfLe5mwJQN4r7pjakiUVzCbNNgI1-iBH1vJD5VCPxgWldzfYA.7cDs4wzbNDt1Kq40Q5ae4w.u1bR6ChVd90QkFIp3H6IkOCIMwf5aIKsQOvqgFangRLrDjctl5qO5jTHr1o1GwBQvAkRmaGSE7fRIwWB_l-Ayx2c2WDFOkVXFSR_D23GrWaLMLbugPItQd2Mny6H4QOzO3O0EK_Qm7frqwKQI3og72SB8DUqzEaKsrz7HR2z_qMa2CEEApxai_R6NIlAdMUbYvOfZx262MWFGrITBDmma-Mnqiz9WJUv2wexfwjROaaS4wXfkGy5B6ltESifpZZk5NerExR3GA6yX7cFqJc4pQ.FKcbLyB9eP1UXmxyliTu1_GQrnS-JtAB"
+
+	//when
+	test, _, err := Decode(token, Enc(PrivKey(), "RSA-OAEP-256", "A256CBC-HS512"))
+
+	fmt.Printf("\nalg/enc doesn't match err=%v\n", err)
+
+	//then
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+func (s *TestSuite) TestDecode_TwoPhased_MatchEnc_InvalidEnc(c *C) {
+	//given
+	token := "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTkyQ0JDLUhTMzg0In0.COuKvozBVi2vkEPpFdx0HTMpU9tmpP1lLngbmGn8RVphY-vjhVaduv8D_Ay_1j8LuMz4tgP98xWtbJkTyhxY1kBwXe0CgqFUOSJ1mTEPRkKSXpdFR7rT1Pv68qug2yKaXT_qcviyBerIcUVFbXBmtiYAosYO4kaPSOE1IvLadFOrMkxdZv6QiiCROzWgJNCCMgNQZGRoPhqLe3wrcxi86DhNO7Bpqq_yeNVyHdU_qObMuMVZIWWEQIDhiU4nE8WGJLG_NtKElc_nQwbmclL_YYgTiHsIAKWZCdj0nwfLe5mwJQN4r7pjakiUVzCbNNgI1-iBH1vJD5VCPxgWldzfYA.7cDs4wzbNDt1Kq40Q5ae4w.u1bR6ChVd90QkFIp3H6IkOCIMwf5aIKsQOvqgFangRLrDjctl5qO5jTHr1o1GwBQvAkRmaGSE7fRIwWB_l-Ayx2c2WDFOkVXFSR_D23GrWaLMLbugPItQd2Mny6H4QOzO3O0EK_Qm7frqwKQI3og72SB8DUqzEaKsrz7HR2z_qMa2CEEApxai_R6NIlAdMUbYvOfZx262MWFGrITBDmma-Mnqiz9WJUv2wexfwjROaaS4wXfkGy5B6ltESifpZZk5NerExR3GA6yX7cFqJc4pQ.FKcbLyB9eP1UXmxyliTu1_GQrnS-JtAB"
+
+	//when
+	test, _, err := Decode(token, Enc(PrivKey(), "RSA-OAEP", "A192CBC-HS384"))
+
+	fmt.Printf("\nalg/enc doesn't match err=%v\n", err)
+
+	//then
+	c.Assert(err, NotNil)
+	c.Assert(test, Equals, "")
+}
+
+// test utils
 func PubKey() *rsa.PublicKey {
 	key, _ := Rsa.ReadPublic([]byte(pubKey))
 	return key
