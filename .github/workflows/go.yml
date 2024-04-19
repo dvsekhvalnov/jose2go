@@ -9,12 +9,12 @@ on:
 jobs:
 
   build-and-test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ windows-latest, ubuntu-latest, macos-latest }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        version: ['1.20']
+        version: ['1.20', '1.21', '1.22']
     steps:
     - name: Checkout library sources
       uses: actions/checkout@v3
