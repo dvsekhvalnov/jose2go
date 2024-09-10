@@ -1,4 +1,4 @@
-//package ecc provides helpers for creating elliptic curve leys
+// package ecc provides helpers for creating elliptic curve leys
 package ecc
 
 import (
