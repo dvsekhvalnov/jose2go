@@ -2141,6 +2141,30 @@ func (s *TestSuite) TestDecrypt_RSA_OAEP_256_A256CBC_HS512(c *C) {
 	c.Assert(test, Equals, `{"exp":1392553211,"sub":"alice","nbf":1392552611,"aud":["https:\/\/app-one.com","https:\/\/app-two.com"],"iss":"https:\/\/openid.net","jti":"586dd129-a29f-49c8-9de7-454af1155e27","iat":1392552611}`)
 }
 
+func (s *TestSuite) TestDecrypt_RSA_OAEP_384_A192GCM(c *C) {
+	//given
+	token := "eyJlbmMiOiJBMTkyR0NNIiwiYWxnIjoiUlNBLU9BRVAtMzg0In0.pT2_03Aa03PWky6L5LoW9UR2KYbdgQqpiU2lRsZxfKk2OUC-MPs6rAECylRtSPOWMYhW1NKaGrmt07jAi7gCs2ijwgpyD1VyM3GmmOrnsWwP_MW8WTWIpnLgaL1ajHjrlM3ZZuSFNLSw-O_-JfY6JHKUeCbq7Gta95l6AESDDGLxVW_wJnZLkNVqY-pq5_eBR1Gk1jOWpxb68MTr8k8gLivvuRRBWRiX4i52kcRFFaKcNp65ZmXTr3HOgf0BiGSzEZQFDwwpzGE5aaD8DcWEyn8R3LsxZU9puOILdkKo7MvHNkjZkTHWQFpe9L4Ppd8wX-fh4mLweyCCcJylzJHN1g.Vz8ymkRo6KT-ADV4.BmVs6Y4PE6zR2ALEDYjC8bCUQjALvsWwhbt9MU-Vo0mZpCIXZdwW8sAIF9n62GH7FPoNQbaXTXfpziyGPGFCxiB6StkppiGFo5Af4mGXx55YFNXghMkZfS9Oy3Ib0SbagF0GNR_cWXyfzanHCeskqcYOICEHwiAdONzwLhgCXt57R3TdoK6EL_wJKy6vhEL2pOsg5woj2P7NLuGezNUoB1vrpqTbySeoS8eZJ3Rz54_ShzdcVl8kBJ7WRRN_Iw.yErR3LUS8PbBClIwF7kI_Q"
+
+	//when
+	test, _, err := Decode(token, PrivKey())
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"sub":"alice","aud":["https://app-one.com","https://app-two.com"],"nbf":1731426506,"iss":"https://openid.net","exp":1731427106,"iat":1731426506,"jti":"49c091f4-f176-4227-ab82-b236beac2b94"}`)
+}
+
+func (s *TestSuite) TestDecrypt_RSA_OAEP_512_A256GCM(c *C) {
+	//given
+	token := "eyJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAtNTEyIn0.dDvBnxku8qBk0Ry8MRoIkWVszEsI0NKiBQtYnDQ6sq8mQyFp9dEbF-4_0a6_e6qZs5lyEjE-4y9Y-dV3rKymTXHqOVtsyUvrF_bGQ5rOThBkd08wcpEe7OiFIuWWcujJQ5p77IAkBlpedt3hb7tE2kbhMkocTSUXzWmWjLIka3teYUfbv2Rifacpj_XPXejDgYifVMnOcN7LFjbhEl7aajpy9nseWx9ihnAFbPdf7fT8cm9lEM8damUoFPIH4KUrHmAk72F49yT8OODjY-Sl93Q1vo1PbVMX-J6kTY3h0CcsAabnLs3Cn8OamHXxeWtQsWKmfazmOIp_uRCisTgwcg.hrJ7S_BfciovKcRB.YSqRYn0c-NQ3C86O7kpFev0Wt5RpOi_hHknLVgn04zwZGZGqS3zr7t5v-j4bHgouFhv1GdN5xvu0gFW1xXjo0_ZxcLNmHFmOAa3I7LtsPy4cW3Hkuy3wEblLg8cRoPTaLSvRPt9w2j_wy1beH9zrEqcf_KC3cKCzmoY0FatVwof5V9ICqtfFunv4h6ows-Fwhi_zzuL7zO5ydR-MH7D5Yhq1ni6SvRogp3Utfj2R_4jTGy8jGRRowfjsXR-GuQ.w15ByyQnK2G1_qnmkQU8QA"
+
+	//when
+	test, _, err := Decode(token, PrivKey())
+
+	//then
+	c.Assert(err, IsNil)
+	c.Assert(test, Equals, `{"sub":"alice","aud":["https://app-one.com","https://app-two.com"],"nbf":1731426506,"iss":"https://openid.net","exp":1731427106,"iat":1731426506,"jti":"6278505b-6dcd-483c-8dd1-7c35b7d1a1e5"}`)
+}
+
 func (s *TestSuite) TestEncrypt_RSA_OAEP_256_A128GCM(c *C) {
 	//given
 	payload := `{"hello": "world"}`
