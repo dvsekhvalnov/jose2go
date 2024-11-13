@@ -22,6 +22,8 @@ type SecurityTestSuite struct{}
 
 var _ = Suite(&SecurityTestSuite{})
 
+var aes128Key = []byte{194, 164, 235, 6, 138, 248, 171, 239, 24, 216, 11, 22, 137, 199, 215, 133}
+
 func (s *SecurityTestSuite) Test_InvalidCurve(c *C) {
 	// https://www.cs.bris.ac.uk/Research/CryptographySecurity/RWC/2017/nguyen.quan.pdf
 	// Attack exploits some ECDH implementations which do not check
@@ -122,6 +124,15 @@ func (s *SecurityTestSuite) Test_DeflateBomb(c *C) {
 	c.Assert(payload, Equals, "")
 	c.Assert(headers, IsNil)
 	c.Assert(err, Equals, jose.ErrSizeExceeded)
+}
+
+func (s *SecurityTestSuite) Test_TruncatedAesGcmAuthTag(c *C) {
+	token := "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..PEXf1goWOF0SZRe_.Zp3CHYq4ZqM3_opMIy25O50gmQzw_p-nCOiW2ROuQSv80-aD-78n8m103kgPRPCsOt7qrckDRGSDACOBZGr2WovzSC-dxIcW3EsPqtibueyh0p3FY43h-bcbhPzXBdjQPaNTCY0o26wcEV_4FzPYdE9_ngRFIUe_7Kby-E2CWYLFc5D9RO9TLGN5dpHL6l4SOGbNz8M0o4aQuyJv3BV1wj_KswqyVcKBHjm0eh6RmFhoERxWjvt5yeo83bzxTfReVWAxXw.AVLr7JE1r1uiUSLj"
+	payload, headers, err := jose.Decode(token, aes128Key)
+
+	c.Assert(payload, Equals, "")
+	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
 }
 
 func Ecc256() *ecdsa.PrivateKey {
