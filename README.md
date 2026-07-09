@@ -12,9 +12,11 @@ Extensively unit tested and cross tested (100+ tests) for compatibility with [jo
 
 
 ## Status
-Used in production. GA ready. Current version is 1.6.
+Used in production. GA ready. Current version is 1.9.
 
 ## Important
+v1.9 security hardening, fixed found vulnerabilities
+
 v1.8 added experimental RSA-OAEP-384 and RSA-OAEP-512 key management algorithms
 
 v1.7 introduced deflate decompression memory limits to avoid denial-of-service attacks aka 'deflate-bomb'. See [Customizing compression](#customizing-compression) section for details.
