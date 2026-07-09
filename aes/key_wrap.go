@@ -15,7 +15,6 @@ func KeyWrap(cek,kek []byte) ([]byte,error) {
 	if len(cek) < 16 {
 		return nil, errors.New("KeyWrap() requires cek at least of 128 bit length")
 	}
-
 															// 1) Initialize variables
 	a := defaultIV              // Set A = IV, an initial value
 	r, err := arrays.Slice(cek, 8)   // For i = 1 to n
@@ -65,10 +64,6 @@ func KeyUnwrap(encryptedCek, kek []byte) ([]byte,error) {
 
 	if err != nil {
 		return nil, err
-	}
-	
-	if len(c) < 1 {
-		return []byte{}, nil
 	}
 
 	a := c[0];                           //   Set A = C[0]
