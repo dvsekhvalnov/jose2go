@@ -3,11 +3,14 @@ package sec_test
 import (
 	"crypto/ecdsa"
 	"crypto/rsa"
+	"crypto/rand"
 	"encoding/json"
+	"crypto/elliptic"
 	"fmt"
 	"strings"
 	"testing"
 	"time"
+	"github.com/dvsekhvalnov/jose2go/base64url"
 
 	jose "github.com/dvsekhvalnov/jose2go"
 	"github.com/dvsekhvalnov/jose2go/arrays"
@@ -132,6 +135,59 @@ func (s *SecurityTestSuite) Test_TruncatedAesGcmAuthTag(c *C) {
 
 	c.Assert(payload, Equals, "")
 	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func (s *SecurityTestSuite) Test_HmacUsingShaWrongKeyTypeBypass(c *C) {
+	header := []byte(`{"alg":"HS256"}`)
+	payload := []byte(`{"sub":"attacker","admin":true,"iss":"forged"}`)
+	forged := base64url.Encode(header) + "." + base64url.Encode(payload) + "." 
+
+	rsaPriv, _ := rsa.GenerateKey(rand.Reader, 2048)
+	rsaPub := &rsaPriv.PublicKey
+
+	out, headers, err := jose.Decode(forged, rsaPub)
+
+	c.Assert(out, Equals, "")
+	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
+
+	ecPriv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	ecPub := &ecPriv.PublicKey
+
+	out, headers, err = jose.Decode(forged, ecPub)
+
+	c.Assert(out, Equals, "")
+	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
+
+	out, headers, err = jose.Decode(forged, rsaPriv)
+
+	c.Assert(out, Equals, "")
+	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
+
+	out, headers, err = jose.Decode(forged, "top secret")
+
+	c.Assert(out, Equals, "")
+	c.Assert(headers, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func (s *SecurityTestSuite) Test_PanicWithMalformedCEK(c *C) {
+	// Verifier's symmetric key (e.g. expects "dir"+A128GCM or A128KW JWEs).
+	key := make([]byte, 16)
+	headers := []byte(`{"alg":"A128KW","enc":"A128GCM"}`)
+	token := base64url.Encode(headers) + "." + 
+	"." +  // empty CEK
+	base64url.Encode(make([]byte, 12)) + "." + 
+	base64url.Encode([]byte("x")) + "." + 
+	base64url.Encode(make([]byte, 16)) 
+
+	out, hdr, err := jose.Decode(token, key)
+
+	c.Assert(out, Equals, "")
+	c.Assert(hdr, IsNil)
 	c.Assert(err, NotNil)
 }
 

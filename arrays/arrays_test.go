@@ -3,6 +3,7 @@ package arrays
 import (
 	. "gopkg.in/check.v1"
 	"testing"
+	"fmt"
 )
 
 func Test(t *testing.T) { TestingT(t) }
@@ -29,13 +30,40 @@ func (s *TestSuite) TestSlice(c *C) {
 	data := []byte{0, 1, 2, 3, 4, 5, 6, 7, 8}
 
 	//when
-	test := Slice(data, 3)
+	test, err := Slice(data, 3)
 
 	//then
+	c.Assert(err, IsNil)
 	c.Assert(len(test), Equals, 3)
 	c.Assert(test[0], DeepEquals, []byte{0, 1, 2})
 	c.Assert(test[1], DeepEquals, []byte{3, 4, 5})
 	c.Assert(test[2], DeepEquals, []byte{6, 7, 8})
+}
+
+func (s *TestSuite) TestSliceUnequal(c *C) {
+	//given
+	data := []byte{0, 1, 2, 3, 4, 5, 6, 7 }
+
+	//when
+	test, err := Slice(data, 3)
+
+	//then
+	fmt.Printf("err = %v\n", err)
+	c.Assert(err, NotNil)
+	c.Assert(test, IsNil)
+}
+
+func (s *TestSuite) TestSliceEmpty(c *C) {
+	//given
+	data := []byte{}
+
+	//when
+	test, err := Slice(data, 3)
+
+	//then
+	fmt.Printf("err = %v\n", err)
+	c.Assert(err, NotNil)
+	c.Assert(test, IsNil)
 }
 
 func (s *TestSuite) TestConcat(c *C) {
