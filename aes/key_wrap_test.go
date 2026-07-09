@@ -2,9 +2,7 @@ package aes
 
 import (
 	"testing"	
-	// "fmt"
 	. "gopkg.in/check.v1"
-	// "github.com/dvsekhvalnov/jose2go/arrays"
 )
 
 func Test(t *testing.T) { TestingT(t) }
@@ -237,4 +235,22 @@ func (s *TestSuite) Test_Unwrap256Key_256Kek(c *C) {
 
     //then
     c.Assert(test, DeepEquals, expected)
+}
+
+func (s *TestSuite) Test_Unwrap_Malformed(c *C) {
+
+    //given (Section 4.6)
+
+    //000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F
+    kek := []byte{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 }
+
+    //empty cek
+    key := []byte{}
+
+    //when
+    test, err := KeyUnwrap(key, kek)
+
+    //then
+    c.Assert(err, NotNil)
+    c.Assert(test, IsNil)
 }
