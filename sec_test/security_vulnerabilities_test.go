@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 	"github.com/dvsekhvalnov/jose2go/base64url"
+	"github.com/dvsekhvalnov/jose2go/compact"
 
 	jose "github.com/dvsekhvalnov/jose2go"
 	"github.com/dvsekhvalnov/jose2go/arrays"
@@ -185,6 +186,29 @@ func (s *SecurityTestSuite) Test_PanicWithMalformedCEK(c *C) {
 	base64url.Encode(make([]byte, 16)) 
 
 	out, hdr, err := jose.Decode(token, key)
+
+	c.Assert(out, Equals, "")
+	c.Assert(hdr, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func (s *SecurityTestSuite) Test_AesGcmKw_WrongIVSize(c *C) {
+	var key = []byte{194, 164, 235, 6, 138, 248, 171, 239, 24, 216, 11, 22, 137, 199, 215, 133}
+	token, _ := jose.Encrypt(`{"hello":"world"}`, jose.A128GCMKW, jose.A128GCM, key)
+
+	// tamper original token by injecting malformed IV into header
+	parts, _ := compact.Parse(token) 
+
+	var header map[string]interface{}
+	json.Unmarshal(parts[0], &header)
+	header["iv"] = base64url.Encode(make([]byte, 5))
+
+	tamperedHeader, _ := json.Marshal(header)
+	parts[0] = tamperedHeader
+
+	tampered := compact.Serialize(parts...)
+
+	out, hdr, err := jose.Decode(tampered, key)
 
 	c.Assert(out, Equals, "")
 	c.Assert(hdr, IsNil)
