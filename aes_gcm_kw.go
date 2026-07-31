@@ -115,7 +115,7 @@ func (alg *AesGcmKW) Unwrap(encryptedCek []byte, key interface{}, cekSizeBits in
 		}
 
 		if nonceSize := len(ivBytes); nonceSize != aesgcm.NonceSize() {
-			return nil, errors.New(fmt.Sprintf("AesGcmKW.Unwrap(): expected nonce of size %v bits, but was given %v bits.", aesgcm.NonceSize()<<3, nonceSize<<3))
+			return nil, fmt.Errorf("AesGcmKW.Unwrap(): expected nonce of size %v bits, but was given %v bits.", aesgcm.NonceSize()<<3, nonceSize<<3)
 		}
 
 		cipherAndTag:=append(encryptedCek,tagBytes...)
