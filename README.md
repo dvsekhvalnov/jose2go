@@ -15,6 +15,8 @@ Extensively unit tested and cross tested (100+ tests) for compatibility with [jo
 Used in production. GA ready. Current version is 1.9.
 
 ## Important
+v1.10 more security hardening, [#42](https://github.com/dvsekhvalnov/jose2go/issues/42)
+
 v1.9 security hardening, fixed found vulnerabilities
 
 v1.8 added experimental RSA-OAEP-384 and RSA-OAEP-512 key management algorithms
