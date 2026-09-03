@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"math/big"
 	"github.com/dvsekhvalnov/jose2go/base64url"
 	"github.com/dvsekhvalnov/jose2go/compact"
 
@@ -45,7 +46,7 @@ func (s *SecurityTestSuite) Test_InvalidCurve(c *C) {
 
 	//then
 	c.Assert(err, NotNil)
-	fmt.Printf("\nerr= %v\n", err)
+	fmt.Printf("\nTest_InvalidCurve: err= %v\n", err)
 	c.Assert(test, Equals, "")
 
 	//when
@@ -53,7 +54,7 @@ func (s *SecurityTestSuite) Test_InvalidCurve(c *C) {
 
 	//then
 	c.Assert(err, NotNil)
-	fmt.Printf("\nerr= %v\n", err)
+	fmt.Printf("\nTest_InvalidCurve: err= %v\n", err)
 	c.Assert(test, Equals, "")
 }
 
@@ -99,9 +100,8 @@ func (s *SecurityTestSuite) Test_AAD_IntegerOverflow(c *C) {
 	test, err := enc.Decrypt(newAad, cek, newIv, newCipherText, authTag)
 
 	//if we reach that point HMAC check was bypassed although the decrypted data is different
-
+	fmt.Printf("\nTest_AAD_IntegerOverflow: err= %v\n", err)
 	c.Assert(err, NotNil)
-	fmt.Printf("\nerr= %v\n", err)
 	c.Assert(test, IsNil)
 }
 
@@ -213,6 +213,89 @@ func (s *SecurityTestSuite) Test_AesGcmKw_WrongIVSize(c *C) {
 	c.Assert(out, Equals, "")
 	c.Assert(hdr, IsNil)
 	c.Assert(err, NotNil)
+}
+
+func (s *SecurityTestSuite) Test_PanicECDHMalformedEphemeralPublicKey(c *C) {
+	// generate (x,y) on P256 curve, so x is single byte when marshalled
+	curve := elliptic.P256()
+	x := big.NewInt(5)
+
+	rhs := new(big.Int).Exp(x, big.NewInt(3), curve.Params().P)
+	rhs.Sub(rhs, new(big.Int).Mul(big.NewInt(3), x))
+	rhs.Add(rhs, curve.Params().B)
+	rhs.Mod(rhs, curve.Params().P)
+
+	y := new(big.Int).ModSqrt(rhs, curve.Params().P)
+
+	c.Assert(y, NotNil)
+	c.Assert(curve.IsOnCurve(x, y), Equals, true)
+	c.Assert(len(x.Bytes()), Equals, 1)
+
+	// forge token
+	header := map[string]interface{}{
+		"alg": jose.ECDH_ES,
+		"enc": jose.A128GCM,
+		"epk": map[string]string{
+			"kty": "EC",
+			"crv": "P-256",
+			"x":   base64url.Encode(x.Bytes()),
+			"y":   base64url.Encode(y.Bytes()),
+		},
+	}
+
+	headerBytes, err := json.Marshal(header)
+	c.Assert(err, IsNil)
+
+	token := compact.Serialize(
+		headerBytes,
+		[]byte{},
+		make([]byte, 12),
+		[]byte("x"),
+		make([]byte, 16),
+	)
+
+	out, hdr, err := jose.Decode(token, Ecc256())
+
+	fmt.Printf("\nTest_PanicECDHMalformedEphemeralPublicKey: err= %v\n", err)
+
+	c.Assert(out, Equals, "")
+	c.Assert(hdr, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func (s *SecurityTestSuite) Test_BadCurve(c *C) {
+	// given
+	token := "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTEyOENCQy1IUzI1NiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6Im9uU2VtWjRDOGZoYXhyS1VodDRDTlVlNFlldjFYM2ZDb1dKLVhnTnE4REUiLCJ5IjoiY2NBaWNaNjdYQjNXWWJ0YkZKRkdnWXhkbGN5YzhjRFBkUmlQZ2xMcE8zSSJ9fQ..1aVHzNGF40cH5xayV-weQg.mEsN3XiInMng5YonQrmrpWNtQVOXclNsiMieJRg_F8M.XXoZ4ze4vprNJVLyTwhTxw"
+
+	// when
+	out, hdr, err := jose.Decode(token, Ecc256())
+
+	// then
+	fmt.Printf("\nTest_BadCurve(): err= %v\n", err)
+
+	c.Assert(out, Equals, "")
+	c.Assert(hdr, IsNil)
+	c.Assert(err, NotNil)
+
+}
+func (s *SecurityTestSuite) Test_UnsupportedCurve(c *C) {
+	// given
+	token := "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTEyOENCQy1IUzI1NiIsImVwayI6eyJjcnYiOiJzZWNwMjU2azEiLCJrdHkiOiJFQyIsIngiOiI0bDU0aWhZV29zMGs2RUN5VkIyS3JwaG5MUzdjSnFjLVl1YkxxYzk2aFQwIiwieSI6ImpKUjBrdFFrdkd2OVBPaFh3bHBfNkNjVklUODE3LWNRSjhVQVhZVVVUNmMifX0..WfXiE1UZArqMzCdnXpvNig.B2tYTfyoLkA674HlSDnE4h4Kw26pTc-tkmxjBJvBDj0.bZuRmTapmqcU3It-Frtu1w"
+
+	// when
+	out, hdr, err := jose.Decode(token, Ecc256())
+
+	// then
+	fmt.Printf("\nTest_UnsupportedCurve(): err= %v\n", err)
+
+	c.Assert(out, Equals, "")
+	c.Assert(hdr, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func Ecc256Public() *ecdsa.PublicKey {
+	return ecc.NewPublic([]byte{4, 114, 29, 223, 58, 3, 191, 170, 67, 128, 229, 33, 242, 178, 157, 150, 133, 25, 209, 139, 166, 69, 55, 26, 84, 48, 169, 165, 67, 232, 98, 9},
+		[]byte{131, 116, 8, 14, 22, 150, 18, 75, 24, 181, 159, 78, 90, 51, 71, 159, 214, 186, 250, 47, 207, 246, 142, 127, 54, 183, 72, 72, 253, 21, 88, 53})
 }
 
 func Ecc256() *ecdsa.PrivateKey {
