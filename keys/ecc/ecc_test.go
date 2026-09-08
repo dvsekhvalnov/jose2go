@@ -104,6 +104,24 @@ func (s *TestSuite) TestReadPrivatePKCS8(c *C) {
 	c.Assert(test.Curve, Equals, elliptic.P256())
 }
 
+func (s *TestSuite) TestCurveByName(c *C) {
+	crv, err := CurveByName("P-256") 
+	c.Assert(crv, Equals, elliptic.P256())
+	c.Assert(err, IsNil)
+
+	crv, err = CurveByName("P-384") 
+	c.Assert(crv, Equals, elliptic.P384())
+	c.Assert(err, IsNil)
+
+	crv, err = CurveByName("P-521") 
+	c.Assert(crv, Equals, elliptic.P521())
+	c.Assert(err, IsNil)
+
+	crv, err = CurveByName("???") 
+	c.Assert(crv, IsNil)
+	c.Assert(err, NotNil)
+} 
+
 //utils
 func bigInt(value string) *big.Int {
 	i:=new (big.Int)
