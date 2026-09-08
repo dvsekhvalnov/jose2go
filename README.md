@@ -16,6 +16,7 @@ Used in production. GA ready. Current version is 1.9.
 
 ## Important
 v1.11 more security hardening, [ECDH-ES malformed ephemeral public key (`epk.x`) causes nil-curve dereference panic (remote DoS)](https://github.com/dvsekhvalnov/jose2go/security/advisories/GHSA-f24c-mccr-j77x)
+
 v1.10 more security hardening, [#42](https://github.com/dvsekhvalnov/jose2go/issues/42)
 
 v1.9 security hardening, fixed found vulnerabilities
